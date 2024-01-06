@@ -13,7 +13,7 @@ function login_submit() {
 
     const userData = {username: usernameInput.value, password: passwordInput.value}; 
 
-    fetch('http://localhost:3000/api/logins/logins.json', {
+    fetch('https://chalkgrades.vercel.app/api/logins/logins.json', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -43,7 +43,7 @@ function signup_submit() {
 
     const userData = {username: usernameInput.value, password: passwordInput.value, password_confirm: passwordConfirmInput.value, accesskey: accessInput.value};
 
-    fetch('localhost:3000/api/logins/signups.json', {
+    fetch('https://chalkgrades.vercel.app/api/logins/signups.json', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
