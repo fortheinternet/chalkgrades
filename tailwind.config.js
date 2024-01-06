@@ -10,8 +10,10 @@ module.exports = {
     colors: {
       'cwhite': '#ffffff',
       'twhite': '#ffffff25',
+      'twhite2': '#ffffff50',
+      'twhite3': '#ffffff75',
       'cblack': '#000000',
-      'dark-1': '#15120e',
+      'dark-1': '#141312',
       'dark-1a': '#1c1710',
       'dark-2': '#101010',
       'accent-1': '#d7e4dc',

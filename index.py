@@ -18,21 +18,33 @@ app = Flask(__name__)
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return send_from_directory('public', '404.html'), 404
+    return send_from_directory('src/pages', '404.html'), 404
 
 # these serve sites
 @app.route('/')
 def serve_root():
     return send_from_directory('src/pages', 'landing.html')
 
+@app.route('/login')
+def serve_login():
+    return send_from_directory('src/pages', 'login.html')
+
 # these serve files
 @app.route('/src/styles/<path:filename>')
 def serve_styles(filename):
     return send_from_directory('src/styles', filename)
 
-@app.route('/src/<path:filename>')
-def serve_src(filename):
-    return send_from_directory('src', filename)
+@app.route('/src/js/<path:filename>')
+def serve_js(filename):
+    return send_from_directory('src/js', filename)
+
+@app.route('/src/output.css')
+def serve_output():
+    return send_from_directory('src', 'output.css')
+
+@app.route('/src/favicon.png')
+def serve_favicon():
+    return send_from_directory('src', 'favicon.png')
 
 # Logins
 
@@ -143,6 +155,7 @@ def handle_work_create():
     token = data.get('token')
     url = data.get('url')
     display = data.get('display')
+    accesskey = data.get('accesskey')
 
     #
 
@@ -155,7 +168,11 @@ def handle_work_create():
     creator_id = creator_response.data[0]['user_id'] if creator_response.data else None
 
     # ROUND 1 OF CONDITIONS
-    conditions = [(not creator_id, 'w-mal-20', 'Work: Invalid token')]
+    conditions = [
+        (not creator_id, 'w-mal-20', 'Work: Invalid token'),
+        (accesskey != "newclass", 'w-mal-15', 'Work: Bad access key'),
+    ]
+    
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
     

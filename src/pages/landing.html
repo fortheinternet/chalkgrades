@@ -11,6 +11,8 @@
         <link rel="stylesheet" href="../../src/output.css">
         <link rel="icon" href="../../src/favicon.png" type="image/png">
 
+        <script src="../../src/js/landing.js"></script>
+
     </head>
     <body>
         <main class="flex flex-col h-screen">
@@ -19,10 +21,10 @@
             </div>
             <div id="primary_section" class="bg-dark-1 text-cwhite flex-grow p-8">
                 <h1 class="font-display mb-5 font-bold text-4xl">Chalk is an online examination software</h1>
-                <p class="font-body mb-6">If you know Python and want to help fix my bad code, you can visit the GitHub repository if I ever choose to publish it.</p>
+                <p class="font-body mb-6">If you know Python and want to help fix my bad code, you can visit the GitHub repository at github.com/pvcsoftware/chalkgrades.</p>
 
-                <button class="h-10 px-5 mr-3 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">log in or sign up</button>
-                <button class="h-10 px-5 mx-3 bg-transparent border-twhite border-dashed border-2 rounded-md font-semibold">View documentation</button>
+                <button onclick="nav_loginsignup()" class="h-10 px-5 mr-3 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">log in or sign up</button>
+                <button onclick="nav_viewdocuments()" class="h-10 px-5 mx-3 bg-transparent border-twhite border-dashed border-2 rounded-md font-semibold">View documentation</button>
             </div>
         </main>
     </body>
