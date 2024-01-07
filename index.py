@@ -29,6 +29,10 @@ def serve_root():
 def serve_login():
     return send_from_directory('src/pages', 'login.html')
 
+@app.route('/home')
+def serve_home():
+    return send_from_directory('src/pages', 'home.html')
+
 # these serve files
 @app.route('/src/styles/<path:filename>')
 def serve_styles(filename):

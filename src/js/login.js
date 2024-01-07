@@ -4,6 +4,12 @@ document.addEventListener("DOMContentLoaded", function() {
         '%cWARNING: Pasting any script into this console will give attackers access to your account authentication details. If you know what you are doing you should come working here, details at read.cv/pvcsd',
         'font-weight: bold;'
     );
+
+    const user_token = getCookie("token")
+
+    if(user_token) {
+        window.location.href = '/home';
+    }
 })
 
 function login_submit() {
@@ -27,6 +33,7 @@ function login_submit() {
         } else {
             loginErrors.textContent = "";
             setCookie("token", data.token);
+            window.location.href = '/home';
         }
     })
     .catch(error => {
@@ -57,6 +64,7 @@ function signup_submit() {
         } else {
             signupErrors.textContent = "";
             setCookie("token", data.token);
+            window.location.href = '/home';
         }
     })
     .catch(error => {
@@ -64,7 +72,7 @@ function signup_submit() {
     });
 }
 
-// This code does not look professional. It looks like a cat fell asleep on the keyboard. But it works so it won't be fixed. Or at least not by me ¯\_(ツ)_/¯
+// This code does not look professional, it looks like a cat fell asleep on the keyboard. But it works so it won't be fixed. Or at least not by me ¯\_(ツ)_/¯
 
 function setCookie(cname, cvalue) {
     let d = new Date();

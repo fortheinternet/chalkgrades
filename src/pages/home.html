@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>chalk - home</title>
+        <meta name="description" content="This page should not show up in search results, therefore no one will see this message. If anyone does see it, I hope you're well?">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <meta charset="UTF-8">
+
+        <link rel="stylesheet" href="../../src/output.css">
+        <link rel="stylesheet" href="../../src/styles/custom.css">
+
+        <link rel="icon" href="../../src/favicon.png" type="image/png">
+        <script src="../../src/js/home.js"></script>
+
+    </head>
+    <body class="bg-dark-1 text-cwhite">
+        <main class="flex flex-col h-min">
+            <div id="top_section" class="border-b-2 border-dark-1a border-solid flex-none h-min p-3">
+                <p class="font-body">Production / <span id="username_field" class="font-bold">Loading, please wait..</span></p>
+            </div>
+            <div id="primary_section" class="h-min p-8 border-b-2 border-dark-1a border-solid">
+                <h4 class="font-display mb-3 font-bold text-xl">Workspaces</h4>
+
+                <div id="links">
+                    <a onclick="view_workspaces()" class="font-body no-underline text-enabled cursor-pointer hover:text-accent-1">view workspaces</a>
+                    <span id="join_lnk" class="font-body text-accent-1 select-none mx-2">|</span>
+
+                    <a onclick="create_new_workspace()" class="font-body no-underline text-enabled cursor-pointer hover:text-accent-1">create new</a>
+                    <span id="join_lnk" class="font-body text-accent-1 select-none mx-2">|</span>
+    
+                    <a onclick="join_new_workspace()" class="font-body no-underline text-enabled cursor-pointer hover:text-accent-1">join workspace</a>
+                    <span class="font-body text-accent-1 select-none mx-2">|</span>
+    
+                    <a onclick="logout()" class="font-body no-underline text-enabled cursor-pointer hover:text-accent-1">log out</a>
+                </div>
+            </div>
+            <div id="selected_content" class="flex-grow p-8">
+
+                <div id="workspaces">
+                    <div id="workspace" class="hidden">
+                        <p class="font-body md-6 font-bold"><span id="workspace_display"></span></p>
+                        <p class="font-body md-6 mb-5 text-twhite3"><span id="workspace_creator"></span> / <span id="workspace_url"></span></p>
+                    </div>
+                </div>
+
+                <div id="create_workspace" class="hidden">
+                    <h4 class="font-display mb-3 font-bold text-xl">Create workspace</h4>
+                    <p class="font-body mb-6" id="create_errors"></p>
+
+                    <p class="font-body font-bold mb-2">Class Display Name</p>
+                    <input type="text" id="create_display" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+
+                    <p class="font-body font-bold mb-2">Class URL</p>
+                    <input type="text" id="create_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+
+                    <p class="font-body font-bold mb-2">Password</p>
+                    <input type="password" id="create_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+
+                    <p class="font-body font-bold mb-2">Access credential</p>
+                    <input type="text" id="create_access" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+
+                    <p></p>
+
+                    <button onclick="create_submit()" class="h-11 px-5 mb-6 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Create new workspace</button>
+                </div>
+
+                <div id="join_workspace" class="hidden">
+                    <h4 class="font-display mb-3 font-bold text-xl">Join a workspace</h4>
+                    <p class="font-body mb-6" id="join_errors"></p>
+
+                    <p class="font-body font-bold mb-2">Class Superuser</p>
+                    <input type="text" id="join_superuser" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+
+                    <p class="font-body font-bold mb-2">Class URL</p>
+                    <input type="text" id="join_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+
+                    <p class="font-body font-bold mb-2">Password</p>
+                    <input type="password" id="join_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+
+                    <p></p>
+
+                    <button onclick="join_submit()" class="h-11 px-5 mb-6 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Join workspace</button>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
