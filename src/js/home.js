@@ -21,7 +21,7 @@ function load_homedotjson() {
     const user_token = getCookie("token")
     const userData = {token: user_token};
 
-    fetch('http://chalkgrades.vercel.app/api/logins/home.json', {
+    fetch('https://chalkgrades.vercel.app/api/logins/home.json', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -134,7 +134,7 @@ function create_submit() {
 
     const workData = {token: getCookie("token"), display: createDisplay.value, url: createURL.value, password: createPassword.value, accesskey: createAccess.value}; 
 
-    fetch('http://chalkgrades.vercel.app/api/work/create.json', {
+    fetch('https://chalkgrades.vercel.app/api/work/create.json', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -170,7 +170,7 @@ function join_submit() {
 
     const workData = {token: getCookie("token"), password: joinPassword.value};
 
-    fetch(`http://chalkgrades.vercel.app/api/work/${superuser_value}/${url_value}/join.json`, {
+    fetch(`https://chalkgrades.vercel.app/api/work/${superuser_value}/${url_value}/join.json`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
