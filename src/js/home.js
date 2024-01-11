@@ -18,12 +18,10 @@ function load_homedotjson() {
     const workspaceDiv = document.getElementById("workspace");
     const workspacesDiv = document.getElementById("workspaces");
 
-    workspacesDiv.innerHTML = '';
-
     const user_token = getCookie("token")
-    const userData = { token: user_token};
+    const userData = {token: user_token};
 
-    fetch('https://chalkgrades.vercel.app/api/logins/home.json', {
+    fetch('http://chalkgrades.vercel.app/api/logins/home.json', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -41,6 +39,8 @@ function load_homedotjson() {
 
                 const workspaces_data = data.workspaces;
 
+                workspacesDiv.innerHTML = '';
+
                 workspaces_data.forEach(workspace => {
                     const { display_name, creator_username, url } = workspace;
 
@@ -50,6 +50,7 @@ function load_homedotjson() {
                     workspaceClone.querySelector("#workspace_display").textContent = display_name;
                     workspaceClone.querySelector("#workspace_creator").textContent = creator_username;
                     workspaceClone.querySelector("#workspace_url").textContent = url;
+                    workspaceClone.querySelector("#workspace_link").href = "/" + creator_username + "/" + url;
 
                     workspacesDiv.appendChild(workspaceClone);
                 });
@@ -66,6 +67,19 @@ function create_new_workspace() {
     const join_section = document.getElementById("join_workspace");
     const work_section = document.getElementById("workspaces");
 
+    const work_section_c1 = document.getElementById("create_errors");
+    const work_section_c2 = document.getElementById("create_url");
+    const work_section_c3 = document.getElementById("create_password");
+    const work_section_c4 = document.getElementById("create_display");
+    const work_section_c5 = document.getElementById("create_access");
+
+
+    work_section_c1.textContent = ""
+    work_section_c2.value = ""
+    work_section_c3.value = ""
+    work_section_c4.value = ""
+    work_section_c5.value = ""
+
     create_section.style.display = "block";
     join_section.style.display = "none";
     work_section.style.display = "none";
@@ -75,6 +89,17 @@ function join_new_workspace() {
     const create_section = document.getElementById("create_workspace");
     const join_section = document.getElementById("join_workspace");
     const work_section = document.getElementById("workspaces");
+
+    const work_section_j1 = document.getElementById("join_errors");
+    const work_section_j2 = document.getElementById("join_superuser");
+    const work_section_j3 = document.getElementById("join_url");
+    const work_section_j4 = document.getElementById("join_password");
+
+    work_section_j1.textContent = ""
+    work_section_j2.value = ""
+    work_section_j3.value = ""
+    work_section_j4.value = ""
+
 
     create_section.style.display = "none";
     join_section.style.display = "block";
@@ -109,7 +134,7 @@ function create_submit() {
 
     const workData = {token: getCookie("token"), display: createDisplay.value, url: createURL.value, password: createPassword.value, accesskey: createAccess.value}; 
 
-    fetch('https://chalkgrades.vercel.app/api/work/create.json', {
+    fetch('http://chalkgrades.vercel.app/api/work/create.json', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -120,6 +145,11 @@ function create_submit() {
     .then(data => {
         if (data.error) {
             createErrors.textContent = data.message;
+
+            if (data.error === "w-mal-20") {
+                window.location.href = '/login';
+                removeCookie("token");
+            }
         } else {
             createErrors.textContent = "Workspace creation successful!";
         }
@@ -140,7 +170,7 @@ function join_submit() {
 
     const workData = {token: getCookie("token"), password: joinPassword.value};
 
-    fetch(`https://chalkgrades.vercel.app/api/work/${superuser_value}/${url_value}/join.json`, {
+    fetch(`http://chalkgrades.vercel.app/api/work/${superuser_value}/${url_value}/join.json`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -151,6 +181,11 @@ function join_submit() {
     .then(data => {
         if (data.error) {
             joinErrors.textContent = data.message;
+
+            if (data.error === "w-mal-20") {
+                window.location.href = '/login';
+                removeCookie("token");
+            }
         } else {
             joinErrors.textContent = "Workspace joined successfully!";
         }

@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 
 load_dotenv()
 
+# Super Ultra Pro Max 5G AI Fold Quantum Computing Native AR IoT Blockchain Web3 Secret PostgREST (is that even spelled correctly???) API JWT AWS Frankfurt, Germany (fra-1) Supabase Service Role Secret key, DON'T LEAK!!
+
 supabase_url = os.getenv("supabase_url")
 supabase_key = os.getenv("supabase_key")
 
@@ -50,6 +52,14 @@ def serve_output():
 def serve_favicon():
     return send_from_directory('src', 'favicon.png')
 
+@app.route('/<string:creator_username>/<string:url>')
+def serve_workspace_home(creator_username, url):
+    creator_username = "foo"
+    url = "bar"
+
+    # None of the values above are used. They just exist so I don't have to put effort & time into finding a better solution.
+
+    return send_from_directory('src/pages', 'work_home.html')
 # Logins
 
 @app.route('/api/logins/logins.json', methods=['POST'])
