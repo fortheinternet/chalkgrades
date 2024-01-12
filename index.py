@@ -14,6 +14,12 @@ load_dotenv()
 supabase_url = os.getenv("supabase_url")
 supabase_key = os.getenv("supabase_key")
 
+accesskey_user = os.getenv("user_key")
+accesskey_work = os.getenv("work_key")
+
+password_salt = os.getenv("password_salt")
+password_salt_2 = os.getenv("password_salt_2")
+
 supabase: Client = create_client(supabase_url, supabase_key)
 
 app = Flask(__name__)
@@ -79,7 +85,7 @@ def handle_logins():
     auth = result[0]['auth'] if result else None
     token = result[0]['token'] if result else None
 
-    salted_password = 'e10reGEXspace' + password
+    salted_password = password_salt + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
     # ROUND 2 OF CONDITIONS
@@ -103,7 +109,7 @@ def handle_signups():
 
     conditions = [
         (password != password_confirm, 's-mal-10', 'Signup: Passwords dont match'),
-        (accesskey != "77000", 's-mal-15', 'Signup: Bad access key'),
+        (accesskey != accesskey_user, 's-mal-15', 'Signup: Bad access key'),
         (username.lower() in map(str.lower, all_usernames), 's-mal-20', 'Signup: Username already taken'),
         (not re.match(r'^[A-Za-z\d_]{3,16}$', username), 's-mal-50', 'Signup: Invalid username'),
     ]
@@ -111,7 +117,7 @@ def handle_signups():
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
-    salted_password = 'e10reGEXspace' + password
+    salted_password = password_salt + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
     token = None
@@ -173,7 +179,7 @@ def handle_work_create():
 
     #
 
-    salted_password = '32joi1' + password
+    salted_password = password_salt_2 + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
     #
@@ -184,7 +190,7 @@ def handle_work_create():
     # ROUND 1 OF CONDITIONS
     conditions = [
         (not creator_id, 'w-mal-20', 'Work: Invalid token'),
-        (accesskey != "newclass", 'w-mal-15', 'Work: Bad access key'),
+        (accesskey != accesskey_work, 'w-mal-15', 'Work: Bad access key'),
     ]
     
     for condition in conditions:
@@ -241,7 +247,7 @@ def handle_work_join(creator_username, url):
     for condition in conditions:
         if condition[0] and condition[3] == "r2": return jsonify({'error': condition[1], 'message': condition[2]})
 
-    salted_password = '32joi1' + password
+    salted_password = password_salt_2 + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
     # ROUND 3 OF CONDITIONS
