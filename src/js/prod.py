@@ -7,10 +7,10 @@ def replace_urls_in_file(file_path):
             
             if mode == "Production" or mode == "prod":
                 updated_content = content.replace('http://', 'https://')
-                updated_content = content.replace('localhost:3000', 'chalkgrades.vercel.app')
+                updated_content = updated_content.replace('localhost:3000', 'chalkgrades.vercel.app')
             elif mode == "Development" or mode == "dev":
                 updated_content = content.replace('chalkgrades.vercel.app', 'localhost:3000')
-                updated_content = content.replace('https://', 'http://')
+                updated_content = updated_content.replace('https://', 'http://')
             
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(updated_content)
