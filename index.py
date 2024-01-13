@@ -273,8 +273,10 @@ def handle_work_home(creator_username, url):
     data = request.get_json()
     token = data.get('token')
 
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
+    user_data = supabase.table('users_data').select('user_id', 'username').eq('token', token).execute().data
+
     user_id = user_data[0]['user_id'] if user_data else None
+    username = user_data[0]['username'] if user_data else None
 
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
@@ -324,7 +326,7 @@ def handle_work_home(creator_username, url):
             'role': member_role
         })
         
-    return jsonify({'display': display, 'members': members_response})
+    return jsonify({'display': display, 'username': username, 'user_role': user_role, 'members': members_response})
 
 @app.route('/api/work/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
 def handle_work_settings(creator_username, url):

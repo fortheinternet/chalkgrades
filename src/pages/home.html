@@ -16,23 +16,27 @@
     </head>
     <body class="bg-dark-1 text-cwhite">
         <main class="flex flex-col h-min">
-            <div id="top_section" class="border-b-2 border-dark-1a border-solid flex-none h-min p-3">
-                <p class="font-body">Production / <span id="username_field" class="font-bold">Loading, please wait..</span></p>
+            <div id="top_section" class="border-b-2 border-dark-1a border-solid flex-none h-min p-3 px-4">
+                <p class="font-body">
+                    <a href="/home" class="font-body underline cursor-pointer">Production</a>
+                    /
+                    <span id="username_field" class="font-bold">Loading, please wait..</span>
+                </p>
             </div>
             <div id="primary_section" class="h-min p-8 border-b-2 border-dark-1a border-solid">
                 <h4 class="font-display mb-3 font-bold text-xl">Workspaces</h4>
 
                 <div id="links">
-                    <a onclick="view_workspaces()" class="font-body no-underline text-enabled cursor-pointer hover:text-accent-1">view workspaces</a>
-                    <span id="join_lnk" class="font-body text-accent-1 select-none mx-2">|</span>
+                    <a onclick="view_workspaces()" class="font-body text-enabled hover:text-accent-1 cursor-pointer">view workspaces</a>
+                    <span class="font-body text-accent-1 select-none mx-2">|</span>
 
-                    <a onclick="create_new_workspace()" class="font-body no-underline text-enabled cursor-pointer hover:text-accent-1">create new</a>
-                    <span id="join_lnk" class="font-body text-accent-1 select-none mx-2">|</span>
-    
-                    <a onclick="join_new_workspace()" class="font-body no-underline text-enabled cursor-pointer hover:text-accent-1">join workspace</a>
+                    <a onclick="create_new_workspace()" class="font-body text-enabled hover:text-accent-1 cursor-pointer">create new</a>
                     <span class="font-body text-accent-1 select-none mx-2">|</span>
     
-                    <a onclick="logout()" class="font-body no-underline text-enabled cursor-pointer hover:text-accent-1">log out</a>
+                    <a onclick="join_new_workspace()" class="font-body text-enabled hover:text-accent-1 cursor-pointer">join workspace</a>
+                    <span class="font-body text-accent-1 select-none mx-2">|</span>
+    
+                    <a onclick="logout()" class="font-body text-enabled hover:text-accent-1 cursor-pointer">log out</a>
                 </div>
             </div>
             <div id="selected_content" class="flex-grow p-8">
@@ -45,20 +49,24 @@
                 </div>
 
                 <div id="create_workspace" class="hidden">
-                    <h4 class="font-display mb-3 font-bold text-xl">Create workspace</h4>
-                    <p class="font-body mb-6" id="create_errors"></p>
+                    <h4 class="font-display mb-2 font-bold text-xl">Create workspace</h4>
+                    <p class="font-body mb-6 text-[14px] lg:w-[500px] w-full" id="create_errors"></p>
 
-                    <p class="font-body font-bold mb-2">Class Display Name</p>
-                    <input type="text" id="create_display" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body font-bold mb-1">Display Name</p>
+                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">Can contain any amount of any character. Is used to quickly identify a class.</p>
+                    <input type="text" id="create_display" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
 
-                    <p class="font-body font-bold mb-2">Class URL</p>
-                    <input type="text" id="create_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body font-bold mb-1">Workspace Resource</p>
+                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">A simple, easy-to-remember number or word that is used to interact with the workspace.</p>
+                    <input type="text" id="create_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
 
-                    <p class="font-body font-bold mb-2">Password</p>
-                    <input type="password" id="create_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body font-bold mb-1">Password</p>
+                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">It's a secret! You can provide this to your students, and is used to join the class.</p>
+                    <input type="password" id="create_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
 
-                    <p class="font-body font-bold mb-2">Access credential</p>
-                    <input type="text" id="create_access" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body font-bold mb-1">Access credential</p>
+                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">Is a *top-sneaky* parameter, used to keep the database size below 500MB. If you are a teacher, you can email me for this value.</p>
+                    <input type="text" id="create_access" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
 
                     <p></p>
 
@@ -66,17 +74,20 @@
                 </div>
 
                 <div id="join_workspace" class="hidden">
-                    <h4 class="font-display mb-3 font-bold text-xl">Join a workspace</h4>
-                    <p class="font-body mb-6" id="join_errors"></p>
+                    <h4 class="font-display mb-2 font-bold text-xl">Join a workspace</h4>
+                    <p class="font-body mb-6 text-[14px] lg:w-[500px] w-full" id="join_errors"></p>
 
-                    <p class="font-body font-bold mb-2">Class Superuser</p>
-                    <input type="text" id="join_superuser" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body font-bold mb-1">Teacher's username</p>
+                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">This is generally the username of the head teacher, or the peson who created the class.</p>
+                    <input type="text" id="join_superuser" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
 
-                    <p class="font-body font-bold mb-2">Class URL</p>
-                    <input type="text" id="join_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body font-bold mb-1">Workspace Resource</p>
+                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">A simple, easy-to-remember number or word that is used to interact with the workspace.</p>
+                    <input type="text" id="join_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
 
-                    <p class="font-body font-bold mb-2">Password</p>
-                    <input type="password" id="join_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-1/5 w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body font-bold mb-1">Password</p>
+                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">This value will be provided by your teacher when joining the class. It is possible that there is no password.</p>
+                    <input type="password" id="join_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
 
                     <p></p>
 

@@ -17,11 +17,12 @@ document.addEventListener("DOMContentLoaded", function() {
 function load_homedotjson() {
     const workspaceDiv = document.getElementById("workspace");
     const workspacesDiv = document.getElementById("workspaces");
+    const username_field = document.getElementById("username_field")
 
     const user_token = getCookie("token")
     const userData = {token: user_token};
 
-    fetch('https://chalkgrades.vercel.app/api/logins/home.json', {
+    fetch('http://localhost:3000/api/logins/home.json', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -134,7 +135,7 @@ function create_submit() {
 
     const workData = {token: getCookie("token"), display: createDisplay.value, url: createURL.value, password: createPassword.value, accesskey: createAccess.value}; 
 
-    fetch('https://chalkgrades.vercel.app/api/work/create.json', {
+    fetch('http://localhost:3000/api/work/create.json', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -170,7 +171,7 @@ function join_submit() {
 
     const workData = {token: getCookie("token"), password: joinPassword.value};
 
-    fetch(`https://chalkgrades.vercel.app/api/work/${superuser_value}/${url_value}/join.json`, {
+    fetch(`http://localhost:3000/api/work/${superuser_value}/${url_value}/join.json`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -182,7 +183,7 @@ function join_submit() {
         if (data.error) {
             joinErrors.textContent = data.message;
 
-            if (data.error === "w-mal-20") {
+            if (data.error === "w-mal-25-1") {
                 window.location.href = '/login';
                 removeCookie("token");
             }

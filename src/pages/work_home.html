@@ -16,10 +16,33 @@
     </head>
     <body class="bg-dark-1 text-cwhite">
         <main class="flex flex-col h-min">
-            <div id="top_section" class="border-b-2 border-dark-1a border-solid flex-none h-min p-3">
-                <p class="font-body">Development / <span id="username_field" class="font-bold">Not loading, so please don't wait, this feature is under construction.</span></p>
+            <div id="top_section" class="border-b-2 border-dark-1a border-solid h-min p-3 px-4">
+                <p class="font-body">
+                    <a href="/home" class="font-body underline cursor-pointer">Production</a>
+                    /
+                    <span id="username_field" class="font-bold">Loading, please wait..</span>
+                </p>
             </div>
-            
+            <div id="primary_section" class="h-min p-8 border-b-2 border-dark-1a border-solid">
+                <h4 id="work_display" class="font-display font-bold text-xl"></h4>
+
+                <p class="font-body text-twhite3">
+                    <span id="work_user"></span>
+                    /
+                    <span id="work_url"></span>
+                </p>
+            </div>
+            <div id="selected_content" class="flex-grow p-8">
+                <h4 class="font-display font-bold text-xl mb-1">Members</h4>
+                <p class="font-body text-[14px] mb-6 lg:w-[500px] w-full">All the users that are in your class.</p>
+
+                <div id="members">
+                    <div id="member" class="hidden">
+                        <a class="font-body md-6 font-bold" id="workspace_link"><span id="member_user"></span></a>
+                        <p class="font-body md-6 mb-5 text-twhite3"><span id="member_role"></span></p>
+                    </div>
+                </div>
+            </div>
         </main>
     </body>
 </html>

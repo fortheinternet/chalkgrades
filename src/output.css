@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.4.0 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.1 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -544,6 +544,10 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.visible {
+  visibility: visible;
+}
+
 .fixed {
   position: fixed;
 }
@@ -556,6 +560,15 @@ video {
 .mx-3 {
   margin-left: 0.75rem;
   margin-right: 0.75rem;
+}
+
+.mx-8 {
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
 }
 
 .mb-2 {
@@ -576,6 +589,14 @@ video {
 
 .mr-3 {
   margin-right: 0.75rem;
+}
+
+.mr-8 {
+  margin-right: 2rem;
+}
+
+.mr-0 {
+  margin-right: 0px;
 }
 
 .block {
@@ -637,6 +658,11 @@ video {
   width: 100%;
 }
 
+.w-fit {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .max-w-60 {
   max-width: 15rem;
 }
@@ -661,6 +687,10 @@ video {
 
 .flex-col {
   flex-direction: column;
+}
+
+.justify-between {
+  justify-content: space-between;
 }
 
 .rounded-md {
@@ -715,6 +745,11 @@ video {
   padding: 2rem;
 }
 
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .px-5 {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
@@ -736,6 +771,10 @@ video {
 .text-4xl {
   font-size: 2.25rem;
   line-height: 2.5rem;
+}
+
+.text-\[14px\] {
+  font-size: 14px;
 }
 
 .text-xl {
@@ -770,8 +809,8 @@ video {
   color: #ffffff75;
 }
 
-.no-underline {
-  text-decoration-line: none;
+.underline {
+  text-decoration-line: underline;
 }
 
 .outline-none {
@@ -790,6 +829,10 @@ video {
 }
 
 @media (min-width: 640px) {
+  .sm\:mr-0 {
+    margin-right: 0px;
+  }
+
   .sm\:hidden {
     display: none;
   }
@@ -820,6 +863,18 @@ video {
   .md\:w-full {
     width: 100%;
   }
+
+  .md\:w-\[255px\] {
+    width: 255px;
+  }
+
+  .md\:w-\[300px\] {
+    width: 300px;
+  }
+
+  .md\:w-1\/2 {
+    width: 50%;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -840,11 +895,15 @@ video {
     display: flex;
   }
 
-  .lg\:w-1\/5 {
-    width: 20%;
-  }
-
   .lg\:w-2\/3 {
     width: 66.666667%;
+  }
+
+  .lg\:w-\[500px\] {
+    width: 500px;
+  }
+
+  .lg\:w-\[400px\] {
+    width: 400px;
   }
 }
