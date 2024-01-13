@@ -32,7 +32,7 @@ function load_workhomedotjson() {
     const user_token = getCookie("token")
     const userData = {token: user_token}
 
-    fetch(`http://localhost:3000/api/work/${creator_username}/${url}/home.json`, {
+    fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/home.json`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
