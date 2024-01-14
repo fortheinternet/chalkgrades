@@ -323,7 +323,8 @@ def handle_work_home(creator_username, url):
 
         members_response.append({
             'username': member_username,
-            'role': member_role
+            'role': member_role,
+            'user_id': member_id
         })
         
     return jsonify({'display': display, 'username': username, 'user_role': user_role, 'members': members_response})

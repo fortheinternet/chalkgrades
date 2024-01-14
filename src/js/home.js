@@ -31,7 +31,7 @@ function load_homedotjson() {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.error === "h-mal-20") {
+            if (data.error === "h-mal-10") {
                 window.location.href = '/login';
                 removeCookie("token");
             } else {

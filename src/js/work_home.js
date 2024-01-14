@@ -16,7 +16,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function load_workhomedotjson() {
     const membersDiv = document.getElementById("members")
+    const membersRemoveDiv = document.getElementById("members_remove")
+
     const memberDiv = document.getElementById("member")
+    const memberRemoveDiv = document.getElementById("member_remove")
 
     const username_field = document.getElementById("username_field")
     const work_user = document.getElementById("work_user")
@@ -61,7 +64,7 @@ function load_workhomedotjson() {
                 membersDiv.innerHTML = '';
 
                 members_data.forEach(member => {
-                    const { username, role } = member;
+                    const { username, role, user_id } = member;
 
                     const memberClone = memberDiv.cloneNode(true);
                     memberClone.style.display = "block";
@@ -70,6 +73,17 @@ function load_workhomedotjson() {
                     memberClone.querySelector("#member_role").textContent = role;
 
                     membersDiv.appendChild(memberClone);
+                    
+                    // removes
+
+                    const memberRemoveClone = memberRemoveDiv.cloneNode(true);
+                    memberRemoveClone.style.display = "block";
+
+                    memberRemoveClone.querySelector("#member_rm_lnk").textContent = "remove member";
+                    memberRemoveClone.querySelector("#member_rm_lnk").dataset.identifier = user_id;
+
+
+                    membersRemoveDiv.appendChild(memberRemoveClone);
                 });
             }
         })

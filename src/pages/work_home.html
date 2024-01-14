@@ -32,14 +32,31 @@
                     <span id="work_url"></span>
                 </p>
             </div>
-            <div id="selected_content" class="flex-grow p-8">
-                <h4 class="font-display font-bold text-xl mb-1">Members</h4>
-                <p class="font-body text-[14px] mb-6 lg:w-[500px] w-full">All the users that are in your class.</p>
-
-                <div id="members">
-                    <div id="member" class="hidden">
-                        <a class="font-body md-6 font-bold" id="workspace_link"><span id="member_user"></span></a>
-                        <p class="font-body md-6 mb-5 text-twhite3"><span id="member_role"></span></p>
+            <div id="selected_content" class="flex-grow flex p-8">
+                <div id="members_wrap">
+                    <h4 class="font-display font-bold text-xl mb-1">Members</h4>
+                    <p class="font-body text-[14px] mb-6 lg:w-[500px] w-full">All the users that are in your class.</p>
+    
+                    <div id="members">
+                        <div id="member" class="hidden mb-2">
+                            <p class="font-body">
+                                <span id="member_user" class="font-bold"></span>
+                                -
+                                <span id="member_role" class="text-twhite3"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div id="settings_wrap">
+                    <h4 class="font-display font-bold text-xl mb-1">Settings</h4>
+                    <p class="font-body text-[14px] mb-6 lg:w-[500px] w-full">All the settings you can modify.</p>
+                    
+                    <div id="members_remove">
+                        <div id="member_remove" class="hidden mb-2">
+                            <a class="font-body cursor-pointer">
+                                <span id="member_rm_lnk" class="text-twhite3" data-identifier=""></span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
