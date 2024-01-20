@@ -32,10 +32,10 @@
                     <span id="work_url"></span>
                 </p>
             </div>
-            <div id="selected_content" class="flex-grow flex p-8">
-                <div id="members_wrap">
+            <div id="selected_content" class="flex-grow md:flex p-8">
+                <div id="members_wrap" class="md:mr-4 mb-8 lg:w-[500px] w-full">
                     <h4 class="font-display font-bold text-xl mb-1">Members</h4>
-                    <p class="font-body text-[14px] mb-6 lg:w-[500px] w-full">All the users that are in your class.</p>
+                    <p class="font-body text-[14px] mb-6">All the users that are in your class.</p>
     
                     <div id="members">
                         <div id="member" class="hidden mb-2">
@@ -45,18 +45,39 @@
                                 <span id="member_role" class="text-twhite3"></span>
                             </p>
                         </div>
-                    </div>
+                    </div> <!--mr-->
                 </div>
-                <div id="settings_wrap">
+                <div id="settings_wrap" class="md:mx-4 lg:w-[500px] w-full">
                     <h4 class="font-display font-bold text-xl mb-1">Settings</h4>
-                    <p class="font-body text-[14px] mb-6 lg:w-[500px] w-full">All the settings you can modify.</p>
+                    <p class="font-body text-[14px] mb-6 ">All the settings you can modify.</p>
                     
-                    <div id="members_remove">
-                        <div id="member_remove" class="hidden mb-2">
-                            <a class="font-body cursor-pointer">
-                                <span id="member_rm_lnk" class="text-twhite3" data-identifier=""></span>
-                            </a>
+                    <div class="flex">
+                        <div id="members_remove" class="mr-[30%] hidden">
+                            <div id="member_remove" class="mb-2">
+                                <a class="font-body cursor-pointer" id="member_rm_lnk" onclick="remove_member(this)">
+                                    <span id="member_rm_span" class="text-twhite3"></span>
+                                </a>
+                            </div>
                         </div>
+
+                        <div id="other_settings" class="hidden">
+                            <div class="my-2">
+                                <a class="font-body cursor-pointer" onclick="change_display()">
+                                    <span>Display Name</span>
+                                </a>
+                            </div>
+                            <div class="mb-2">
+                                <a class="font-body cursor-pointer" onclick="change_url()">
+                                    <span>Work Resource</span>
+                                </a>
+                            </div>
+                            <div class="mb-2">
+                                <a class="font-body cursor-pointer" onclick="remove_work()">
+                                    <span class="text-warning">Remove Workspace</span>
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

@@ -323,11 +323,11 @@ def handle_work_home(creator_username, url):
 
         members_response.append({
             'username': member_username,
-            'role': member_role,
-            'user_id': member_id
+            'selected_role': member_role,
+            'selected_user_id': member_id
         })
         
-    return jsonify({'display': display, 'username': username, 'user_role': user_role, 'members': members_response})
+    return jsonify({'display': display, 'username': username, 'user_id': user_id, 'user_role': user_role, 'members': members_response})
 
 @app.route('/api/work/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
 def handle_work_settings(creator_username, url):
@@ -381,7 +381,7 @@ def handle_work_settings(creator_username, url):
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
-        return jsonify({'message':'Ho ho ho! please message me on discord @pvcsd and explain what you were supposed to be doing when you found this'})
+        return jsonify({'message':'Ho ho ho! please message me read.cv/pvcsd and explain what you were supposed to be doing when you found this'})
     
     elif action == "display":
         conditions = [
@@ -429,12 +429,27 @@ def handle_work_settings(creator_username, url):
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
+        supabase.table('posts_data').delete().eq('work_id', work_id).execute()
+
+        # TODO: properly close sessions before removing everything (1/20/2024)
+
+        '''
+        supabase.table('options_data').delete().eq('work_id', work_id).execute()
+        supabase.table('questions_data').delete().eq('work_id', work_id).execute()
+        supabase.table('results_data').delete().eq('work_id', work_id).execute()
+        supabase.table('answers_data').delete().eq('work_id', work_id).execute()
+        supabase.table('sessions_data').delete().eq('work_id', work_id).execute()
+        supabase.table('exams_data').delete().eq('work_id', work_id).execute()
+        '''
+
         supabase.table('members_data').delete().eq('work_id', work_id).execute()
         supabase.table('work_data').delete().eq('work_id', work_id).execute()
 
         return jsonify({'success': 'Work: Removed workspace successfully'})
     
     elif action == "remove_member":
+        exams_data = supabase.table('exams_data').select('exam_id').eq('work_id', work_id).execute().data
+
         conditions = [
             (user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
         ]
@@ -444,7 +459,12 @@ def handle_work_settings(creator_username, url):
 
         supabase.table('members_data').delete().eq('work_id', work_id).eq('member_id', value).execute()
         supabase.table('posts_data').delete().eq('work_id', work_id).eq('user_id', value).execute()
-        supabase.table('sessions_data').delete().eq('work_id', work_id).eq('user_id', value).execute()
+        
+        for exam in exams_data:
+            exam_id = exam.get('exam_id')
+            supabase.table('sessions_data').delete().eq('exam_id', exam_id).eq('user_id', value).execute()
+
+        return jsonify({'success': 'Work: Removed member successfully'})
 
             
 # @ Workspaces
@@ -607,7 +627,7 @@ def handle_discuss_settings(creator_username, url):
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
     if action == "santa":
-        return jsonify({'message':'Ho ho ho! please message me on discord @pvcsd and explain what you were supposed to be doing when you found this'})
+        return jsonify({'message':'Ho ho ho! please message me read.cv/pvcsd and explain what you were supposed to be doing when you found this'})
     
     elif action == "remove":
         supabase.table('posts_data').delete().eq('post_id', value).eq('work_id', work_id).execute()
@@ -798,7 +818,7 @@ def handle_exam_settings(creator_username, url):
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
     if action == "santa":
-        return jsonify({'message':'Ho ho ho! please message me on discord @pvcsd and explain what you were supposed to be doing when you found this'})
+        return jsonify({'message':'Ho ho ho! please message me read.cv/pvcsd and explain what you were supposed to be doing when you found this'})
     
     elif action == "remove":
         supabase.table('options_data').delete().eq('exam_id', exam_id).execute()
@@ -977,14 +997,12 @@ def handle_exam_access(creator_username, url):
 
     return jsonify({'questions': formatted_questions})
 
-@app.route('/api/exams/start.json', methods=['POST'])
-def handle_exam_start():
+@app.route('/api/exams/<string:creator_username>/<string:url>/start.json', methods=['POST'])
+def handle_exam_start(creator_username, url):
     data = request.get_json()
     
     token = data.get('token')
     exam_id = data.get('value')
-    creator_username = data.get('creator')
-    url = data.get('url')
 
     user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
     user_id = user_data[0]['user_id'] if user_data else None
