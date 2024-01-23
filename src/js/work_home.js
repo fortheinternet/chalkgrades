@@ -35,7 +35,7 @@ function load_workhomedotjson() {
     const user_token = getCookie("token")
     const userData = {token: user_token}
 
-    fetch(`http://localhost:3000/api/work/${creator_username}/${url}/home.json`, {
+    fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/home.json`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ function load_workhomedotjson() {
                 removeCookie("token");
 
             } else if (data.error === "w-mal-25-11") {
-                window.location.href = 'http://en.wikipedia.org/wiki/HTTP_404';
+                window.location.href = 'https://en.wikipedia.org/wiki/HTTP_404';
 
             } else {
                 console.info("User authenticated successfully as " + data.username)
@@ -145,7 +145,7 @@ function remove_member(element) {
         value: identifier
     }
 
-    fetch(`http://localhost:3000/api/work/${creator_username}/${url}/settings.json`, {
+    fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/settings.json`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
