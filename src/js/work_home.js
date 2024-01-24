@@ -35,6 +35,9 @@ function load_workhomedotjson() {
     const user_token = getCookie("token")
     const userData = {token: user_token}
 
+    const loading = document.getElementById("loading")
+    const main = document.getElementById("main")
+
     fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/home.json`, {
             method: 'POST',
             headers: {
@@ -83,7 +86,7 @@ function load_workhomedotjson() {
                     const memberRemoveClone = memberRemoveDiv.cloneNode(true);
 
                     const settingsDiv1 = document.getElementById("members_remove")
-                    const settingsDiv2 = document.getElementById("other_settings")
+                    settingsDiv1.style.display = "block";
 
                     console.table([
                         ["global user ID", user_id],
@@ -112,9 +115,10 @@ function load_workhomedotjson() {
                     memberRemoveClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
                     membersRemoveDiv.appendChild(memberRemoveClone);
 
-                    settingsDiv1.style.display = "block";
-                    settingsDiv2.style.display = "block";
                 });
+
+                main.style.display = "block"
+                loading.style.display = "none"
             }
         })
         .catch(error => {
@@ -162,13 +166,10 @@ function remove_member(element) {
                 const userElements = document.querySelectorAll(`[data-identifier="${identifier}"]`);
                 userElements.forEach(element => {
                     if(element.getAttribute('data-action') == "leave") {
-
-                    }
-                    
-                    else if(element.getAttribute('data-action') == "remove_member") {
+                        window.location.href = '/home';
+                    } else {
                         element.remove()
-                    }
-            
+                    }            
                 });
             }
                 

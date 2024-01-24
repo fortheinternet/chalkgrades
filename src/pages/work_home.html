@@ -13,24 +13,28 @@
         <link rel="icon" href="../../src/favicon.png" type="image/png">
         <script src="../../src/js/work_home.js"></script>
 
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     </head>
     <body class="bg-dark-1 text-cwhite">
-        <main class="flex flex-col h-min">
-            <div id="top_section" class="border-b-2 border-dark-1a border-solid h-min p-3 px-4">
-                <p class="font-body">
-                    <a href="/home" class="font-body underline cursor-pointer">Production</a>
-                    /
-                    <span id="username_field" class="font-bold">Loading, please wait..</span>
-                </p>
-            </div>
-            <div id="primary_section" class="h-min p-8 border-b-2 border-dark-1a border-solid">
-                <h4 id="work_display" class="font-display font-bold text-xl"></h4>
+        <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
+        <main class="flex flex-col h-min hidden" id="main">
+            <div id="primary_section" class="h-min px-8 border-b-2 border-dark-1a border-solid">
+                <div class="mb-5 mt-8">
+                    <h4 id="work_display" class="font-display mb-1 font-bold text-xl"></h4>
+                    <p class="font-body text-twhite2">
+                        <span id="work_user" class="mr-1"></span>
+                        <span class="mr-1">/</span>
+                        <span id="work_url"></span>
+                    </p>
+                </div>
+                
 
-                <p class="font-body text-twhite3">
-                    <span id="work_user"></span>
-                    /
-                    <span id="work_url"></span>
-                </p>
+                <div class="mb-5 flex flex-wrap">
+                    <span class="material-symbols-outlined select-none text-enabled mr-1">person</span>
+                    <a href="/home" class="font-body font-bold cursor-pointer text-enabled mr-6" id="username_field"></a>
+                    <span class="material-symbols-outlined select-none mr-1">event_available</span>
+                    <p class="font-bold">coming soon</p>
+                </div>
             </div>
             <div id="selected_content" class="flex-grow md:flex p-8">
                 <div id="members_wrap" class="md:mr-4 mb-8 lg:w-[500px] w-full">
@@ -59,25 +63,6 @@
                                 </a>
                             </div>
                         </div>
-
-                        <div id="other_settings" class="hidden">
-                            <div class="my-2">
-                                <a class="font-body cursor-pointer" onclick="change_display()">
-                                    <span>Display Name</span>
-                                </a>
-                            </div>
-                            <div class="mb-2">
-                                <a class="font-body cursor-pointer" onclick="change_url()">
-                                    <span>Work Resource</span>
-                                </a>
-                            </div>
-                            <div class="mb-2">
-                                <a class="font-body cursor-pointer" onclick="remove_work()">
-                                    <span class="text-warning">Remove Workspace</span>
-                                </a>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>

@@ -19,6 +19,9 @@ function load_homedotjson() {
     const workspacesDiv = document.getElementById("workspaces");
     const username_field = document.getElementById("username_field")
 
+    const loading = document.getElementById("loading")
+    const main = document.getElementById("main")
+
     const user_token = getCookie("token")
     const userData = {token: user_token};
 
@@ -39,22 +42,31 @@ function load_homedotjson() {
                 username_field.textContent = data.username;
 
                 const workspaces_data = data.workspaces;
+                const workspaceClones = workspacesDiv.querySelectorAll('[data-origin="clone"]')
 
-                workspacesDiv.innerHTML = '';
+                    workspaceClones.forEach(workspaceClone => {
+                        workspaceClone.remove()
+                    });
 
                 workspaces_data.forEach(workspace => {
                     const { display_name, creator_username, url } = workspace;
 
                     const workspaceClone = workspaceDiv.cloneNode(true);
-                    workspaceClone.style.display = "block";
 
                     workspaceClone.querySelector("#workspace_display").textContent = display_name;
                     workspaceClone.querySelector("#workspace_creator").textContent = creator_username;
                     workspaceClone.querySelector("#workspace_url").textContent = url;
                     workspaceClone.querySelector("#workspace_link").href = "/" + creator_username + "/" + url;
 
+                    workspaceClone.dataset.origin = "clone";
+                    
                     workspacesDiv.appendChild(workspaceClone);
+                    workspaceClone.style.display = "block";
+
                 });
+
+                main.style.display = "block"
+                loading.style.display = "none"
 
             }
         })

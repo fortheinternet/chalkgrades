@@ -13,30 +13,31 @@
         <link rel="icon" href="../../src/favicon.png" type="image/png">
         <script src="../../src/js/home.js"></script>
 
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     </head>
     <body class="bg-dark-1 text-cwhite">
-        <main class="flex flex-col h-min">
-            <div id="top_section" class="border-b-2 border-dark-1a border-solid flex-none h-min p-3 px-4">
-                <p class="font-body">
-                    <a href="/home" class="font-body underline cursor-pointer">Production</a>
-                    /
-                    <span id="username_field" class="font-bold">Loading, please wait..</span>
-                </p>
-            </div>
-            <div id="primary_section" class="h-min p-8 border-b-2 border-dark-1a border-solid">
-                <h4 class="font-display mb-3 font-bold text-xl">Workspaces</h4>
+        <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
+        <main class="flex flex-col h-min hidden" id="main">
+            <div id="primary_section" class="h-min px-8 border-b-2 border-dark-1a border-solid">
+                <div class="mb-5 mt-8">
+                    <h4 class="font-display mb-1 font-bold text-xl">Workspaces</h4>
+                    <p class="font-body text-twhite2">
+                        Workspaces are classes that authorized users can create and anyone can join.
+                    </p>
+                </div>
 
-                <div id="links">
-                    <a onclick="view_workspaces()" class="font-body text-enabled hover:text-accent-1 cursor-pointer">view workspaces</a>
-                    <span class="font-body text-accent-1 select-none mx-2">|</span>
+                <div class="mb-5 flex flex-wrap">
+                    <span class="material-symbols-outlined select-none text-enabled mr-1">person</span>
+                    <a onclick="view_workspaces()" class="font-body font-bold cursor-pointer text-enabled mr-6" id="username_field"></a>
 
-                    <a onclick="create_new_workspace()" class="font-body text-enabled hover:text-accent-1 cursor-pointer">create new</a>
-                    <span class="font-body text-accent-1 select-none mx-2">|</span>
-    
-                    <a onclick="join_new_workspace()" class="font-body text-enabled hover:text-accent-1 cursor-pointer">join workspace</a>
-                    <span class="font-body text-accent-1 select-none mx-2">|</span>
-    
-                    <a onclick="logout()" class="font-body text-enabled hover:text-accent-1 cursor-pointer">log out</a>
+                    <span class="material-symbols-outlined select-none text-accent-1 mr-1">add</span>
+                    <a onclick="create_new_workspace()" class="font-body font-bold cursor-pointer text-accent-1 mr-6">Create Workspace</a>
+
+                    <span class="material-symbols-outlined select-none text-accent-1 mr-1">person_add</span>
+                    <a onclick="join_new_workspace()" class="font-body font-bold cursor-pointer text-accent-1 mr-6">Join Workspace</a>
+
+                    <span class="material-symbols-outlined select-none text-accent-1 mr-1">logout</span>
+                    <a onclick="logout()" class="font-body font-bold cursor-pointer text-accent-1 mr-6">Log out</a>
                 </div>
             </div>
             <div id="selected_content" class="flex-grow p-8">
