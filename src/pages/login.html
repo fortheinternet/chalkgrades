@@ -4,6 +4,7 @@
         <title>chalk - login</title>
         <meta name="description" content="Making descriptions for pages pollutes the search results, and risks making uncaught typos and other errors.">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="color-scheme" content="dark">
 
         <meta charset="UTF-8">
 
@@ -17,7 +18,7 @@
     <body class="bg-dark-1 text-cwhite">
         <main class="flex flex-col h-full">
             <div id="top_section" class="border-b-2 border-dark-1a border-solid flex min-h-0 max-h-fit p-8">
-                <div class="h-max lg:w-[400px] lg:mr-8 md:w-1/2 md:mr-8 w-full mr-0">
+                <div class="h-max lg:w-[400px] lg:mr-8 md:w-1/2 md:mr-8 w-full mr-0" id="login">
                     <h6 class="font-display mb-2 font-bold text-xl">Log in</h6>
                     <p class="font-body mb-6 text-[14px] lg:w-[400px] w-full" id="login_errors"></p>
 
@@ -35,9 +36,10 @@
 
                     <p></p>
 
-                    <button onclick="login_submit()" class="h-11 px-5 mb-6 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Submit details</button>
+                    <button onclick="login_submit()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Submit details</button>
+                    <button onclick="nav_viewsignup()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-transparent border-twhite border-dashed border-2 rounded-md font-semibold block md:hidden">Create an account instead</button>
                 </div>
-                <div class="h-max lg:w-[400px] lg:block md:w-1/2 md:block hidden">
+                <div class="h-max lg:w-[400px] lg:mr-8 md:w-1/2 md:mr-8 w-full mr-0 hidden md:block" id="signups">
                     <h6 class="font-display mb-2 font-bold text-xl">Create a new account</h6>
                     <p class="font-body mb-6 text-[14px] lg:w-[400px] w-full" id="signup_errors"></p>
 
@@ -59,14 +61,9 @@
 
                     <p></p>
 
-                    <button onclick="signup_submit()" class="h-11 px-5 mb-6 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Create new account</button>
+                    <button onclick="signup_submit()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Create new account</button>
+                    <button onclick="nav_viewlogin()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-transparent border-twhite border-dashed border-2 rounded-md font-semibold block md:hidden">Log in to an existing account</button>
                 </div>
-            </div>
-            <div id="primary_section" class="flex-grow h-full sm:w-full md:w-full lg:w-2/3 p-8">
-                <h2 class="font-display mb-5 font-bold text-4xl">log in or sign up</h1>
-                <p class="font-body mb-6">This time, you can use the options above. If you're wondering why is the site this slow, let me remind you that every request has to travel to the server in Frankfurt and back, while you can barely even make the journey from your bed to your desk.</p>
-        
-                <p class="font-body mb-6">It is currently not possible to reset a password. If you forgot it, make a new account and email me both usernames and which account's password you want to keep. You can learn more in the Privacy Policy, or just message me read.cv/pvcsd</p>
             </div>
         </main>
     </body>

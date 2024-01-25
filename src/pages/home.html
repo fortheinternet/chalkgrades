@@ -27,17 +27,22 @@
                 </div>
 
                 <div class="mb-5 flex flex-wrap">
-                    <span class="material-symbols-outlined select-none text-enabled mr-1">person</span>
-                    <a onclick="view_workspaces()" class="font-body font-bold cursor-pointer text-enabled mr-6" id="username_field"></a>
-
-                    <span class="material-symbols-outlined select-none text-accent-1 mr-1">add</span>
-                    <a onclick="create_new_workspace()" class="font-body font-bold cursor-pointer text-accent-1 mr-6">Create Workspace</a>
-
-                    <span class="material-symbols-outlined select-none text-accent-1 mr-1">person_add</span>
-                    <a onclick="join_new_workspace()" class="font-body font-bold cursor-pointer text-accent-1 mr-6">Join Workspace</a>
-
-                    <span class="material-symbols-outlined select-none text-accent-1 mr-1">logout</span>
-                    <a onclick="logout()" class="font-body font-bold cursor-pointer text-accent-1 mr-6">Log out</a>
+                    <div class="flex">
+                        <span class="material-symbols-outlined select-none text-enabled mr-1 mb-3">person</span>
+                        <a onclick="view_workspaces()" class="font-body font-bold cursor-pointer text-enabled mr-6 mb-3" id="username_field"></a>
+                    </div>
+                    <div class="flex">                        
+                        <span class="material-symbols-outlined select-none text-accent-1 mr-1 mb-3">add</span>
+                        <a onclick="create_new_workspace()" class="font-body font-bold cursor-pointer text-accent-1 mr-6 mb-3">Create Workspace</a>
+                    </div>
+                    <div class="flex">                       
+                        <span class="material-symbols-outlined select-none text-accent-1 mr-1 mb-3">person_add</span>
+                        <a onclick="join_new_workspace()" class="font-body font-bold cursor-pointer text-accent-1 mr-6 mb-3">Join Workspace</a>
+                    </div>
+                    <div class="flex">
+                        <span class="material-symbols-outlined select-none text-accent-1 mr-1 mb-3">logout</span>
+                        <a onclick="logout()" class="font-body font-bold cursor-pointer text-accent-1 mr-6 mb-3">Log out</a>
+                    </div>
                 </div>
             </div>
             <div id="selected_content" class="flex-grow p-8">
@@ -51,23 +56,23 @@
 
                 <div id="create_workspace" class="hidden">
                     <h4 class="font-display mb-2 font-bold text-xl">Create workspace</h4>
-                    <p class="font-body mb-6 text-[14px] lg:w-[500px] w-full" id="create_errors"></p>
+                    <p class="font-body mb-6 text-[14px] sm:w-[580px] w-full" id="create_errors"></p>
 
                     <p class="font-body font-bold mb-1">Display Name</p>
-                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">Can contain any amount of any character. Is used to quickly identify a class.</p>
-                    <input type="text" id="create_display" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">Can contain any amount of any character. Is used to quickly identify a class.</p>
+                    <input type="text" id="create_display" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
 
                     <p class="font-body font-bold mb-1">Workspace Resource</p>
-                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">A simple, easy-to-remember number or word that is used to interact with the workspace.</p>
-                    <input type="text" id="create_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">A simple, easy-to-remember number or word that is used to interact with the workspace.</p>
+                    <input type="text" id="create_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
 
                     <p class="font-body font-bold mb-1">Password</p>
-                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">It's a secret! You can provide this to your students, and is used to join the class.</p>
-                    <input type="password" id="create_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">It's a secret! You can provide this to your students, and is used to join the class.</p>
+                    <input type="password" id="create_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
 
                     <p class="font-body font-bold mb-1">Access credential</p>
-                    <p class="font-body text-[14px] mb-3 lg:w-[500px] w-full">Is a *top-sneaky* parameter, used to keep the database size below 500MB. If you are a teacher, you can email me for this value.</p>
-                    <input type="text" id="create_access" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[500px] w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">Is a *top-sneaky* parameter, used to keep the database size below 500MB. If you are a teacher, you can email me for this value.</p>
+                    <input type="text" id="create_access" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
 
                     <p></p>
 

@@ -72,6 +72,22 @@ function signup_submit() {
     });
 }
 
+function nav_viewsignup() {
+    const login = document.getElementById("login")
+    const signups = document.getElementById("signups")
+
+    login.style.display = "none"
+    signups.style.display = "block"
+}
+
+function nav_viewlogin() {
+    const login = document.getElementById("login")
+    const signups = document.getElementById("signups")
+
+    login.style.display = "block"
+    signups.style.display = "none"
+}
+
 // This code does not look professional, it looks like a cat fell asleep on the keyboard. But it works so it won't be fixed. Or at least not by me ¯\_(ツ)_/¯
 
 function setCookie(cname, cvalue) {
