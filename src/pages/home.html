@@ -4,6 +4,7 @@
         <title>chalk - home</title>
         <meta name="description" content="This page should not show up in search results, therefore no one will see this message. If anyone does see it, I hope you're well?">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="color-scheme" content="dark">
 
         <meta charset="UTF-8">
 
@@ -18,31 +19,32 @@
     <body class="bg-dark-1 text-cwhite">
         <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
         <main class="flex flex-col h-min hidden" id="main">
-            <div id="primary_section" class="h-min px-8 border-b-2 border-dark-1a border-solid">
-                <div class="mb-5 mt-8">
+            <div id="primary_section" class="h-min px-8 pt-8 pb-5 border-b-2 border-dark-1a border-solid">
+                <button onclick="nav_user()" class="h-9 px-5 mb-6 bg-twhite10 rounded-full font-semibold" id="username_field"></button>
+
+                <div class="mb-5">
                     <h4 class="font-display mb-1 font-bold text-xl">Workspaces</h4>
                     <p class="font-body text-twhite2">
                         Workspaces are classes that authorized users can create and anyone can join.
                     </p>
                 </div>
-
-                <div class="mb-5 flex flex-wrap">
-                    <div class="flex">
-                        <span class="material-symbols-outlined select-none text-enabled mr-1 mb-3">person</span>
-                        <a onclick="view_workspaces()" class="font-body font-bold cursor-pointer text-enabled mr-6 mb-3" id="username_field"></a>
-                    </div>
-                    <div class="flex">                        
-                        <span class="material-symbols-outlined select-none text-accent-1 mr-1 mb-3">add</span>
-                        <a onclick="create_new_workspace()" class="font-body font-bold cursor-pointer text-accent-1 mr-6 mb-3">Create Workspace</a>
-                    </div>
-                    <div class="flex">                       
-                        <span class="material-symbols-outlined select-none text-accent-1 mr-1 mb-3">person_add</span>
-                        <a onclick="join_new_workspace()" class="font-body font-bold cursor-pointer text-accent-1 mr-6 mb-3">Join Workspace</a>
-                    </div>
-                    <div class="flex">
-                        <span class="material-symbols-outlined select-none text-accent-1 mr-1 mb-3">logout</span>
-                        <a onclick="logout()" class="font-body font-bold cursor-pointer text-accent-1 mr-6 mb-3">Log out</a>
-                    </div>
+                <div class="flex flex-wrap">
+                    <a onclick="view_workspaces()" class="font-body font-bold cursor-pointer mr-6 mb-2">
+                        <span class="material-symbols-outlined select-none mr-1 relative top-1.5">person</span>
+                        Workspaces
+                    </a>
+                    <a onclick="create_new_workspace()" class="font-body font-bold cursor-pointer mr-6 mb-2">
+                        <span class="material-symbols-outlined select-none mr-1 relative top-1.5">add</span>
+                        Create Workspace
+                    </a> 
+                    <a onclick="join_new_workspace()" class="font-body font-bold cursor-pointer mr-6 mb-2">
+                        <span class="material-symbols-outlined select-none mr-1 relative top-1.5">person_add</span>
+                        Join Workspace
+                    </a>
+                    <a onclick="logout()" class="font-body font-bold cursor-pointer mr-6 mb-2">
+                        <span class="material-symbols-outlined select-none mr-1 relative top-1.5">logout</span>
+                        Log out
+                    </a>
                 </div>
             </div>
             <div id="selected_content" class="flex-grow p-8">

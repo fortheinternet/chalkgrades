@@ -47,11 +47,11 @@ function load_workhomedotjson() {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.error === "w-mal-25-1") {
+            if (data.error == "w-mal-25-1") {
                 window.location.href = '/login';
                 removeCookie("token");
 
-            } else if (data.error === "w-mal-25-11") {
+            } else if (data.error == "w-mal-25-11") {
                 window.location.href = 'https://en.wikipedia.org/wiki/HTTP_404';
 
             } else {
@@ -65,9 +65,13 @@ function load_workhomedotjson() {
                 const members_data = data.members;
                 const user_id = data.user_id;
                 const user_role = data.user_role;
-                
-                membersDiv.innerHTML = '';
 
+                anyClones = document.querySelectorAll('[data-origin="clone"]') 
+
+                anyClones.forEach(clone => {
+                    clone.remove()
+                });
+                
                 members_data.forEach(member => {
                     const { username, selected_role, selected_user_id } = member;
 
@@ -78,6 +82,7 @@ function load_workhomedotjson() {
                     memberClone.querySelector("#member_role").textContent = selected_role;
 
                     memberClone.dataset.identifier = selected_user_id;
+                    memberClone.dataset.origin = "clone";
 
                     membersDiv.appendChild(memberClone);
                     
@@ -88,17 +93,10 @@ function load_workhomedotjson() {
                     const settingsDiv1 = document.getElementById("members_remove")
                     settingsDiv1.style.display = "block";
 
-                    console.table([
-                        ["global user ID", user_id],
-                        ["selected_user_id", selected_user_id],
-                        ["user role", user_role],
-                        ["user_selected_role", selected_role]
-                    ])
-
                     if(user_role == "superuser") {
                         if(user_id == selected_user_id) {
-                            memberRemoveClone.querySelector("#member_rm_span").textContent = "N/A";
-                            memberRemoveClone.querySelector("#member_rm_lnk").dataset.action = "leave";
+                            memberRemoveClone.querySelector("#member_rm_span").textContent = "can't remove member";
+                            memberRemoveClone.querySelector("#member_rm_lnk").dataset.action = "na";
                         } else {
                             memberRemoveClone.querySelector("#member_rm_span").textContent = "remove member";
                             memberRemoveClone.querySelector("#member_rm_lnk").dataset.action = "remove_member";
@@ -113,6 +111,7 @@ function load_workhomedotjson() {
                     }
 
                     memberRemoveClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
+                    memberRemoveClone.dataset.origin = "clone";
                     membersRemoveDiv.appendChild(memberRemoveClone);
 
                 });
@@ -130,54 +129,73 @@ function remove_member(element) {
     const action = element.getAttribute('data-action');
     const identifier = element.getAttribute('data-identifier');
 
-    const currentUrl = window.location.href;
-    const urlParts = currentUrl.split('/');
-
-    const creator_username = urlParts[urlParts.length - 2];
-    const url = urlParts[urlParts.length - 1];
-
-    console.table([
-        ["identifier", identifier],
-        ["action", action]
-    ])
-
-    const user_token = getCookie("token")
-
-    const userData = {
-        token: user_token,
-        action: action,
-        value: identifier
+    if (action != "na") {
+        const currentUrl = window.location.href;
+        const urlParts = currentUrl.split('/');
+    
+        const creator_username = urlParts[urlParts.length - 2];
+        const url = urlParts[urlParts.length - 1];
+    
+        console.table([
+            ["identifier", identifier],
+            ["action", action]
+        ])
+    
+        const user_token = getCookie("token")
+    
+        const userData = {
+            token: user_token,
+            action: action,
+            value: identifier
+        }
+    
+        fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/settings.json`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error == "w-mal-25-1") {
+                    window.location.href = '/login';
+                    removeCookie("token");
+    
+                } else {
+                    const userElements = document.querySelectorAll(`[data-identifier="${identifier}"]`);
+                    userElements.forEach(element => {
+                        if(element.getAttribute('data-action') == "leave") {
+                            window.location.href = '/home';
+                        } else {
+                            element.remove()
+                        }            
+                    });
+                }
+                    
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    } else {
+        console.warn("INFORMATION: You cannot remove this member.")
     }
+}
 
-    fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/settings.json`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error === "w-mal-25-1") {
-                window.location.href = '/login';
-                removeCookie("token");
+function view_members() {
+    console.log("viewed members")
+}
 
-            } else {
-                const userElements = document.querySelectorAll(`[data-identifier="${identifier}"]`);
-                userElements.forEach(element => {
-                    if(element.getAttribute('data-action') == "leave") {
-                        window.location.href = '/home';
-                    } else {
-                        element.remove()
-                    }            
-                });
-            }
-                
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+function view_settings() {
+    console.log("viewed settings")
+}
 
+function view_exams() {
+    console.log("viewed exams")
+}
+
+function nav_user() {
+    window.location.href = '/home';
 }
 
 // This code does not look professional, it looks like a cat fell asleep on the keyboard. But it works so it won't be fixed. Or at least not by me ¯\_(ツ)_/¯
@@ -195,10 +213,10 @@ function getCookie(cname) {
     let ca = decodedCookie.split(';');
     for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
-        while (c.charAt(0) === ' ') {
+        while (c.charAt(0) == ' ') {
             c = c.substring(1);
         }
-        if (c.indexOf(name) === 0) {
+        if (c.indexOf(name) == 0) {
             return c.substring(name.length, c.length);
         }
     }

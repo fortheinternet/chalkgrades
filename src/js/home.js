@@ -34,19 +34,20 @@ function load_homedotjson() {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.error === "h-mal-10") {
+            if (data.error == "h-mal-10") {
                 window.location.href = '/login';
                 removeCookie("token");
             } else {
                 console.info("User authenticated successfully as " + data.username)
-                username_field.textContent = data.username;
+                username = data.username;
+                username_field.textContent = username;
 
                 const workspaces_data = data.workspaces;
                 const workspaceClones = workspacesDiv.querySelectorAll('[data-origin="clone"]')
 
-                    workspaceClones.forEach(workspaceClone => {
-                        workspaceClone.remove()
-                    });
+                workspaceClones.forEach(workspaceClone => {
+                    workspaceClone.remove()
+                });
 
                 workspaces_data.forEach(workspace => {
                     const { display_name, creator_username, url } = workspace;
@@ -136,6 +137,10 @@ function logout() {
     window.location.href = '/login';
 }
 
+function nav_user() {
+    window.location.href = '/home';
+}
+
 //
 
 function create_submit() {
@@ -159,12 +164,12 @@ function create_submit() {
         if (data.error) {
             createErrors.textContent = data.message;
 
-            if (data.error === "w-mal-20") {
+            if (data.error == "w-mal-20") {
                 window.location.href = '/login';
                 removeCookie("token");
             }
         } else {
-            createErrors.textContent = "Workspace creation successful!";
+            window.location.href = `/${username}/${createURL.value}`
         }
     })
     .catch(error => {
@@ -195,12 +200,12 @@ function join_submit() {
         if (data.error) {
             joinErrors.textContent = data.message;
 
-            if (data.error === "w-mal-25-1") {
+            if (data.error == "w-mal-25-1") {
                 window.location.href = '/login';
                 removeCookie("token");
             }
         } else {
-            joinErrors.textContent = "Workspace joined successfully!";
+            window.location.href = `/${superuser_value}/${url_value}`
         }
     })
     .catch(error => {
@@ -223,10 +228,10 @@ function getCookie(cname) {
     let ca = decodedCookie.split(';');
     for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
-        while (c.charAt(0) === ' ') {
+        while (c.charAt(0) == ' ') {
             c = c.substring(1);
         }
-        if (c.indexOf(name) === 0) {
+        if (c.indexOf(name) == 0) {
             return c.substring(name.length, c.length);
         }
     }

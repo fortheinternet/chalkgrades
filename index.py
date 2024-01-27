@@ -9,8 +9,6 @@ from datetime import datetime, timezone
 
 load_dotenv()
 
-# Super Ultra Pro Max 5G AI Fold Quantum Computing Native AR IoT Blockchain Web3 Secret PostgREST (is that even spelled correctly???) API JWT AWS Frankfurt, Germany (fra-1) Supabase Service Role Secret key, DON'T LEAK!!
-
 supabase_url = os.getenv("supabase_url")
 supabase_key = os.getenv("supabase_key")
 
@@ -21,14 +19,12 @@ password_salt = os.getenv("password_salt")
 password_salt_2 = os.getenv("password_salt_2")
 
 supabase: Client = create_client(supabase_url, supabase_key)
-
 app = Flask(__name__)
 
 @app.errorhandler(404)
 def page_not_found(error):
     return send_from_directory('src/pages', '404.html'), 404
 
-# these serve sites
 @app.route('/')
 def serve_root():
     return send_from_directory('src/pages', 'landing.html')
@@ -41,7 +37,10 @@ def serve_login():
 def serve_home():
     return send_from_directory('src/pages', 'home.html')
 
-# these serve files
+@app.route('/<string:creator_username>/<string:url>')
+def serve_workspace_home(creator_username, url):
+    return send_from_directory('src/pages', 'work_home.html')
+
 @app.route('/src/styles/<path:filename>')
 def serve_styles(filename):
     return send_from_directory('src/styles', filename)
@@ -58,14 +57,6 @@ def serve_output():
 def serve_favicon():
     return send_from_directory('src', 'favicon.png')
 
-@app.route('/<string:creator_username>/<string:url>')
-def serve_workspace_home(creator_username, url):
-    creator_username = "foo"
-    url = "bar"
-
-    # None of the values above are used. They just exist so I don't have to put effort & time into finding a better solution.
-
-    return send_from_directory('src/pages', 'work_home.html')
 # Logins
 
 @app.route('/api/logins/logins.json', methods=['POST'])
@@ -77,7 +68,6 @@ def handle_logins():
 
     result = supabase.table('users_data').select('auth, token').eq('username', username).execute().data
 
-    # ROUND 1 OF CONDITIONS
     conditions = [(not result, 'l-fatal-20', 'Login: User not found')]
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
@@ -88,7 +78,6 @@ def handle_logins():
     salted_password = password_salt + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
-    # ROUND 2 OF CONDITIONS
     conditions = [(sha256_hash != auth, 'l-mal-10', 'Login: Passwords dont match')]
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
@@ -138,7 +127,6 @@ def handle_home():
     username = result[0]['username'] if result else None
     user_id = result[0]['user_id'] if result else None
 
-    # conditions checker
     conditions = [(not username, 'h-mal-10', 'Home: Invalid token')]
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
@@ -160,12 +148,6 @@ def handle_home():
         workspace_info.append({'display_name': display_name, 'url': url, 'creator_username': creator_username})
 
     return jsonify({'username': username, 'workspaces': workspace_info})
-
-# @ Logins
-# I /api/logins/
-
-# I Workspaces
-# @ /api/work
     
 @app.route('/api/work/create.json', methods=['POST'])
 def handle_work_create():
@@ -177,17 +159,12 @@ def handle_work_create():
     display = data.get('display')
     accesskey = data.get('accesskey')
 
-    #
-
     salted_password = password_salt_2 + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
-
-    #
 
     creator_response = supabase.table('users_data').select('user_id').eq('token', token).execute()
     creator_id = creator_response.data[0]['user_id'] if creator_response.data else None
 
-    # ROUND 1 OF CONDITIONS
     conditions = [
         (not creator_id, 'w-mal-20', 'Work: Invalid token'),
         (accesskey != accesskey_work, 'w-mal-15', 'Work: Bad access key'),
@@ -206,9 +183,7 @@ def handle_work_create():
 
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-    
-    #
-    
+        
     supabase.table("work_data").insert({"creator_id": creator_id, "auth": sha256_hash, "url": url, "display": display}).execute()
 
     work_id = supabase.table('work_data').select('work_id').eq('creator_id', creator_id).eq('url', url).execute().data[0]['work_id']
@@ -229,7 +204,6 @@ def handle_work_join(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute()
     creator_id = creator_data.data[0]['user_id'] if creator_data.data else None
 
-    # ROUND 1 OF CONDITIONS
     conditions = [
         (not user_id, 'w-mal-25-1', 'Work: Invalid token', 'r1'),
         (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist', 'r1'),
@@ -242,7 +216,6 @@ def handle_work_join(creator_username, url):
     work_id = work_query.data[0]['work_id'] if work_query.data else None
     work_auth = work_query.data[0]['auth'] if work_query.data else None
 
-    # ROUND 2 OF CONDITIONS
     conditions = [(not work_id, 'w-mal-25-2', 'Work: That workspace does not exist', 'r2')]
     for condition in conditions:
         if condition[0] and condition[3] == "r2": return jsonify({'error': condition[1], 'message': condition[2]})
@@ -250,12 +223,9 @@ def handle_work_join(creator_username, url):
     salted_password = password_salt_2 + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
-    # ROUND 3 OF CONDITIONS
     conditions = [(sha256_hash != work_auth, 'w-mal-55', 'Work: Invalid access credentials', 'r3')]
     for condition in conditions:
         if condition[0] and condition[3] == "r3": return jsonify({'error': condition[1], 'message': condition[2]})
-
-    #
         
     existing_member = supabase.table('members_data').select('member_id').eq('member_id', user_id).eq('work_id', work_id).execute().data
 
@@ -263,8 +233,6 @@ def handle_work_join(creator_username, url):
     for condition in conditions:
         if condition[0] and condition[3] == "r4": return jsonify({'error': condition[1], 'message': condition[2]})
     
-    #
-
     supabase.table("members_data").insert({"member_id": user_id, "work_id": work_id, "role": "member"}).execute()
     return jsonify({'success': 'Work: Workspace joined successfully'})
 
@@ -281,7 +249,6 @@ def handle_work_home(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
 
-    # ROUND 1 OF CONDITIONS
     conditions = [
         (not user_id, 'w-mal-25-1', 'Work: Invalid token', 'r1'),
         (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist', 'r1'),
@@ -295,18 +262,13 @@ def handle_work_home(creator_username, url):
     work_id = work_query[0]['work_id'] if work_query else None
     display = work_query[0]['display'] if work_query else None
 
-    # ROUND 2 OF CONDITIONS
-    conditions = [
-        (not work_id, 'w-mal-25-2', 'Work: That workspace does not exist'),
-    ]
-
+    conditions = [(not work_id, 'w-mal-25-2', 'Work: That workspace does not exist'),]
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
     user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute().data
     user_role = user_role_data[0]['role'] if user_role_data else None
 
-    # ROUND 3 OF CONDITIONS
     conditions = [(not user_role, 'w-mal-26', 'Work: You are not a member of that workspace')]
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
@@ -343,7 +305,6 @@ def handle_work_settings(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
 
-    # CONDITIONS ROUND 1
     conditions = [
         (not user_id, 'w-mal-25-1', 'Work: Invalid token'),
         (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist'),
@@ -355,7 +316,6 @@ def handle_work_settings(creator_username, url):
     work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
 
-    # CONDITIONS ROUND 2
     conditions = [
         (not work_id, 'w-mal-25-2', 'Work: That workspace does not exist'),
     ]
@@ -429,18 +389,13 @@ def handle_work_settings(creator_username, url):
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
-        supabase.table('posts_data').delete().eq('work_id', work_id).execute()
-
-        # TODO: properly close sessions before removing everything (1/20/2024)
-
-        '''
         supabase.table('options_data').delete().eq('work_id', work_id).execute()
         supabase.table('questions_data').delete().eq('work_id', work_id).execute()
         supabase.table('results_data').delete().eq('work_id', work_id).execute()
         supabase.table('answers_data').delete().eq('work_id', work_id).execute()
         supabase.table('sessions_data').delete().eq('work_id', work_id).execute()
         supabase.table('exams_data').delete().eq('work_id', work_id).execute()
-        '''
+        
 
         supabase.table('members_data').delete().eq('work_id', work_id).execute()
         supabase.table('work_data').delete().eq('work_id', work_id).execute()
@@ -466,173 +421,6 @@ def handle_work_settings(creator_username, url):
 
         return jsonify({'success': 'Work: Removed member successfully'})
 
-            
-# @ Workspaces
-# I /api/work/
-
-# I Discussions & Bulletins
-# @ /api/discuss
-
-@app.route('/api/discuss/<string:creator_username>/<string:url>/post.json', methods=['POST'])
-def handle_discuss_post(creator_username, url):
-    data = request.get_json()
-
-    token = data.get('token')
-    message = data.get('value')
-
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute()
-    user_id = user_data.data[0]['user_id'] if user_data.data else None
-
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute()
-    creator_id = creator_data.data[0]['user_id'] if creator_data.data else None
-
-    # ROUND 1 OF CONDITIONS
-    conditions = [
-        (not user_id, 'd-mal-25-1', 'Discussions: Invalid token', 'r1'),
-        (not creator_id, 'd-mal-25-11', 'Discussions: That workspace does not exist', 'r1'),
-    ]
-
-    for condition in conditions:
-        if condition[0] and condition[3] == "r1": return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    # ROUND 2 OF CONDITIONS
-    conditions = [(not work_id, 'd-mal-25-2', 'Discussions: That workspace does not exist', 'r2')]
-    for condition in conditions:
-        if condition[0] and condition[3] == "r2": return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
-    user_role = user_role_data.data[0]['role'] if user_role_data.data else None
-
-    # ROUND 3 OF CONDITIONS
-    conditions = [(not user_role, 'd-mal-20', 'Discussions: You do not have the proper permissions to post messages.', 'r3')]
-    for condition in conditions:
-        if condition[0] and condition[3] == "r3": return jsonify({'error': condition[1], 'message': condition[2]})
-        
-    current_utc_time = datetime.now(timezone.utc)
-    formatted_time = current_utc_time.strftime('%Y-%m-%dT%H:%M:%SZ')
-
-    supabase.table("posts_data").insert({"user_id": user_id, "work_id": work_id, "content": message, "creation_date": formatted_time}).execute()
-    return jsonify({'success': 'Discuss: Post created successfully'})
-
-@app.route('/api/discuss/<string:creator_username>/<string:url>/home.json', methods=['POST'])
-def handle_discuss_home(creator_username, url):
-    data = request.get_json()
-
-    token = data.get('token')
-    # page = data.get('page')
-
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute()
-    user_id = user_data.data[0]['user_id'] if user_data.data else None
-
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute()
-    creator_id = creator_data.data[0]['user_id'] if creator_data.data else None
-
-    # ROUND 1 OF CONDITIONS
-    conditions = [
-        (not user_id, 'd-mal-25-1', 'Discussions: Invalid token', 'r1'),
-        (not creator_id, 'd-mal-25-11', 'Discussions: That workspace does not exist', 'r1'),
-    ]
-
-    for condition in conditions:
-        if condition[0] and condition[3] == "r1": return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    # ROUND 2 OF CONDITIONS
-    conditions = [(not work_id, 'd-mal-25-2', 'Discussions: That workspace does not exist', 'r2')]
-
-    for condition in conditions:
-        if condition[0] and condition[3] == "r2": return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
-    user_role = user_role_data.data[0]['role'] if user_role_data.data else None
-
-    # ROUND 3 OF CONDITIONS
-    conditions = [(not user_role, 'd-mal-20-10', 'Discussions: You do not have the proper permissions to access messages.', 'r3')]
-
-    for condition in conditions:
-        if condition[0] and condition[3] == "r3": return jsonify({'error': condition[1], 'message': condition[2]})
-
-    posts_data = supabase.table("posts_data").select('post_id').eq('work_id', work_id).execute()
-    post_ids = posts_data.data
-
-    posts = []
-    for post in post_ids:
-        post_id = post.get('post_id')
-        result = supabase.table('posts_data').select('user_id','post_id','content','creation_date').eq('post_id', post_id).execute()
-
-        user_id = result.data[0].get('user_id')
-        content = result.data[0].get('content')
-        creation_date = result.data[0].get('creation_date')
-        post_id = result.data[0].get('post_id')
-
-        result = supabase.table('users_data').select('username').eq('user_id', user_id).execute()
-        username = result.data[0]['username'] if result.data else None
-
-        posts.append({
-            'username': username,
-            'content': content,
-            'creation_date': creation_date,
-            'post_id': post_id
-        })
-    
-    return jsonify({'posts': posts})
-
-@app.route('/api/discuss/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
-def handle_discuss_settings(creator_username, url):
-    data = request.get_json()
-
-    token = data.get('token')
-    value = data.get('value')
-    action = data.get('action')
-
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
-    user_id = user_data[0]['user_id'] if user_data else None
-
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
-
-    # CONDITIONS ROUND 1
-    conditions = [
-        (not user_id, 'd-mal-25-1', 'Discussions: Invalid token'),
-        (not creator_id, 'd-mal-25-11', 'Discussions: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    # CONDITIONS ROUND 2
-    conditions = [
-        (not work_id, 'd-mal-25-2', 'Discussions: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute().data
-    user_role = user_role_data[0]['role'] if user_role_data else None
-
-    conditions = [
-        (not user_role or user_role != "superuser", 'd-mal-20', 'Discussions: You do not have the proper permissions to change settings.')
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    if action == "santa":
-        return jsonify({'message':'Ho ho ho! please message me read.cv/pvcsd and explain what you were supposed to be doing when you found this'})
-    
-    elif action == "remove":
-        supabase.table('posts_data').delete().eq('post_id', value).eq('work_id', work_id).execute()
-        return jsonify({'success': 'Discussions: Settings removed successfully'})
-    
 @app.route('/api/exams/<string:creator_username>/<string:url>/create.json', methods=['POST'])
 def handle_exams_create(creator_username, url):
     data = request.get_json()
@@ -646,7 +434,6 @@ def handle_exams_create(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
 
-    # CONDITIONS ROUND 1
     conditions = [
         (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
         (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
@@ -658,11 +445,7 @@ def handle_exams_create(creator_username, url):
     work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
 
-    # CONDITIONS ROUND 2
-    conditions = [
-        (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
+    conditions = [(not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),]
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
@@ -684,7 +467,6 @@ def handle_exams_home(creator_username, url):
     data = request.get_json()
 
     token = data.get('token')
-    # page = data.get('page')
 
     user_data = supabase.table('users_data').select('user_id').eq('token', token).execute()
     user_id = user_data.data[0]['user_id'] if user_data.data else None
@@ -692,7 +474,6 @@ def handle_exams_home(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute()
     creator_id = creator_data.data[0]['user_id'] if creator_data.data else None
 
-    # ROUND 1 OF CONDITIONS
     conditions = [
         (not user_id, 'e-mal-25-1', 'Exams: Invalid token', 'r1'),
         (not creator_id, 'e-mal-25-5', 'Exams: That workspace does not exist', 'r1'),
@@ -704,7 +485,6 @@ def handle_exams_home(creator_username, url):
     work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
 
-    # ROUND 2 OF CONDITIONS
     conditions = [
         (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist', 'r2')
     ]
@@ -715,7 +495,6 @@ def handle_exams_home(creator_username, url):
     user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
     user_role = user_role_data.data[0]['role'] if user_role_data.data else None
 
-    # ROUND 3 OF CONDITIONS
     conditions = [
         (not user_role, 'e-mal-20-10', 'Exams: You do not have the proper permissions to access tests.', 'r3')
     ]
@@ -779,7 +558,6 @@ def handle_exam_settings(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
 
-    # CONDITIONS ROUND 1
     conditions = [
         (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
         (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
@@ -791,7 +569,6 @@ def handle_exam_settings(creator_username, url):
     work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
 
-    # CONDITIONS ROUND 2
     conditions = [
         (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
     ]
@@ -846,7 +623,6 @@ def handle_exam_build(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
 
-    # CONDITIONS ROUND 1
     conditions = [
         (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
         (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
@@ -858,7 +634,6 @@ def handle_exam_build(creator_username, url):
     work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
 
-    # CONDITIONS ROUND 2
     conditions = [
         (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
     ]
@@ -883,8 +658,6 @@ def handle_exam_build(creator_username, url):
 
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    # cut
         
     supabase.table('options_data').delete().eq('exam_id', exam_id).execute()
     supabase.table('questions_data').delete().eq('exam_id', exam_id).execute()
@@ -915,10 +688,8 @@ def handle_exam_build(creator_username, url):
                     (option_order in orders, 'e-mal-99-11', 'Exams: One or more of the orders are duplicated.')
                 ]
 
-                # check for conditions
                 for condition in conditions:
-                    if condition[0]:
-                        return jsonify({'error': condition[1], 'message': condition[2]})
+                    if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
                 orders.append(option_order)
             
@@ -945,7 +716,6 @@ def handle_exam_access(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
 
-    # CONDITIONS ROUND 1
     conditions = [
         (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
         (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
@@ -957,10 +727,7 @@ def handle_exam_access(creator_username, url):
     work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
 
-    # CONDITIONS ROUND 2
-    conditions = [
-        (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
+    conditions = [(not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),]
 
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
@@ -1010,7 +777,6 @@ def handle_exam_start(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
 
-    # CONDITIONS ROUND 1
     conditions = [
         (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
         (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
@@ -1022,7 +788,6 @@ def handle_exam_start(creator_username, url):
     work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
 
-    # CONDITIONS ROUND 2
     conditions = [
         (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
     ]
@@ -1079,7 +844,6 @@ def handle_exam_check_stat(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
 
-    # CONDITIONS ROUND 1
     conditions = [
         (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
         (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
@@ -1091,7 +855,6 @@ def handle_exam_check_stat(creator_username, url):
     work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
 
-    # CONDITIONS ROUND 2
     conditions = [
         (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
     ]
@@ -1138,7 +901,6 @@ def handle_exam_check_stu_list(creator_username, url):
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
 
-    # CONDITIONS ROUND 1
     conditions = [
         (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
         (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
@@ -1150,7 +912,6 @@ def handle_exam_check_stu_list(creator_username, url):
     work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
 
-    # CONDITIONS ROUND 2
     conditions = [
         (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
     ]
@@ -1185,10 +946,6 @@ def handle_exam_check_stu_list(creator_username, url):
         student_sessions.append(formatted_session)
 
     return jsonify({'sessions': student_sessions})
-
-
-
-# Glad you're here!
 
 if __name__ == '__main__':
     app.run(host='localhost', port=3000, debug=True)

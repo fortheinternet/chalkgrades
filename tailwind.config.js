@@ -9,6 +9,7 @@ module.exports = {
     },
     colors: {
       'cwhite': '#ffffff',
+      'twhite10': '#ffffff10',
       'twhite': '#ffffff25',
       'twhite2': '#ffffff50',
       'twhite3': '#ffffff75',

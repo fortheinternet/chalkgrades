@@ -4,6 +4,7 @@
         <title>chalk - workspace home</title>
         <meta name="description" content="This page should not show up in search results, therefore no one will see this message. If anyone does see it, I hope you're well?">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="color-scheme" content="dark">
 
         <meta charset="UTF-8">
 
@@ -18,8 +19,13 @@
     <body class="bg-dark-1 text-cwhite">
         <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
         <main class="flex flex-col h-min hidden" id="main">
-            <div id="primary_section" class="h-min px-8 border-b-2 border-dark-1a border-solid">
-                <div class="mb-5 mt-8">
+            <div id="primary_section" class="h-min px-8 pt-8 pb-5 border-b-2 border-dark-1a border-solid">
+                <button onclick="nav_user()" class="h-9 px-5 mb-6 bg-twhite10 rounded-full font-semibold">
+                    <span class="material-symbols-outlined select-none mr-1 relative top-1">arrow_back</span>
+                    <span class="relative bottom-1" id="username_field"></span>
+                </button>
+
+                <div class="mb-5">
                     <h4 id="work_display" class="font-display mb-1 font-bold text-xl"></h4>
                     <p class="font-body text-twhite2">
                         <span id="work_user" class="mr-1"></span>
@@ -27,44 +33,48 @@
                         <span id="work_url"></span>
                     </p>
                 </div>
-                
-
-                <div class="mb-5 flex flex-wrap">
-                    <div class="flex">
-                        <span class="material-symbols-outlined select-none text-enabled mr-1 mb-3">person</span>
-                        <a href="/home" class="font-body font-bold cursor-pointer text-enabled mr-6 mb-3" id="username_field"></a>    
-                    </div>
-                    <div class="flex">
-                        <span class="material-symbols-outlined select-none mr-1 mb-3">event_available</span>
-                        <p class="font-bold mb-3">coming soon</p>    
-                    </div>
+                <div class="flex flex-wrap">
+                    <a onclick="view_members()" class="font-body font-bold cursor-pointer mr-8">
+                        <span class="material-symbols-outlined select-none mr-2 relative top-1.5">group</span>    
+                        Members
+                    </a>
+                    <a onclick="view_exams()" class="font-body font-bold cursor-pointer mr-8">
+                        <span class="material-symbols-outlined select-none mr-2 relative top-1.5">quiz</span>
+                        Exams
+                    </a>
+                    <a onclick="view_settings()" class="font-body font-bold cursor-pointer mr-8">
+                        <span class="material-symbols-outlined select-none mr-2 relative top-1.5">settings</span>
+                        Settings
+                    </a>   
                 </div>
             </div>
-            <div id="selected_content" class="flex-grow md:flex p-8">
-                <div id="members_wrap" class="md:mr-4 mb-8 lg:w-[500px] w-full">
-                    <h4 class="font-display font-bold text-xl mb-1">Members</h4>
-                    <p class="font-body text-[14px] mb-6">All the users that are in your class.</p>
-    
-                    <div id="members">
-                        <div id="member" class="hidden mb-2">
-                            <p class="font-body">
-                                <span id="member_user" class="font-bold"></span>
-                                -
-                                <span id="member_role" class="text-twhite3"></span>
-                            </p>
-                        </div>
-                    </div> <!--mr-->
-                </div>
-                <div id="settings_wrap" class="md:mx-4 lg:w-[500px] w-full">
-                    <h4 class="font-display font-bold text-xl mb-1">Settings</h4>
-                    <p class="font-body text-[14px] mb-6 ">All the settings you can modify.</p>
-                    
-                    <div class="flex">
-                        <div id="members_remove" class="mr-[30%] hidden">
-                            <div id="member_remove" class="mb-2">
-                                <a class="font-body cursor-pointer" id="member_rm_lnk" onclick="remove_member(this)">
-                                    <span id="member_rm_span" class="text-twhite3"></span>
-                                </a>
+            <div id="selected_content" class="flex-grow p-8">
+                <div id="view_members" class="md:flex">
+                    <div id="members_wrap" class="md:mr-4 mb-8 lg:w-[500px] w-full">
+                        <h4 class="font-display font-bold text-xl mb-1">Members</h4>
+                        <p class="font-body text-[14px] mb-6">All the users that are in your class.</p>
+        
+                        <div id="members">
+                            <div id="member" class="hidden mb-2">
+                                <p class="font-body">
+                                    <span id="member_user" class="font-bold"></span>
+                                    -
+                                    <span id="member_role" class="text-twhite3"></span>
+                                </p>
+                            </div>
+                        </div> <!--mr-->
+                    </div>
+                    <div class="md:mx-4 lg:w-[500px] w-full">
+                        <h4 class="font-display font-bold text-xl mb-1">Settings</h4>
+                        <p class="font-body text-[14px] mb-6 ">You are able to leave the workspace, or remove members.</p>
+                        
+                        <div class="flex">
+                            <div id="members_remove" class="mr-[30%] hidden">
+                                <div id="member_remove" class="mb-2">
+                                    <a class="font-body cursor-pointer" id="member_rm_lnk" onclick="remove_member(this)">
+                                        <span id="member_rm_span" class="text-twhite3"></span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

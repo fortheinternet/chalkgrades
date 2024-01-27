@@ -13,3 +13,7 @@ function nav_loginsignup() {
 function nav_viewdocuments() {
     window.location.href = 'https://diamond-range-a70.notion.site/API-Documentation-05975f405fa64aba85871eb976e63832';
 }
+
+function nav_viewrepository() {
+    window.location.href = 'https://github.com/pvcsoftware/chalkgrades';
+}
