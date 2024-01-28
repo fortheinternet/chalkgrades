@@ -88,7 +88,7 @@ function create_new_workspace() {
     const work_section_c5 = document.getElementById("create_access");
 
 
-    work_section_c1.textContent = ""
+    work_section_c1.textContent = "Workspaces are for classes you attend. You must have an access credential to create a workspace."
     work_section_c2.value = ""
     work_section_c3.value = ""
     work_section_c4.value = ""
@@ -109,7 +109,7 @@ function join_new_workspace() {
     const work_section_j3 = document.getElementById("join_url");
     const work_section_j4 = document.getElementById("join_password");
 
-    work_section_j1.textContent = ""
+    work_section_j1.textContent = "Workspaces are for classes you attend. You must have an access credential to create a workspace."
     work_section_j2.value = ""
     work_section_j3.value = ""
     work_section_j4.value = ""

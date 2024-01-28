@@ -288,8 +288,46 @@ def handle_work_home(creator_username, url):
             'selected_role': member_role,
             'selected_user_id': member_id
         })
-        
-    return jsonify({'display': display, 'username': username, 'user_id': user_id, 'user_role': user_role, 'members': members_response})
+
+    if user_role == "member":
+        exams_data = supabase.table("exams_data").select('exam_id').eq('work_id', work_id).eq('visibility', "public").execute()
+        exam_ids = exams_data.data
+
+        exams = []
+        for exam in exam_ids:
+            exam_id = exam.get('exam_id')
+
+            result = supabase.table('exams_data').select('display_name','visibility').eq('exam_id', exam_id).execute()
+
+            exam_name = result.data[0]['display_name'] if result.data else None
+            visibility = result.data[0]['visibility'] if result.data else None
+
+            exams.append({
+                'display_name': exam_name,
+                'visibility': visibility,
+                'exam_id': exam_id
+            })
+            
+    elif user_role == "superuser":
+        exams_data = supabase.table("exams_data").select('exam_id').eq('work_id', work_id).execute()
+        exam_ids = exams_data.data
+
+        exams = []
+        for exam in exam_ids:
+            exam_id = exam.get('exam_id')
+
+            result = supabase.table('exams_data').select('display_name','visibility').eq('exam_id', exam_id).execute()
+
+            exam_name = result.data[0]['display_name'] if result.data else None
+            visibility = result.data[0]['visibility'] if result.data else None
+
+            exams.append({
+                'display_name': exam_name,
+                'visibility': visibility,
+                'exam_id': exam_id
+            })
+            
+    return jsonify({'display': display, 'username': username, 'user_id': user_id, 'user_role': user_role, 'members': members_response, 'exams': exams})
 
 @app.route('/api/work/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
 def handle_work_settings(creator_username, url):
@@ -413,7 +451,6 @@ def handle_work_settings(creator_username, url):
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
         supabase.table('members_data').delete().eq('work_id', work_id).eq('member_id', value).execute()
-        supabase.table('posts_data').delete().eq('work_id', work_id).eq('user_id', value).execute()
         
         for exam in exams_data:
             exam_id = exam.get('exam_id')
@@ -461,88 +498,6 @@ def handle_exams_create(creator_username, url):
     
     supabase.table('exams_data').insert({"display_name": exam_name, "work_id": work_id, "visibility": "private"}).execute()
     return jsonify({'success': 'Exams: Created test successfully'})
-
-@app.route('/api/exams/<string:creator_username>/<string:url>/home.json', methods=['POST'])
-def handle_exams_home(creator_username, url):
-    data = request.get_json()
-
-    token = data.get('token')
-
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute()
-    user_id = user_data.data[0]['user_id'] if user_data.data else None
-
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute()
-    creator_id = creator_data.data[0]['user_id'] if creator_data.data else None
-
-    conditions = [
-        (not user_id, 'e-mal-25-1', 'Exams: Invalid token', 'r1'),
-        (not creator_id, 'e-mal-25-5', 'Exams: That workspace does not exist', 'r1'),
-    ]
-
-    for condition in conditions:
-        if condition[0] and condition[3] == "r1": return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    conditions = [
-        (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist', 'r2')
-    ]
-
-    for condition in conditions:
-        if condition[0] and condition[3] == "r2": return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
-    user_role = user_role_data.data[0]['role'] if user_role_data.data else None
-
-    conditions = [
-        (not user_role, 'e-mal-20-10', 'Exams: You do not have the proper permissions to access tests.', 'r3')
-    ]
-    
-    for condition in conditions:
-        if condition[0] and condition[3] == "r3": return jsonify({'error': condition[1], 'message': condition[2]})
-
-    if user_role == "member":
-        exams_data = supabase.table("exams_data").select('exam_id').eq('work_id', work_id).eq('visibility', "public").execute()
-        exam_ids = exams_data.data
-
-        exams = []
-        for exam in exam_ids:
-            exam_id = exam.get('exam_id')
-
-            result = supabase.table('exams_data').select('display_name','visibility').eq('exam_id', exam_id).execute()
-
-            exam_name = result.data[0]['display_name'] if result.data else None
-            visibility = result.data[0]['visibility'] if result.data else None
-
-            exams.append({
-                'display_name': exam_name,
-                'visibility': visibility,
-                'exam_id': exam_id
-            })
-    
-        return jsonify({'exams': exams})
-        
-    elif user_role == "superuser":
-        exams_data = supabase.table("exams_data").select('exam_id').eq('work_id', work_id).execute()
-        exam_ids = exams_data.data
-
-        exams = []
-        for exam in exam_ids:
-            exam_id = exam.get('exam_id')
-
-            result = supabase.table('exams_data').select('display_name','visibility').eq('exam_id', exam_id).execute()
-
-            exam_name = result.data[0]['display_name'] if result.data else None
-            visibility = result.data[0]['visibility'] if result.data else None
-
-            exams.append({
-                'display_name': exam_name,
-                'visibility': visibility,
-                'exam_id': exam_id
-            })
-    
-    return jsonify({'exams': exams})
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
 def handle_exam_settings(creator_username, url):

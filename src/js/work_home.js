@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const user_token = getCookie("token")
 
-    if(user_token) {
+    if (user_token) {
         load_workhomedotjson()
     } else {
         window.location.href = '/login';
@@ -15,12 +15,6 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 function load_workhomedotjson() {
-    const membersDiv = document.getElementById("members")
-    const membersRemoveDiv = document.getElementById("members_remove")
-
-    const memberDiv = document.getElementById("member")
-    const memberRemoveDiv = document.getElementById("member_remove")
-
     const username_field = document.getElementById("username_field")
     const work_user = document.getElementById("work_user")
     const work_url = document.getElementById("work_url")
@@ -28,6 +22,9 @@ function load_workhomedotjson() {
 
     const currentUrl = window.location.href;
     const urlParts = currentUrl.split('/');
+
+    const create_exam_btn = document.getElementById("create_exam_btn")
+    const view_settings_btn = document.getElementById("view_settings_btn")
 
     const creator_username = urlParts[urlParts.length - 2];
     const url = urlParts[urlParts.length - 1];
@@ -62,9 +59,24 @@ function load_workhomedotjson() {
                 work_user.textContent = creator_username;
                 work_url.textContent = url;
 
+                const membersDiv = document.getElementById("members")
+                const membersRemoveDiv = document.getElementById("members_remove")
+
+                const memberDiv = document.getElementById("member")
+                const memberRemoveDiv = document.getElementById("member_remove")
+
+                const examDiv = document.getElementById("exam")
+                const examsDiv = document.getElementById("exams")
+                
                 const members_data = data.members;
+                const exams_data = data.exams;
                 const user_id = data.user_id;
                 const user_role = data.user_role;
+
+                if (user_role == "superuser") {
+                    create_exam_btn.style.display = "block";
+                    view_settings_btn.style.display = "block";
+                }
 
                 anyClones = document.querySelectorAll('[data-origin="clone"]') 
 
@@ -89,9 +101,7 @@ function load_workhomedotjson() {
                     // removes
 
                     const memberRemoveClone = memberRemoveDiv.cloneNode(true);
-
-                    const settingsDiv1 = document.getElementById("members_remove")
-                    settingsDiv1.style.display = "block";
+                    memberRemoveClone.style.display = "block";
 
                     if(user_role == "superuser") {
                         if(user_id == selected_user_id) {
@@ -114,6 +124,23 @@ function load_workhomedotjson() {
                     memberRemoveClone.dataset.origin = "clone";
                     membersRemoveDiv.appendChild(memberRemoveClone);
 
+                });
+
+                // exams
+
+                exams_data.forEach(exam => {
+                    const { display_name, exam_id, visibility} = exam;
+
+                    const examClone = examDiv.cloneNode(true);
+                    examClone.style.display = "block";
+
+                    examClone.querySelector("#exam_display").textContent = display_name;
+                    examClone.querySelector("#exam_visibility").textContent = visibility;
+
+                    examClone.dataset.identifier = exam_id;
+                    examClone.dataset.origin = "clone";
+
+                    examsDiv.appendChild(examClone);
                 });
 
                 main.style.display = "block"
@@ -183,15 +210,59 @@ function remove_member(element) {
 }
 
 function view_members() {
-    console.log("viewed members")
+    const view_members = document.getElementById("view_members");
+    const view_exams = document.getElementById("view_exams");
+    const view_settings = document.getElementById("view_settings");
+    const create_exam = document.getElementById("create_exam");
+
+    view_members.style.display = "block";
+    view_exams.style.display = "none";
+    view_settings.style.display = "none";
+    create_exam.style.display = "none";
+
+    load_workhomedotjson()
 }
 
 function view_settings() {
-    console.log("viewed settings")
+    const view_members = document.getElementById("view_members");
+    const view_exams = document.getElementById("view_exams");
+    const view_settings = document.getElementById("view_settings");
+    const create_exam = document.getElementById("create_exam");
+
+    view_members.style.display = "none";
+    view_exams.style.display = "none";
+    view_settings.style.display = "block";
+    create_exam.style.display = "none";
+
+    load_workhomedotjson()
 }
 
 function view_exams() {
-    console.log("viewed exams")
+    const view_members = document.getElementById("view_members");
+    const view_exams = document.getElementById("view_exams");
+    const view_settings = document.getElementById("view_settings");
+    const create_exam = document.getElementById("create_exam");
+
+    view_members.style.display = "none";
+    view_exams.style.display = "block";
+    view_settings.style.display = "none";
+    create_exam.style.display = "none";
+
+    load_workhomedotjson()
+}
+
+function create_exam() {
+    const view_members = document.getElementById("view_members");
+    const view_exams = document.getElementById("view_exams");
+    const view_settings = document.getElementById("view_settings");
+    const create_exam = document.getElementById("create_exam");
+
+    view_members.style.display = "none";
+    view_exams.style.display = "none";
+    view_settings.style.display = "none";
+    create_exam.style.display = "block";
+
+    load_workhomedotjson()
 }
 
 function nav_user() {
