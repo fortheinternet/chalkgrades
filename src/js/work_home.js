@@ -60,10 +60,7 @@ function load_workhomedotjson() {
                 work_url.textContent = url;
 
                 const membersDiv = document.getElementById("members")
-                const membersRemoveDiv = document.getElementById("members_remove")
-
                 const memberDiv = document.getElementById("member")
-                const memberRemoveDiv = document.getElementById("member_remove")
 
                 const examDiv = document.getElementById("exam")
                 const examsDiv = document.getElementById("exams")
@@ -96,33 +93,24 @@ function load_workhomedotjson() {
                     memberClone.dataset.identifier = selected_user_id;
                     memberClone.dataset.origin = "clone";
 
-                    membersDiv.appendChild(memberClone);
-                    
-                    // removes
-
-                    const memberRemoveClone = memberRemoveDiv.cloneNode(true);
-                    memberRemoveClone.style.display = "block";
-
                     if(user_role == "superuser") {
                         if(user_id == selected_user_id) {
-                            memberRemoveClone.querySelector("#member_rm_span").textContent = "can't remove member";
-                            memberRemoveClone.querySelector("#member_rm_lnk").dataset.action = "na";
+                            memberClone.querySelector("#member_rm_span").textContent = "can't remove member";
+                            memberClone.querySelector("#member_rm_lnk").dataset.action = "na";
                         } else {
-                            memberRemoveClone.querySelector("#member_rm_span").textContent = "remove member";
-                            memberRemoveClone.querySelector("#member_rm_lnk").dataset.action = "remove_member";
+                            memberClone.querySelector("#member_rm_span").textContent = "remove member";
+                            memberClone.querySelector("#member_rm_lnk").dataset.action = "remove_member";
                         }
                     } else { 
                         if(user_id == selected_user_id) {
-                            memberRemoveClone.querySelector("#member_rm_span").textContent = "leave workspace";
-                            memberRemoveClone.querySelector("#member_rm_lnk").dataset.action = "leave";
+                            memberClone.querySelector("#member_rm_span").textContent = "leave workspace";
+                            memberClone.querySelector("#member_rm_lnk").dataset.action = "leave";
                         } else {
-                            memberRemoveClone.querySelector("#member_rm_span").textContent = "";
+                            memberClone.querySelector("#member_rm_span").textContent = "";
                         }
                     }
 
-                    memberRemoveClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
-                    memberRemoveClone.dataset.origin = "clone";
-                    membersRemoveDiv.appendChild(memberRemoveClone);
+                    membersDiv.appendChild(memberClone);
 
                 });
 
@@ -207,6 +195,43 @@ function remove_member(element) {
     } else {
         console.warn("INFORMATION: You cannot remove this member.")
     }
+}
+
+function create_submit() {
+    const createErrors = document.getElementById("create_errors");
+    const createDisplay = document.getElementById("create_display")
+    
+    const currentUrl = window.location.href;
+    const urlParts = currentUrl.split('/');
+
+    const creator_username = urlParts[urlParts.length - 2];
+    const url = urlParts[urlParts.length - 1];
+
+    const examData = {token: getCookie("token"), exam_name: createDisplay.value};
+
+    fetch(`https://chalkgrades.vercel.app/api/exams/${creator_username}/${url}/create.json`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(examData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            createErrors.textContent = data.message;
+
+            if (data.error == "e-mal-25-1") {
+                window.location.href = '/login';
+                removeCookie("token");
+            }
+        } else {
+            createErrors.textContent = "Test created successfully, you can go to the 'Exams' tab to check."
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
 
 function view_members() {

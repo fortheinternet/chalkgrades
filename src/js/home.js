@@ -62,7 +62,7 @@ function load_homedotjson() {
                     workspaceClone.dataset.origin = "clone";
                     
                     workspacesDiv.appendChild(workspaceClone);
-                    workspaceClone.style.display = "block";
+                    workspaceClone.style.display = "grid";
 
                 });
 
@@ -79,7 +79,7 @@ function load_homedotjson() {
 function create_new_workspace() {
     const create_section = document.getElementById("create_workspace");
     const join_section = document.getElementById("join_workspace");
-    const work_section = document.getElementById("workspaces");
+    const work_section = document.getElementById("workspaces_wrap");
 
     const work_section_c1 = document.getElementById("create_errors");
     const work_section_c2 = document.getElementById("create_url");
@@ -102,7 +102,7 @@ function create_new_workspace() {
 function join_new_workspace() {
     const create_section = document.getElementById("create_workspace");
     const join_section = document.getElementById("join_workspace");
-    const work_section = document.getElementById("workspaces");
+    const work_section = document.getElementById("workspaces_wrap");
 
     const work_section_j1 = document.getElementById("join_errors");
     const work_section_j2 = document.getElementById("join_superuser");
@@ -123,7 +123,7 @@ function join_new_workspace() {
 function view_workspaces() {
     const create_section = document.getElementById("create_workspace");
     const join_section = document.getElementById("join_workspace");
-    const work_section = document.getElementById("workspaces");
+    const work_section = document.getElementById("workspaces_wrap");
 
     create_section.style.display = "none";
     join_section.style.display = "none";

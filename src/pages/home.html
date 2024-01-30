@@ -19,29 +19,36 @@
     <body class="bg-dark-1 text-cwhite">
         <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
         <main class="flex flex-col h-min hidden" id="main">
-            <div id="primary_section" class="h-min px-8 pt-8 border-b-2 pb-3 border-dark-1a border-solid">
-                <div class="mb-5">
-                    <h4 class="font-display mb-1 font-bold text-xl">Workspaces</h4>
-                    <p class="font-body text-twhite2">
-                        Workspaces are classes that authorized users can create and anyone can join.
-                    </p>
-                </div>
-                <div class="flex flex-wrap">
-                    <button onclick="view_workspaces()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold" id="username_field"></button>
-                    <button onclick="create_new_workspace()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Create Workspace</button>
-                    <button onclick="join_new_workspace()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Join Workspace</button>
-                    <button onclick="logout()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Log out</button>
-                </div>
-            </div>
-            <div id="selected_content" class="flex-grow p-8 h-full">
+            <div id="selected_content" class="flex-grow p-8 pt-24 lg:px-[15vw] h-full">
 
-                <div id="workspaces">
-                    <div id="workspace" class="hidden">
-                        <a class="font-body md-6 font-bold" id="workspace_link"><span id="workspace_display"></span></a>
-                        <p class="font-body md-6 mb-5 text-twhite3"><span id="workspace_creator"></span> / <span id="workspace_url"></span></p>
+                <div class="flex flex-wrap mb-5">
+                    <button onclick="view_workspaces()" class="h-9 px-5 sm:mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold" id="username_field"></button>
+                    <button onclick="create_new_workspace()" class="h-9 px-5 sm:mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Create Workspace</button>
+                    <button onclick="join_new_workspace()" class="h-9 px-5 sm:mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Join Workspace</button>
+                    <button onclick="logout()" class="h-9 px-5 sm:mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Log out</button>
+                </div>
+
+                
+                <div id="workspaces_wrap">
+                    <h4 class="font-display mb-2 font-bold text-2xl">Workspaces</h4>
+                    <p class="font-body mb-6 text-[14px] w-full">Workspaces are for classes you attend. You must have an access credential to create a workspace.</p>
+                    <div id="workspaces" class="p-6 rounded-xl border-dashed border-dark-1a border-2 grid md:gap-2 gap-6 max-w-[1024px]">
+                        <div id="workspace" class="hidden">
+                            <div class="md:grid md:grid-cols-2">
+                                <a class="font-body" id="workspace_link">
+                                    <span class="font-bold" id="workspace_display"></span>
+                                </a>
+
+                                <div class="">
+                                    <span class="font-body text-twhite3">
+                                        <span id="workspace_creator"></span> / <span id="workspace_url"></span>
+                                    </span>
+                                </div>
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
-
                 <div id="create_workspace" class="hidden">
                     <h4 class="font-display mb-2 font-bold text-xl">Create workspace</h4>
                     <p class="font-body mb-6 text-[14px] sm:w-[580px] w-full" id="create_errors"></p>
@@ -69,19 +76,19 @@
 
                 <div id="join_workspace" class="hidden">
                     <h4 class="font-display mb-2 font-bold text-xl">Join a workspace</h4>
-                    <p class="font-body mb-6 text-[14px] lg:w-[580px] w-full" id="join_errors"></p>
+                    <p class="font-body mb-6 text-[14px] sm:w-[580px] w-full" id="join_errors"></p>
 
                     <p class="font-body font-bold mb-1">Teacher's username</p>
-                    <p class="font-body text-[14px] mb-3 lg:w-[580px] w-full">This is generally the username of the head teacher, or the peson who created the class.</p>
-                    <input type="text" id="join_superuser" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[580px] w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">This is generally the username of the head teacher, or the peson who created the class.</p>
+                    <input type="text" id="join_superuser" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
 
                     <p class="font-body font-bold mb-1">Workspace Resource</p>
-                    <p class="font-body text-[14px] mb-3 lg:w-[580px] w-full">A simple, easy-to-remember number or word that is used to interact with the workspace.</p>
-                    <input type="text" id="join_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[580px] w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">A simple, easy-to-remember number or word that is used to interact with the workspace.</p>
+                    <input type="text" id="join_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
 
                     <p class="font-body font-bold mb-1">Password</p>
-                    <p class="font-body text-[14px] mb-3 lg:w-[580px] w-full">This value will be provided by your teacher when joining the class. It is possible that there is no password.</p>
-                    <input type="password" id="join_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[580px] w-full outline-none rounded-md text-twhite3">
+                    <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">This value will be provided by your teacher when joining the class. It is possible that there is no password.</p>
+                    <input type="password" id="join_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
 
                     <p></p>
 
