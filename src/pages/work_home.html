@@ -13,8 +13,6 @@
 
         <link rel="icon" href="../../src/favicon.png" type="image/png">
         <script src="../../src/js/work_home.js"></script>
-
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     </head>
     <body class="bg-dark-1 text-cwhite">
         <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
@@ -22,10 +20,7 @@
             <div id="selected_content" class="flex-grow p-8 lg:pt-24 pt-12 lg:px-[15vw] h-full">
 
                 <div class="flex flex-wrap mb-5">
-                    <button onclick="nav_user()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">
-                        <span class="material-symbols-outlined select-none mr-1 relative top-1">arrow_back</span>
-                        <span class="relative bottom-1" id="username_field"></span>
-                    </button>
+                    <button onclick="nav_user()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold" id="username_field"></button>
                     <button onclick="view_members()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Members</button>
                     <button onclick="view_exams()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Exams</button>
                     <button id="create_exam_btn" onclick="create_exam()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold hidden">Create Exam</button>
@@ -46,7 +41,7 @@
                     <p class="font-body text-[14px] mb-7 w-full">
                         Don't see everyone? It's possible that they left, or are not loaded yet. You can
 
-                        <a onclick="load_workhomedotjson()" class="text-enabled hover:text-accent-1 cursor-pointer">refresh the page.</a>
+                        <a onclick="load_workhomedotjson()" class="text-enabled cursor-pointer">refresh the page.</a>
                     </p>
                     <div id="members" class="p-6 rounded-xl border-dashed border-dark-1a border-2 grid md:gap-2 gap-6 max-w-[1024px]">
                         <div id="member" class="hidden">
@@ -70,7 +65,7 @@
                     <p class="font-body text-[14px] mb-7 w-full">
                         If you don't see the exam you're supposed to be doing, you can try to
 
-                        <a onclick="load_workhomedotjson()" class="text-enabled hover:text-accent-1 cursor-pointer">refresh the page.</a>
+                        <a onclick="load_workhomedotjson()" class="text-enabled cursor-pointer">refresh the page.</a>
                     </p>
 
                     <div id="exams" class="p-6 rounded-xl border-dashed border-dark-1a border-2 grid md:gap-2 gap-6 max-w-[1024px]">
@@ -100,7 +95,7 @@
 
                     <p></p>
 
-                    <button onclick="create_submit()" class="h-10 px-5 mb-6 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Create new workspace</button>
+                    <button onclick="create_submit()" class="h-10 px-5 mb-6 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Create new exam</button>
                 </div>
                 <div id="view_settings" class="hidden">
                     <h4 class="font-display font-bold text-xl mb-1">Settings</h4>
