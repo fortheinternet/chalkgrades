@@ -15,5 +15,5 @@ function nav_viewdocuments() {
 }
 
 function nav_viewrepository() {
-    window.location.href = 'https://github.com/pvcsoftware/chalkgrades';
+    window.location.href = 'https://github.com/thelocaltemp/chalkgrades';
 }

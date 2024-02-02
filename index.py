@@ -662,11 +662,11 @@ def handle_exam_access(creator_username, url):
     
     token = data.get('token')
     exam_id = data.get('value')
-    creator_username = data.get('creator')
-    url = data.get('url')
 
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
+    user_data = supabase.table('users_data').select('user_id', 'username').eq('token', token).execute().data
+    
     user_id = user_data[0]['user_id'] if user_data else None
+    username = user_data[0]['username'] if user_data else None
 
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
     creator_id = creator_data[0]['user_id'] if creator_data else None
@@ -679,8 +679,9 @@ def handle_exam_access(creator_username, url):
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
+    work_query = supabase.table('work_data').select('work_id', 'display').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
+    work_display = work_query.data[0]['display'] if work_query.data else None
 
     conditions = [(not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),]
 
@@ -690,16 +691,14 @@ def handle_exam_access(creator_username, url):
     user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
     user_role = user_role_data.data[0]['role'] if user_role_data.data else None
 
-    exam_work_data = supabase.table('exams_data').select('work_id').eq('exam_id', exam_id).execute()
+    exam_work_data = supabase.table('exams_data').select('work_id', 'visibility', 'display_name').eq('exam_id', exam_id).execute()
     exam_work_id = exam_work_data.data[0]['work_id'] if exam_work_data.data else None
-
-    session_data = supabase.table('sessions_data').select('session_id').eq('status', "active").eq('exam_id', exam_id).execute()
-    session_id = session_data.data[0]['session_id'] if session_data.data else None
+    exam_visibility = exam_work_data.data[0]['visibility'] if exam_work_data.data else None
+    exam_display = exam_work_data.data[0]['display_name'] if exam_work_data.data else None
 
     conditions = [
-        (not user_role or user_role != "superuser", 'e-mal-20', 'Exams: You do not have the proper permissions to change exam configurations.'),
+        (not user_role, 'e-mal-20', 'Exams: You do not have the proper permissions to change exam configurations.'),
         (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.'),
-        (session_id, 'e-mal-26-61', 'Exams: This exam has one or more active sessions so it cant be accessed traditionally')
     ]
 
     for condition in conditions:
@@ -717,7 +716,23 @@ def handle_exam_access(creator_username, url):
         formatted_question = {"order": question.get('question_order'), "content": question.get('content'), "description": question.get('description'), "type": question.get('type'), "options": formatted_options}
         formatted_questions.append(formatted_question)
 
-    return jsonify({'questions': formatted_questions})
+    sessions_data = session_data = supabase.table('sessions_data').select('session_id', 'status', 'user_id').eq('exam_id', exam_id).execute().data
+
+    student_sessions = []
+    for session_data in sessions_data:
+        student_id = session_data.get('user_id')
+
+        student_data = supabase.table('users_data').select('username').eq('user_id', student_id).execute()
+        student_username = student_data.data[0]['username'] if student_data.data else None
+
+        formatted_session = {"status": session_data.get('status'), "username": student_username, "session_id": session_data.get('session_id')}
+        student_sessions.append(formatted_session)
+
+
+    if user_role == "member":
+        return jsonify({'work_display': work_display, 'exam_display': exam_display, 'visibility': exam_visibility, 'user_role': user_role, 'username': username})
+    elif user_role == "superuser":
+        return jsonify({'questions': formatted_questions, 'sessions': student_sessions, 'work_display': work_display, 'exam_display': exam_display, 'visibility': exam_visibility, 'user_role': user_role, 'username': username})
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/start.json', methods=['POST'])
 def handle_exam_start(creator_username, url):
@@ -841,66 +856,6 @@ def handle_exam_check_stat(creator_username, url):
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
     return jsonify({'status': session_status})
-
-@app.route('/api/exams/<string:creator_username>/<string:url>/check_stu_list.json', methods=['POST'])
-def handle_exam_check_stu_list(creator_username, url):
-    data = request.get_json()
-
-    token = data.get('token')
-    exam_id = data.get('value')
-    action = data.get('action')
-
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
-    user_id = user_data[0]['user_id'] if user_data else None
-
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
-
-    conditions = [
-        (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
-        (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    conditions = [
-        (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
-    user_role = user_role_data.data[0]['role'] if user_role_data.data else None
-
-    exam_work_data = supabase.table('exams_data').select('work_id').eq('exam_id', exam_id).execute()
-    exam_work_id = exam_work_data.data[0]['work_id'] if exam_work_data.data else None
-
-    conditions = [
-        (not user_role or user_role != "superuser", 'e-mal-20', 'Exams: You do not have the proper permissions to change settings.'),
-        (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.')
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    sessions_data = session_data = supabase.table('sessions_data').select('session_id', 'status', 'user_id').eq('exam_id', exam_id).execute().data
-
-    student_sessions = []
-    for session_data in sessions_data:
-        student_id = session_data.get('user_id')
-
-        student_data = supabase.table('users_data').select('username').eq('user_id', student_id).execute()
-        student_username = student_data.data[0]['username'] if student_data.data else None
-
-        formatted_session = {"status": session_data.get('status'), "username": student_username, "session_id": session_data.get('session_id')}
-        student_sessions.append(formatted_session)
-
-    return jsonify({'sessions': student_sessions})
 
 if __name__ == '__main__':
     app.run(host='localhost', port=3000, debug=True)
