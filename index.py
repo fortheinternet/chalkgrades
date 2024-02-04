@@ -608,7 +608,7 @@ def handle_exam_build(creator_username, url):
     conditions = [
         (not user_role or user_role != "superuser", 'e-mal-20', 'Exams: You do not have the proper permissions to change exam configurations.'),
         (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.'),
-        (session_id, 'e-mal-26-61', 'Exams: This exam has one or more active sessions so it cant be accessed traditionally')
+        (session_id, 'e-mal-26-61', 'Exams: This exam has one or more sessions so it cant be modified.')
     ]
 
     for condition in conditions:
