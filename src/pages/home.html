@@ -17,7 +17,7 @@
     <body class="bg-dark-1 text-cwhite">
         <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
         <main class="flex flex-col h-min hidden" id="main">
-            <div id="selected_content" class="flex-grow p-8 lg:pt-24 pt-12 lg:px-[15vw] h-full">
+            <div id="selected_content" class="flex-grow p-8 lg:pt-24 pt-12 lg:pl-[15vw] lg:pr-[25vw] h-full">
 
                 <div class="flex flex-wrap mb-5">
                     <button onclick="view_workspaces()" class="h-9 px-5 sm:mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold" id="username_field"></button>
@@ -30,20 +30,21 @@
                 <div id="workspaces_wrap">
                     <h4 class="font-display mb-2 font-bold text-2xl">Workspaces</h4>
                     <p class="font-body mb-6 text-[14px] w-full">Workspaces are for classes you attend. You must have an access credential to create a workspace.</p>
-                    <div id="workspaces" class="p-6 rounded-xl border-dashed border-dark-1a border-2 grid md:gap-2 gap-6 max-w-[1024px]">
-                        <div id="workspace" class="hidden">
-                            <div class="md:grid md:grid-cols-2">
-                                <a class="font-body" id="workspace_link">
-                                    <span class="font-bold" id="workspace_display"></span>
+                    <div id="workspaces" class="p-6 rounded-xl border-solid border-dark-1a border-2 grid grid-cols-1 gap-6 max-w-full">
+                        <div id="workspace" class="hidden flex flex-row items-center">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 16H11V11H16V2H2V16ZM2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2V12L12 18H2ZM4 11V9H9V11H4ZM4 7V5H14V7H4Z" fill="white"/>
+                            </svg>
+                            <div class="sm:ml-5">
+                                <a class="font-bold" id="workspace_link">
+                                    <span id="workspace_display"></span>
                                 </a>
-
-                                <div class="">
-                                    <span class="font-body text-twhite3">
-                                        <span id="workspace_creator"></span> / <span id="workspace_url"></span>
-                                    </span>
-                                </div>
-                                
+    
+                                <p class="font-body text-twhite2">
+                                    <span id="workspace_creator"></span> / <span id="workspace_url"></span>
+                                </p>
                             </div>
+                            
                         </div>
                     </div>
                 </div>

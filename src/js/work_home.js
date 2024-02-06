@@ -51,6 +51,9 @@ function load_workhomedotjson() {
             } else if (data.error == "w-mal-25-11") {
                 window.location.href = 'https://en.wikipedia.org/wiki/HTTP_404';
 
+            } else if (data.error == "w-mal-26") {
+                window.location.href = '/home';
+
             } else {
                 console.info("User authenticated successfully as " + data.username)
                 username_field.textContent = data.username;
@@ -85,7 +88,7 @@ function load_workhomedotjson() {
                     const { username, selected_role, selected_user_id } = member;
 
                     const memberClone = memberDiv.cloneNode(true);
-                    memberClone.style.display = "block";
+                    memberClone.style.display = "flex";
 
                     memberClone.querySelector("#member_user").textContent = username;
                     memberClone.querySelector("#member_role").textContent = selected_role;

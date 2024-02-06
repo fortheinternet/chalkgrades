@@ -62,7 +62,7 @@ function load_homedotjson() {
                     workspaceClone.dataset.origin = "clone";
                     
                     workspacesDiv.appendChild(workspaceClone);
-                    workspaceClone.style.display = "grid";
+                    workspaceClone.style.display = "flex";
 
                 });
 
