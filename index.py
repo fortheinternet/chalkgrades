@@ -6,6 +6,7 @@ import re
 import os
 from supabase import create_client, Client
 from datetime import datetime, timezone
+from flask_socketio import SocketIO, emit, send
 
 load_dotenv()
 
@@ -19,7 +20,9 @@ password_salt = os.getenv("password_salt")
 password_salt_2 = os.getenv("password_salt_2")
 
 supabase: Client = create_client(supabase_url, supabase_key)
+
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -40,6 +43,10 @@ def serve_home():
 @app.route('/<string:creator_username>/<string:url>')
 def serve_workspace_home(creator_username, url):
     return send_from_directory('src/pages', 'work_home.html')
+
+@app.route('/<string:creator_username>/<string:url>/<string:id>')
+def serve_id_home(creator_username, url, id):
+    return send_from_directory('src/pages', 'exam_home.html')
 
 @app.route('/src/styles/<path:filename>')
 def serve_styles(filename):
@@ -379,7 +386,7 @@ def handle_work_settings(creator_username, url):
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
-        return jsonify({'message':'Ho ho ho! please message me read.cv/pvcsd and explain what you were supposed to be doing when you found this'})
+        return jsonify({'message':'Ho ho ho! please message me read.cv/thelocaltemp and explain what you were supposed to be doing when you found this'})
     
     elif action == "display":
         conditions = [
@@ -550,7 +557,7 @@ def handle_exam_settings(creator_username, url):
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
     if action == "santa":
-        return jsonify({'message':'Ho ho ho! please message me read.cv/pvcsd and explain what you were supposed to be doing when you found this'})
+        return jsonify({'message':'Ho ho ho! please message me read.cv/thelocaltemp and explain what you were supposed to be doing when you found this'})
     
     elif action == "remove":
         supabase.table('options_data').delete().eq('exam_id', exam_id).execute()
@@ -656,12 +663,15 @@ def handle_exam_build(creator_username, url):
 
     return jsonify({'success': 'Exam: Questions added successfully'})
 
-@app.route('/api/exams/<string:creator_username>/<string:url>/access.json', methods=['POST'])
-def handle_exam_access(creator_username, url):
-    data = request.get_json()
-    
-    token = data.get('token')
-    exam_id = data.get('value')
+@socketio.on('exam_access', namespace='/ws/exams/access')
+def handle_exam_access(json):
+    token = json.get('token')
+    exam_id = json.get('value')
+
+    creator_username = json.get('creator_username')
+    url = json.get('url')
+
+    print("Success!! Your request reached the server 🥳 " + token)
 
     user_data = supabase.table('users_data').select('user_id', 'username').eq('token', token).execute().data
     
@@ -677,7 +687,11 @@ def handle_exam_access(creator_username, url):
     ]
 
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]:
+            error_message = {'error': condition[1], 'message': condition[2]}
+            emit('error', error_message, json=True, namespace='/ws/exams/access')
+            print("Oh Shit!! Something went wrong in the code. ⚠️")
+            raise ValueError(f"Error: {error_message}")
 
     work_query = supabase.table('work_data').select('work_id', 'display').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
@@ -702,7 +716,11 @@ def handle_exam_access(creator_username, url):
     ]
 
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]:
+            error_message = {'error': condition[1], 'message': condition[2]}
+            emit('error', error_message, json=True, namespace='/ws/exams/access')
+            print("Oh Shit!! Something went wrong in the code. ⚠️")
+            raise ValueError(f"Error: {error_message}")
 
     questions_data = supabase.table('questions_data').select('question_order', 'content', 'description', 'type', 'question_id').eq('exam_id', exam_id).execute().data
 
@@ -729,10 +747,28 @@ def handle_exam_access(creator_username, url):
         student_sessions.append(formatted_session)
 
 
-    if user_role == "member":
-        return jsonify({'work_display': work_display, 'exam_display': exam_display, 'visibility': exam_visibility, 'user_role': user_role, 'username': username})
+    if user_role == "member":    
+        response_data = {
+            'work_display': work_display,
+            'exam_display': exam_display,
+            'visibility': exam_visibility,
+            'user_role': user_role,
+            'username': username
+        }
     elif user_role == "superuser":
-        return jsonify({'questions': formatted_questions, 'sessions': student_sessions, 'work_display': work_display, 'exam_display': exam_display, 'visibility': exam_visibility, 'user_role': user_role, 'username': username})
+        response_data = {
+            'work_display': work_display,
+            'exam_display': exam_display,
+            'visibility': exam_visibility,
+            'user_role': user_role,
+            'username': username,
+            'questions': formatted_questions,
+            'sessions': student_sessions
+        }
+
+    emit('response', response_data, json=True, namespace="/ws/exams/access")
+    
+
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/start.json', methods=['POST'])
 def handle_exam_start(creator_username, url):

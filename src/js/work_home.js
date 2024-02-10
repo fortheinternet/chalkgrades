@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     console.info("INFORMATION: Loading of JavaScript file 'work_home.js' was successful.")
     console.warn(
-        '%cWARNING: Pasting any script into this console will give attackers access to your account authentication details. If you know what you are doing you should come working here, details at read.cv/pvcsd',
+        '%cWARNING: Pasting any script into this console will give attackers access to your account authentication details. If you know what you are doing you should come working here, details at read.cv/thelocaltemp',
         'font-weight: bold;'
     );
 
@@ -127,6 +127,7 @@ function load_workhomedotjson() {
 
                     examClone.querySelector("#exam_display").textContent = display_name;
                     examClone.querySelector("#exam_visibility").textContent = visibility;
+                    examClone.querySelector("#exam_link").href = "/" + creator_username + "/" + url + "/" + exam_id;
 
                     examClone.dataset.identifier = exam_id;
                     examClone.dataset.origin = "clone";

@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     console.info("INFORMATION: Loading of JavaScript file 'login.js' was successful.")
     console.warn(
-        '%cWARNING: Pasting any script into this console will give attackers access to your account authentication details. If you know what you are doing you should come working here, details at read.cv/pvcsd',
+        '%cWARNING: Pasting any script into this console will give attackers access to your account authentication details. If you know what you are doing you should come working here, details at read.cv/thelocaltemp',
         'font-weight: bold;'
     );
 

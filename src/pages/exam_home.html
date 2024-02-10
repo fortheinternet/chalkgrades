@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>chalk - workspace home</title>
+        <meta name="description" content="This page should not show up in search results, therefore no one will see this message. If anyone does see it, I hope you're well?">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="color-scheme" content="dark">
+
+        <meta charset="UTF-8">
+
+        <link rel="stylesheet" href="../../src/output.css">
+        <link rel="stylesheet" href="../../src/styles/custom.css">
+
+        <link rel="icon" href="../../src/favicon.png" type="image/png">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    </head>
+    <body class="bg-dark-1 text-cwhite">
+        <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
+        <main class="flex flex-col h-min hidden" id="main">
+            <div id="selected_content" class="flex-grow p-8 lg:pt-24 pt-12 lg:pl-[15vw] lg:pr-[25vw] h-full">
+                <div class="flex flex-wrap mb-5">
+                    <button onclick="nav_user()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold" id="username_field"></button>
+                    <button onclick="view_members()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Members</button>
+                    <button onclick="view_exams()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Exams</button>
+                    <button id="create_exam_btn" onclick="create_exam()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold hidden">Create Exam</button>
+                    <button id="view_settings_btn" onclick="view_settings()" class="h-9 px-5 mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold hidden">Settings</button>
+                </div>
+
+                <div class="mb-10">
+                    <h4 id="work_display" class="font-display mb-1 font-bold text-xl"></h4>
+                    <p class="font-body text-twhite2">
+                        <span id="work_user" class="mr-1"></span>
+                        <span class="mr-1">/</span>
+                        <span id="work_url"></span>
+                    </p>
+                </div>
+                
+            </div>
+        </main>
+    </body>
+</html>
