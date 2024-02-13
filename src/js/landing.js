@@ -11,7 +11,7 @@ function nav_loginsignup() {
 }
 
 function nav_viewdocuments() {
-    window.location.href = 'https://diamond-range-a70.notion.site/API-Documentation-05975f405fa64aba85871eb976e63832';
+    window.location.href = 'https://carpaltunnel.notion.site/About-the-project-375b56b34c8c44b8b5d233be4a36e9a5?pvs=73';
 }
 
 function nav_viewrepository() {
