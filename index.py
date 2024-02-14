@@ -6,7 +6,6 @@ import re
 import os
 from supabase import create_client, Client
 from datetime import datetime, timezone
-from flask_socketio import SocketIO, emit, send
 
 load_dotenv()
 
@@ -22,7 +21,6 @@ password_salt_2 = os.getenv("password_salt_2")
 supabase: Client = create_client(supabase_url, supabase_key)
 
 app = Flask(__name__)
-socketio = SocketIO(app)
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -663,15 +661,12 @@ def handle_exam_build(creator_username, url):
 
     return jsonify({'success': 'Exam: Questions added successfully'})
 
-@socketio.on('exam_access', namespace='/ws/exams/access')
-def handle_exam_access(json):
-    token = json.get('token')
-    exam_id = json.get('value')
+@app.route('/api/exams/<string:creator_username>/<string:url>/access.json', methods=['POST'])
+def handle_exam_access(creator_username, url):
+    data = request.get_json()
 
-    creator_username = json.get('creator_username')
-    url = json.get('url')
-
-    print("Success!! Your request reached the server 🥳 " + token)
+    token = data.get('token')
+    exam_id = data.get('value')
 
     user_data = supabase.table('users_data').select('user_id', 'username').eq('token', token).execute().data
     
@@ -687,12 +682,8 @@ def handle_exam_access(json):
     ]
 
     for condition in conditions:
-        if condition[0]:
-            error_message = {'error': condition[1], 'message': condition[2]}
-            emit('error', error_message, json=True, namespace='/ws/exams/access')
-            print("Oh Shit!! Something went wrong in the code. ⚠️")
-            raise ValueError(f"Error: {error_message}")
-
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+    
     work_query = supabase.table('work_data').select('work_id', 'display').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
     work_display = work_query.data[0]['display'] if work_query.data else None
@@ -716,11 +707,7 @@ def handle_exam_access(json):
     ]
 
     for condition in conditions:
-        if condition[0]:
-            error_message = {'error': condition[1], 'message': condition[2]}
-            emit('error', error_message, json=True, namespace='/ws/exams/access')
-            print("Oh Shit!! Something went wrong in the code. ⚠️")
-            raise ValueError(f"Error: {error_message}")
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
     questions_data = supabase.table('questions_data').select('question_order', 'content', 'description', 'type', 'question_id').eq('exam_id', exam_id).execute().data
 
@@ -746,7 +733,6 @@ def handle_exam_access(json):
         formatted_session = {"status": session_data.get('status'), "username": student_username, "session_id": session_data.get('session_id')}
         student_sessions.append(formatted_session)
 
-
     if user_role == "member":    
         response_data = {
             'work_display': work_display,
@@ -766,9 +752,7 @@ def handle_exam_access(json):
             'sessions': student_sessions
         }
 
-    emit('response', response_data, json=True, namespace="/ws/exams/access")
-    
-
+    return jsonify(response_data)
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/start.json', methods=['POST'])
 def handle_exam_start(creator_username, url):
