@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 function load_workhomedotjson() {
-    const username_field = document.getElementById("username_field")
+    const username_fields = document.querySelectorAll(".username_field")
     const work_user = document.getElementById("work_user")
     const work_url = document.getElementById("work_url")
     const work_display = document.getElementById("work_display")
@@ -55,8 +55,11 @@ function load_workhomedotjson() {
                 window.location.href = '/home';
 
             } else {
-                console.info("User authenticated successfully as " + data.username)
-                username_field.textContent = data.username;
+                username = data.username;
+                console.info("User authenticated successfully as " + username)
+                username_fields.forEach(username_field => {
+                    username_field.textContent = username;
+                })
                 work_display.textContent = data.display;
 
                 work_user.textContent = creator_username;
@@ -73,9 +76,9 @@ function load_workhomedotjson() {
                 const user_id = data.user_id;
                 const user_role = data.user_role;
 
-                if (user_role == "superuser") {
-                    create_exam_btn.style.display = "block";
-                    view_settings_btn.style.display = "block";
+                if (user_role !== "superuser") {
+                    create_exam_btn.style.display = "none";
+                    view_settings_btn.style.display = "none";
                 }
 
                 anyClones = document.querySelectorAll('[data-origin="clone"]') 
@@ -135,8 +138,9 @@ function load_workhomedotjson() {
                     examsDiv.appendChild(examClone);
                 });
 
-                main.style.display = "block"
+                main.style.display = "flex"
                 loading.style.display = "none"
+                document.title = username + " - Chalk"
             }
         })
         .catch(error => {
@@ -292,6 +296,11 @@ function create_exam() {
     create_exam.style.display = "block";
 
     load_workhomedotjson()
+}
+
+function logout() {
+    removeCookie("token")
+    window.location.href = '/login';
 }
 
 function nav_user() {

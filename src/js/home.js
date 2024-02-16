@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
 function load_homedotjson() {
     const workspaceDiv = document.getElementById("workspace");
     const workspacesDiv = document.getElementById("workspaces");
-    const username_field = document.getElementById("username_field")
+    const username_fields = document.querySelectorAll(".username_field")
 
     const loading = document.getElementById("loading")
     const main = document.getElementById("main")
@@ -38,9 +38,11 @@ function load_homedotjson() {
                 window.location.href = '/login';
                 removeCookie("token");
             } else {
-                console.info("User authenticated successfully as " + data.username)
                 username = data.username;
-                username_field.textContent = username;
+                console.info("User authenticated successfully as " + username)
+                username_fields.forEach(username_field => {
+                    username_field.textContent = username;
+                })
 
                 const workspaces_data = data.workspaces;
                 const workspaceClones = workspacesDiv.querySelectorAll('[data-origin="clone"]')
@@ -66,8 +68,9 @@ function load_homedotjson() {
 
                 });
 
-                main.style.display = "block"
+                main.style.display = "flex"
                 loading.style.display = "none"
+                document.title = username + " - Chalk"
 
             }
         })

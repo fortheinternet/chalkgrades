@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>chalk - home</title>
+        <title>please wait :/</title>
         <meta name="description" content="This page should not show up in search results, therefore no one will see this message. If anyone does see it, I hope you're well?">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="color-scheme" content="dark">
@@ -14,23 +14,33 @@
         <link rel="icon" href="../../src/favicon.png" type="image/png">
         <script src="../../src/js/home.js"></script>
     </head>
-    <body class="bg-dark-1 text-cwhite">
+    <body class="bg-dark-1">
         <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
-        <main class="flex flex-col h-min hidden" id="main">
-            <div id="selected_content" class="flex-grow p-8 lg:pt-24 pt-12 lg:pl-[15vw] lg:pr-[25vw] h-full">
-
-                <div class="flex flex-wrap mb-5">
-                    <button onclick="view_workspaces()" class="h-9 px-5 sm:mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold" id="username_field"></button>
-                    <button onclick="create_new_workspace()" class="h-9 px-5 sm:mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Create Workspace</button>
-                    <button onclick="join_new_workspace()" class="h-9 px-5 sm:mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Join Workspace</button>
-                    <button onclick="logout()" class="h-9 px-5 sm:mr-5 mb-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Log out</button>
+        <main class="flex flex-col h-screen hidden" id="main">
+            <div id="navbar" class="bg-dark-1c pt-5 px-5 lg:pl-[20vw] lg:pr-[20vw] flex flex-wrap md:justify-between border-solid border-b-2 border-twhite10">
+                <div class="md:block hidden">
+                    <button onclick="view_workspaces()" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold username_field"></button>
+                    <button onclick="create_new_workspace()" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Create Workspace</button>
+                    <button onclick="join_new_workspace()" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Join Workspace</button>
                 </div>
-
-                
+                <button onclick="view_workspaces()" class="md:hidden block mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold username_field"></button>
+                <button onclick="logout()" class="mb-5 h-9 px-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Log out</button>
+            </div>
+            <div id="selected_content" class="flex-grow px-8 py-12 lg:pl-[20vw] lg:pr-[20vw]">
                 <div id="workspaces_wrap">
                     <h4 class="font-display mb-2 font-bold text-2xl">Workspaces</h4>
-                    <p class="font-body mb-6 text-[14px] w-full">Workspaces are for classes you attend. You must have an access credential to create a workspace.</p>
-                    <div id="workspaces" class="p-6 rounded-xl border-solid border-dark-1a border-2 grid grid-cols-1 gap-6 max-w-full">
+                    <p class="font-body mb-4 text-[14px] w-full">
+                        <span class="md:block hidden">
+                            Workspaces are for classes you attend. You must have an access credential to create a workspace.
+                        </span>    
+                        <span class="md:hidden block">
+                            Looking to join a workspace? You can 
+                            <a onclick="create_new_workspace()" class="text-enabled cursor-pointer">create a new one</a>
+                            if you have an access key, or
+                            <a onclick="join_new_workspace()" class="text-enabled cursor-pointer">join an existing class.</a>
+                        </span>
+                    </p>
+                    <div id="workspaces" class="p-6 rounded-xl border-solid border-twhite10 border-2 grid grid-cols-1 gap-6 max-w-full">
                         <div id="workspace" class="hidden flex flex-row items-center">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="sm:block hidden">
                                 <path d="M2 16H11V11H16V2H2V16ZM2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2V12L12 18H2ZM4 11V9H9V11H4ZM4 7V5H14V7H4Z" fill="white"/>
@@ -93,6 +103,13 @@
 
                     <button onclick="join_submit()" class="h-10 px-5 mb-6 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Join workspace</button>
                 </div>
+            </div>
+            <div>
+                <p class="text-twhite2 m-8 select-none">
+                    <a href="https://github.com/thelocaltemp/chalkgrades/blob/main/docs/privacy.md" class="mr-5">Privacy Policy</a>
+                    <a href="http://carpaltunnel.notion.site/About-the-project-375b56b34c8c44b8b5d233be4a36e9a5?pvs=73" class="mr-5">View documentation</a>
+                    <a href="https://github.com/thelocaltemp/chalkgrades" class="mr-5">GitHub repository</a>
+                </p>
             </div>
         </main>
     </body>
