@@ -35,7 +35,7 @@ function load_workhomedotjson() {
     const loading = document.getElementById("loading")
     const main = document.getElementById("main")
 
-    fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/home.json`, {
+    fetch(`http://localhost:3000/api/work/${creator_username}/${url}/home.json`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ function load_workhomedotjson() {
                 removeCookie("token");
 
             } else if (data.error == "w-mal-25-11") {
-                window.location.href = 'https://en.wikipedia.org/wiki/HTTP_404';
+                window.location.href = 'http://en.wikipedia.org/wiki/HTTP_404';
 
             } else if (data.error == "w-mal-26") {
                 window.location.href = '/home';
@@ -140,7 +140,7 @@ function load_workhomedotjson() {
 
                 main.style.display = "flex"
                 loading.style.display = "none"
-                document.title = username + " - Chalk"
+                document.title = data.display + " - Chalk"
             }
         })
         .catch(error => {
@@ -172,7 +172,7 @@ function remove_member(element) {
             value: identifier
         }
     
-        fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/settings.json`, {
+        fetch(`http://localhost:3000/api/work/${creator_username}/${url}/settings.json`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -217,7 +217,7 @@ function create_submit() {
 
     const examData = {token: getCookie("token"), exam_name: createDisplay.value};
 
-    fetch(`https://chalkgrades.vercel.app/api/exams/${creator_username}/${url}/create.json`, {
+    fetch(`http://localhost:3000/api/exams/${creator_username}/${url}/create.json`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
