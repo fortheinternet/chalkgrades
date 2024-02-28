@@ -97,26 +97,31 @@ function load_workhomedotjson() {
                     const memberClone = memberDiv.cloneNode(true);
                     memberClone.style.display = "flex";
 
+                    memberClone.dataset.identifier = selected_user_id;
+
                     memberClone.querySelector("#member_user").textContent = username;
                     memberClone.querySelector("#member_role").textContent = selected_role;
 
-                    memberClone.dataset.identifier = selected_user_id;
                     memberClone.dataset.origin = "clone";
 
                     if(user_role == "superuser") {
                         if(user_id == selected_user_id) {
                             memberClone.querySelector("#member_rm_span").textContent = "can't remove member";
                             memberClone.querySelector("#member_rm_lnk").dataset.action = "na";
+                            memberClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
                         } else {
                             memberClone.querySelector("#member_rm_span").textContent = "remove member";
                             memberClone.querySelector("#member_rm_lnk").dataset.action = "remove_member";
+                            memberClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
                         }
                     } else { 
                         if(user_id == selected_user_id) {
                             memberClone.querySelector("#member_rm_span").textContent = "leave workspace";
                             memberClone.querySelector("#member_rm_lnk").dataset.action = "leave";
+                            memberClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
                         } else {
                             memberClone.querySelector("#member_rm_span").textContent = "";
+                            memberClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
                         }
                     }
 
