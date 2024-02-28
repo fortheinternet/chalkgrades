@@ -15,16 +15,16 @@
         <script src="../../src/js/login.js"></script>
 
     </head>
-    <body class="bg-dark-1 text-cwhite">
+    <body class="bg-background text-cwhite">
         <main class="flex flex-col h-full">
-            <div id="top_section" class="border-b-2 border-twhite10 border-solid flex min-h-0 max-h-fit p-8">
+            <div id="top_section" class="border-b-2 border-transparent-100 border-solid flex min-h-0 max-h-fit p-8">
                 <div class="h-max lg:w-[400px] lg:mr-8 md:w-1/2 md:mr-8 w-full mr-0" id="login">
                     <h6 class="font-display mb-2 font-bold text-xl">Log in</h6>
                     <p class="font-body mb-6 text-[14px] lg:w-[400px] w-full" id="login_errors"></p>
 
                     <p class="font-body font-bold mb-1">Username</p>
                     <p class="font-body text-[14px] mb-3 lg:w-[400px] w-full">This is usually your full name with underscores.</p>
-                    <input type="text" id="login_username" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-twhite3">
+                    <input type="text" id="login_username" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-transparent-750">
 
                     <p class="font-body font-bold mb-1">Password</p>
                     <p class="font-body text-[14px] mb-3 lg:w-[400px] w-full">
@@ -32,12 +32,12 @@
 
                         <a href="https://twitter.com/Earth_Updates/status/1736912737064681944" class="text-enabled cursor-pointer">reset your password.</a>
                     </p>
-                    <input type="password" id="login_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-twhite3">
+                    <input type="password" id="login_password" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-transparent-750">
 
                     <p></p>
 
-                    <button onclick="login_submit()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Submit details</button>
-                    <button onclick="nav_viewsignup()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-transparent border-twhite border-dashed border-2 rounded-md font-semibold block md:hidden">Create an account instead</button>
+                    <button onclick="login_submit()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-enabled border-enabled border-solid border-2 hover:border-disabled rounded-md font-semibold">Submit details</button>
+                    <button onclick="nav_viewsignup()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-transparent border-transparent-250 border-solid border-2 rounded-md font-semibold block md:hidden">Create an account instead</button>
                 </div>
                 <div class="h-max lg:w-[400px] lg:mr-8 md:w-1/2 md:mr-8 w-full mr-0 hidden md:block" id="signups">
                     <h6 class="font-display mb-2 font-bold text-xl">Create a new account</h6>
@@ -45,24 +45,24 @@
 
                     <p class="font-body font-bold mb-1">Username</p>
                     <p class="font-body text-[14px] mb-3 lg:w-[400px] w-full">You cannot change this value later.</p>
-                    <input type="text" id="signup_username" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-twhite3">
+                    <input type="text" id="signup_username" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-transparent-750">
 
                     <p class="font-body font-bold mb-1">Password</p>
                     <p class="font-body text-[14px] mb-3 lg:w-[400px] w-full">Be sure it's something unique, and not hard to memorize.</p>
-                    <input type="password" id="signup_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-twhite3">
+                    <input type="password" id="signup_password" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-transparent-750">
 
                     <p class="font-body font-bold mb-1">Repeat password</p>
                     <p class="font-body text-[14px] mb-3 lg:w-[400px] w-full">Just repeat the value above.</p>
-                    <input type="password" id="signup_repassword" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-twhite3">
+                    <input type="password" id="signup_repassword" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-transparent-750">
 
                     <p class="font-body font-bold mb-1">Access credential</p>
                     <p class="font-body text-[14px] mb-3 lg:w-[400px] w-full">Look up from the tablet! It's likely on the whiteboard.</p>
-                    <input type="text" id="signup_access" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-twhite3">
+                    <input type="text" id="signup_access" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 lg:w-[400px] w-full outline-none rounded-md text-transparent-750">
 
                     <p></p>
 
-                    <button onclick="signup_submit()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Create new account</button>
-                    <button onclick="nav_viewlogin()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-transparent border-twhite border-dashed border-2 rounded-md font-semibold block md:hidden">Log in to an existing account</button>
+                    <button onclick="signup_submit()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-enabled border-enabled border-solid border-2 hover:border-disabled rounded-md font-semibold">Create new account</button>
+                    <button onclick="nav_viewlogin()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-transparent border-transparent-250arent-250arent-250 border-solid border-2 rounded-md font-semibold block md:hidden">Log in to an existing account</button>
                 </div>
             </div>
         </main>

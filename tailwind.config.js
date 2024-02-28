@@ -6,28 +6,19 @@ module.exports = {
     fontFamily: {
       display: ['Inter', 'system-ui', 'sans-serif'],
       body: ['Inter', 'system-ui', 'sans-serif'],
+      navigation: ['monospace'],
     },
     colors: {
-      'transparent0': '#ffffff00',
-      'cwhite': '#ffffff',
-      'twhite10': '#ffffff10',
-      'twhite': '#ffffff25',
-      'twhite2': '#ffffff50',
-      'twhite3': '#ffffff75',
-      'cblack': '#000000',
-      'dark-1': '#0E0C0B',
-      'dark-1a': '#282828',
-      'dark-1c': '#0C0A09',
-      'dark-2': '#101010',
-      'accent-1': '#d7e4dc',
-      'accent-2': '#c20002',
-      'primary': '#155831',
+      'transparent-100': '#ffffff10',
+      'transparent-250': '#ffffff25',
+      'transparent-500': '#ffffff50',
+      'transparent-750': '#ffffff75',
+      'accent': '#d7e4dc',
       'enabled': '#7189ff',
       'disabled': '#5567c0',
-      'success': '#25f87c',
-      'warning': '#ff3d40',
+      'border': '#0C0A09',
+      'background': '#09090b'
     }
   },
   plugins: [],
 }
-

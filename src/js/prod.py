@@ -30,4 +30,7 @@ if __name__ == "__main__":
     current_directory = os.path.dirname(os.path.realpath(__file__))
     mode = str(input("What environment would you like to replace all JS server URLs with? | "))
 
-    process_js_files(current_directory)
+    if mode not in ["prod", "dev", "Development", "Production"]:
+        print("You entered a wrong string you silly.")
+    else:
+        process_js_files(current_directory)

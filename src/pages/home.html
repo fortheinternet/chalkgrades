@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>please wait</title>
+        <title>loading, please wait</title>
         <meta name="description" content="This page should not show up in search results, therefore no one will see this message. If anyone does see it, I hope you're well?">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="color-scheme" content="dark">
@@ -14,33 +14,23 @@
         <link rel="icon" href="../../src/favicon.png" type="image/png">
         <script src="../../src/js/home.js"></script>
     </head>
-    <body class="bg-dark-1">
-        <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
-        <main class="flex flex-col h-screen hidden" id="main">
-            <div id="navbar" class="bg-dark-1c pt-5 px-5 lg:pl-[20vw] lg:pr-[20vw] flex flex-wrap md:justify-between border-solid border-b-2 border-twhite10">
-                <div class="md:block hidden">
-                    <button onclick="view_workspaces()" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold username_field"></button>
-                    <button onclick="create_new_workspace()" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Create Workspace</button>
-                    <button onclick="join_new_workspace()" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Join Workspace</button>
-                </div>
-                <button onclick="view_workspaces()" class="md:hidden block mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold username_field"></button>
-                <button onclick="logout()" class="mb-5 h-9 px-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Log out</button>
+    <body class="bg-background">
+        <main class="flex flex-col h-screen hidden" id="main">            
+            <div id="navbar" class="bg-background sticky top-0 overflow-x-auto min-h-[50px] py-3 px-8 lg:pl-[20vw] lg:pr-[20vw] border-solid border-b-2 border-transparent-100 flex flex-row  whitespace-nowrap text-[16px] select-none items-center">
+                <p class="mr-6 text-transparent-750 username_field"></p>
+                <a onclick="view_workspaces()" class="mr-6 cursor-pointer">Your Workspaces</a>
+                <a onclick="join_new_workspace()" class="mr-6 cursor-pointer">Join Workspace</a>
+                <a onclick="create_new_workspace()" class="mr-6 cursor-pointer">Create New Workspace</a>
+                <a onclick="logout()" class="cursor-pointer">Log out</a>
             </div>
             <div id="selected_content" class="flex-grow px-8 py-12 lg:pl-[20vw] lg:pr-[20vw]">
                 <div id="workspaces_wrap">
                     <h4 class="font-display mb-2 font-bold text-2xl">Workspaces</h4>
-                    <p class="font-body mb-4 text-[14px] w-full">
-                        <span class="md:block hidden">
-                            Workspaces are for classes you attend. You must have an access credential to create a workspace.
-                        </span>    
-                        <span class="md:hidden block">
-                            Looking to join a workspace? You can 
-                            <a onclick="create_new_workspace()" class="text-enabled cursor-pointer">create a new one</a>
-                            if you have an access key, or
-                            <a onclick="join_new_workspace()" class="text-enabled cursor-pointer">join an existing class.</a>
-                        </span>
+                    <p class="font-body mb-6 text-[14px] w-full">
+                        Workspaces are for classes you attend. You must have an access credential to create a workspace.
                     </p>
-                    <div id="workspaces" class="p-6 rounded-xl border-solid border-twhite10 border-2 grid grid-cols-1 gap-6 max-w-full">
+                    <div class="h-[1px] w-full bg-transparent-100"></div>
+                    <div id="workspaces" class="p-6 rounded-md grid grid-cols-1 gap-6 max-w-full">
                         <div id="workspace" class="hidden flex flex-row items-center">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="sm:block hidden">
                                 <path d="M2 16H11V11H16V2H2V16ZM2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2V12L12 18H2ZM4 11V9H9V11H4ZM4 7V5H14V7H4Z" fill="white"/>
@@ -50,7 +40,7 @@
                                     <span id="workspace_display"></span>
                                 </a>
     
-                                <p class="font-body text-twhite2">
+                                <p class="font-body text-transparent-500">
                                     <span id="workspace_creator"></span> / <span id="workspace_url"></span>
                                 </p>
                             </div>
@@ -64,23 +54,23 @@
 
                     <p class="font-body font-bold mb-1">Display Name</p>
                     <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">Can contain any amount of any character. Is used to quickly identify a class.</p>
-                    <input type="text" id="create_display" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
+                    <input type="text" id="create_display" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-transparent-750">
 
                     <p class="font-body font-bold mb-1">Workspace Resource</p>
                     <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">A simple, easy-to-remember number or word that is used to interact with the workspace.</p>
-                    <input type="text" id="create_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
+                    <input type="text" id="create_url" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-transparent-750">
 
                     <p class="font-body font-bold mb-1">Password</p>
                     <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">It's a secret! You can provide this to your students, and is used to join the class.</p>
-                    <input type="password" id="create_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
+                    <input type="password" id="create_password" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-transparent-750">
 
                     <p class="font-body font-bold mb-1">Access credential</p>
                     <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">Is a *top-sneaky* parameter, used to keep the database size below 500MB. If you are a teacher, you can email me for this value.</p>
-                    <input type="text" id="create_access" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
+                    <input type="password" id="create_access" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-transparent-750">
 
                     <p></p>
 
-                    <button onclick="create_submit()" class="h-10 px-5 mb-6 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Create new workspace</button>
+                    <button onclick="create_submit()" class="h-10 px-5 mb-6 bg-enabled border-enabled border-solid border-2 hover:border-disabled rounded-md font-semibold">Create new workspace</button>
                 </div>
 
                 <div id="join_workspace" class="hidden">
@@ -89,27 +79,20 @@
 
                     <p class="font-body font-bold mb-1">Teacher's username</p>
                     <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">This is generally the username of the head teacher, or the peson who created the class.</p>
-                    <input type="text" id="join_superuser" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
+                    <input type="text" id="join_superuser" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-transparent-750">
 
                     <p class="font-body font-bold mb-1">Workspace Resource</p>
                     <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">A simple, easy-to-remember number or word that is used to interact with the workspace.</p>
-                    <input type="text" id="join_url" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
+                    <input type="text" id="join_url" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-transparent-750">
 
                     <p class="font-body font-bold mb-1">Password</p>
                     <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">This value will be provided by your teacher when joining the class. It is possible that there is no password.</p>
-                    <input type="password" id="join_password" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
+                    <input type="password" id="join_password" class="bg-background border-solid border-2 border-transparent-250 h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-transparent-750">
 
                     <p></p>
 
-                    <button onclick="join_submit()" class="h-10 px-5 mb-6 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Join workspace</button>
+                    <button onclick="join_submit()" class="h-10 px-5 mb-6 bg-enabled border-enabled border-solid border-2 hover:border-disabled rounded-md font-semibold">Join workspace</button>
                 </div>
-            </div>
-            <div>
-                <p class="text-twhite2 m-8 select-none">
-                    <a href="https://github.com/thelocaltemp/chalkgrades/blob/main/docs/privacy.md" class="mr-5">Privacy Policy</a>
-                    <a href="http://carpaltunnel.notion.site/About-the-project-375b56b34c8c44b8b5d233be4a36e9a5?pvs=73" class="mr-5">View documentation</a>
-                    <a href="https://github.com/thelocaltemp/chalkgrades" class="mr-5">GitHub repository</a>
-                </p>
             </div>
         </main>
     </body>

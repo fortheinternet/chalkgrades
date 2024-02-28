@@ -23,16 +23,12 @@ function load_workhomedotjson() {
     const currentUrl = window.location.href;
     const urlParts = currentUrl.split('/');
 
-    const create_exam_btn = document.getElementById("create_exam_btn")
-    const view_settings_btn = document.getElementById("view_settings_btn")
-
     const creator_username = urlParts[urlParts.length - 2];
     const url = urlParts[urlParts.length - 1];
 
     const user_token = getCookie("token")
     const userData = {token: user_token}
 
-    const loading = document.getElementById("loading")
     const main = document.getElementById("main")
 
     fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/home.json`, {
@@ -49,7 +45,7 @@ function load_workhomedotjson() {
                 removeCookie("token");
 
             } else if (data.error == "w-mal-25-11") {
-                window.location.href = 'http://en.wikipedia.org/wiki/HTTP_404';
+                window.location.href = 'https://en.wikipedia.org/wiki/HTTP_404';
 
             } else if (data.error == "w-mal-26") {
                 window.location.href = '/home';
@@ -76,9 +72,17 @@ function load_workhomedotjson() {
                 const user_id = data.user_id;
                 const user_role = data.user_role;
 
-                if (user_role !== "superuser") {
-                    create_exam_btn.style.display = "none";
-                    view_settings_btn.style.display = "none";
+                console.table([
+                    ["members_data", members_data],
+                    ["exams_data", exams_data],
+                    ["user_id", user_id],
+                    ["user_role", user_role]
+                ])
+                
+                const view_settings_btn = document.getElementById("view_settings_btn")
+
+                if (user_role == "superuser") {
+                    view_settings_btn.style.display = "block";
                 }
 
                 anyClones = document.querySelectorAll('[data-origin="clone"]') 
@@ -126,7 +130,7 @@ function load_workhomedotjson() {
                     const { display_name, exam_id, visibility} = exam;
 
                     const examClone = examDiv.cloneNode(true);
-                    examClone.style.display = "block";
+                    examClone.style.display = "flex";
 
                     examClone.querySelector("#exam_display").textContent = display_name;
                     examClone.querySelector("#exam_visibility").textContent = visibility;
@@ -139,7 +143,6 @@ function load_workhomedotjson() {
                 });
 
                 main.style.display = "flex"
-                loading.style.display = "none"
                 document.title = data.display + " - Chalk"
             }
         })
@@ -246,12 +249,10 @@ function view_members() {
     const view_members = document.getElementById("view_members");
     const view_exams = document.getElementById("view_exams");
     const view_settings = document.getElementById("view_settings");
-    const create_exam = document.getElementById("create_exam");
-
+    
     view_members.style.display = "block";
     view_exams.style.display = "none";
     view_settings.style.display = "none";
-    create_exam.style.display = "none";
 
     load_workhomedotjson()
 }
@@ -265,7 +266,7 @@ function view_settings() {
     view_members.style.display = "none";
     view_exams.style.display = "none";
     view_settings.style.display = "block";
-    create_exam.style.display = "none";
+    create_exam.style.display = "block";
 
     load_workhomedotjson()
 }
@@ -274,26 +275,10 @@ function view_exams() {
     const view_members = document.getElementById("view_members");
     const view_exams = document.getElementById("view_exams");
     const view_settings = document.getElementById("view_settings");
-    const create_exam = document.getElementById("create_exam");
 
     view_members.style.display = "none";
     view_exams.style.display = "block";
     view_settings.style.display = "none";
-    create_exam.style.display = "none";
-
-    load_workhomedotjson()
-}
-
-function create_exam() {
-    const view_members = document.getElementById("view_members");
-    const view_exams = document.getElementById("view_exams");
-    const view_settings = document.getElementById("view_settings");
-    const create_exam = document.getElementById("create_exam");
-
-    view_members.style.display = "none";
-    view_exams.style.display = "none";
-    view_settings.style.display = "none";
-    create_exam.style.display = "block";
 
     load_workhomedotjson()
 }

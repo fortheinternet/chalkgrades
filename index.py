@@ -297,42 +297,54 @@ def handle_work_home(creator_username, url):
     if user_role == "member":
         exams_data = supabase.table("exams_data").select('exam_id').eq('work_id', work_id).eq('visibility', "public").execute()
         exam_ids = exams_data.data
-
-        exams = []
-        for exam in exam_ids:
-            exam_id = exam.get('exam_id')
-
-            result = supabase.table('exams_data').select('display_name','visibility').eq('exam_id', exam_id).execute()
-
-            exam_name = result.data[0]['display_name'] if result.data else None
-            visibility = result.data[0]['visibility'] if result.data else None
-
-            exams.append({
-                'display_name': exam_name,
-                'visibility': visibility,
-                'exam_id': exam_id
-            })
-            
+    
     elif user_role == "superuser":
         exams_data = supabase.table("exams_data").select('exam_id').eq('work_id', work_id).execute()
         exam_ids = exams_data.data
-
-        exams = []
-        for exam in exam_ids:
-            exam_id = exam.get('exam_id')
-
-            result = supabase.table('exams_data').select('display_name','visibility').eq('exam_id', exam_id).execute()
-
-            exam_name = result.data[0]['display_name'] if result.data else None
-            visibility = result.data[0]['visibility'] if result.data else None
-
-            exams.append({
-                'display_name': exam_name,
-                'visibility': visibility,
-                'exam_id': exam_id
-            })
             
-    return jsonify({'display': display, 'username': username, 'user_id': user_id, 'user_role': user_role, 'members': members_response, 'exams': exams})
+    exams = []
+    for exam in exam_ids:
+        exam_id = exam.get('exam_id')
+
+        result = supabase.table('exams_data').select('display_name','visibility').eq('exam_id', exam_id).execute()
+
+        exam_name = result.data[0]['display_name'] if result.data else None
+        visibility = result.data[0]['visibility'] if result.data else None
+
+        exams.append({
+            'display_name': exam_name,
+            'visibility': visibility,
+            'exam_id': exam_id
+        })
+
+    # REALTIME
+    existing_row = supabase.table('realtime_pages').select('*').eq('work_id', work_id).execute().data
+
+    if existing_row:
+        realtime_access = existing_row[0]['access']
+        realtime_reference = existing_row[0]['reference']
+    else:
+        realtime_access = None
+        while not realtime_access or supabase.table('realtime_pages').select('access').eq('access', realtime_access).execute().data:
+            realtime_access = random.randint(10**15, (10**16)-1)
+    
+        realtime_reference = None
+        while not realtime_reference or supabase.table('realtime_pages').select('reference').eq('reference', realtime_reference).execute().data:
+            realtime_reference = random.randint(10**15, (10**16)-1)
+    
+        supabase.table('realtime_pages').insert({'work_id': work_id, 'reference': realtime_reference, 'access': realtime_access}).execute()
+
+    response = ({
+        'display': display,
+        'username': username,
+        'user_id': user_id,
+        'user_role': user_role,
+        'members': members_response,
+        'exams': exams,
+        'realtime_access': realtime_access 
+    })
+
+    return jsonify(response)
 
 @app.route('/api/work/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
 def handle_work_settings(creator_username, url):
@@ -661,8 +673,8 @@ def handle_exam_build(creator_username, url):
 
     return jsonify({'success': 'Exam: Questions added successfully'})
 
-@app.route('/api/exams/<string:creator_username>/<string:url>/access.json', methods=['POST'])
-def handle_exam_access(creator_username, url):
+@app.route('/api/exams/<string:creator_username>/<string:url>/home.json', methods=['POST'])
+def handle_exam_home(creator_username, url):
     data = request.get_json()
 
     token = data.get('token')
@@ -751,6 +763,18 @@ def handle_exam_access(creator_username, url):
             'questions': formatted_questions,
             'sessions': student_sessions
         }
+
+    # REALTIME
+        
+    realtime_access = None
+    while not realtime_access or supabase.table('realtime_pages').select('access').eq('access', realtime_access).execute().data:
+        realtime_access = random.randint(10**15, (10**16)-1)
+
+    realtime_reference = None
+    while not realtime_access or supabase.table('realtime_pages').select('reference').eq('reference', realtime_reference).execute().data:
+        realtime_reference = random.randint(10**15, (10**16)-1)
+
+    supabase.table('realtime_pages').insert({'exam_id': exam_id, 'reference': realtime_reference, 'access': realtime_access}).execute()
 
     return jsonify(response_data)
 

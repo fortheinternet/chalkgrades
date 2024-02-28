@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>please wait</title>
+        <title>loading, please wait</title>
         <meta name="description" content="This page should not show up in search results, therefore no one will see this message. If anyone does see it, I hope you're well?">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="color-scheme" content="dark">
@@ -14,28 +14,19 @@
         <link rel="icon" href="../../src/favicon.png" type="image/png">
         <script src="../../src/js/work_home.js"></script>
     </head>
-    <body class="bg-dark-1">
-        <p class="text-twhite2 m-8" id="loading">Loading, please wait..</p>
+    <body class="bg-background">
         <main class="flex flex-col h-screen hidden" id="main">
-            <div id="navbar" class="bg-dark-1c pt-5 px-5 lg:pl-[20vw] lg:pr-[20vw] flex flex-wrap md:justify-between border-solid border-b-2 border-twhite10">
-                <div class="md:block hidden">
-                    <button onclick="nav_user()" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold username_field"></button>            
-                    <button onclick="view_members()" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Members</button>
-                    <button onclick="view_exams()" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Exams</button>
-                    <button onclick="view_settings()" id="view_settings_btn" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Settings</button>    
-                </div>
-                <div class="md:block hidden">
-                    <button onclick="create_exam()" id="create_exam_btn" class="mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Create Exam</button>
-                    <button onclick="logout()" class="h-9 px-5 mb-5 w-max text-left bg-twhite10 rounded-full font-semibold">Log out</button>
-                </div>
-                <button onclick="nav_user()" class="md:hidden block mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold username_field"></button>            
-                <button onclick="view_members()" class="md:hidden block mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Members</button>
-                <button onclick="view_exams()" class="md:hidden block mb-5 h-9 px-5 sm:mr-5 w-full sm:w-max text-left bg-twhite10 rounded-full font-semibold">Exams</button>
+            <div id="navbar" class="bg-background sticky top-0 overflow-x-auto min-h-[50px] py-3 px-8 lg:pl-[20vw] lg:pr-[20vw] border-solid border-b-2 border-transparent-100 flex flex-row  whitespace-nowrap text-[16px] select-none items-center">
+                <a onclick="nav_user()" class="mr-6 text-transparent-750 cursor-pointer username_field"></a>
+                <a onclick="view_members()" class="mr-6 cursor-pointer">Members</a>
+                <a onclick="view_exams()" class="mr-6 cursor-pointer">Exams</a>
+                <a onclick="view_settings()" class="mr-6 cursor-pointer hidden" id="view_settings_btn">Settings</a>
             </div>
+
             <div id="selected_content" class="flex-grow px-8 py-12 lg:pl-[20vw] lg:pr-[20vw]">
                 <div class="mb-10">
                     <h4 id="work_display" class="font-display mb-1 font-bold text-xl"></h4>
-                    <p class="font-body text-twhite2">
+                    <p class="font-body text-transparent-500">
                         <span id="work_user" class="mr-1"></span>
                         <span class="mr-1">/</span>
                         <span id="work_url"></span>
@@ -44,75 +35,67 @@
 
                 <div id="view_members">
                     <h4 class="font-display font-bold text-xl mb-1">Members</h4>
-                    <p class="font-body text-[14px] mb-7 w-full">
+                    <p class="font-body text-[14px] mb-1 w-full">
                         Don't see everyone? It's possible that they left, or are not loaded yet. You can
 
-                        <a onclick="load_workhomedotjson()" class="text-enabled cursor-pointer">refresh the page.</a>
+                        <a onclick="load_workhomedotjson()" class="text-enabled cursor-pointer">refresh the page. </a>
                     </p>
-                    <div id="members" class="p-6 rounded-xl border-solid border-twhite10 border-2 grid grid-cols-1 gap-6 max-w-full">
-                        <div id="member" class="hidden flex flex-row items-center">
-                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="sm:block hidden">
-                                <path d="M15.5 11C15.9167 11 16.2708 10.8542 16.5625 10.5625C16.8542 10.2708 17 9.91667 17 9.5C17 9.08333 16.8542 8.72917 16.5625 8.4375C16.2708 8.14583 15.9167 8 15.5 8C15.0833 8 14.7292 8.14583 14.4375 8.4375C14.1458 8.72917 14 9.08333 14 9.5C14 9.91667 14.1458 10.2708 14.4375 10.5625C14.7292 10.8542 15.0833 11 15.5 11ZM8.5 11C8.91667 11 9.27083 10.8542 9.5625 10.5625C9.85417 10.2708 10 9.91667 10 9.5C10 9.08333 9.85417 8.72917 9.5625 8.4375C9.27083 8.14583 8.91667 8 8.5 8C8.08333 8 7.72917 8.14583 7.4375 8.4375C7.14583 8.72917 7 9.08333 7 9.5C7 9.91667 7.14583 10.2708 7.4375 10.5625C7.72917 10.8542 8.08333 11 8.5 11ZM12 13.5C10.8667 13.5 9.8375 13.8208 8.9125 14.4625C7.9875 15.1042 7.31667 15.95 6.9 17H8.55C8.91667 16.3833 9.40417 15.8958 10.0125 15.5375C10.6208 15.1792 11.2833 15 12 15C12.7167 15 13.3792 15.1792 13.9875 15.5375C14.5958 15.8958 15.0833 16.3833 15.45 17H17.1C16.6833 15.95 16.0125 15.1042 15.0875 14.4625C14.1625 13.8208 13.1333 13.5 12 13.5ZM12 22C10.6167 22 9.31667 21.7375 8.1 21.2125C6.88333 20.6875 5.825 19.975 4.925 19.075C4.025 18.175 3.3125 17.1167 2.7875 15.9C2.2625 14.6833 2 13.3833 2 12C2 10.6167 2.2625 9.31667 2.7875 8.1C3.3125 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.3125 8.1 2.7875C9.31667 2.2625 10.6167 2 12 2C13.3833 2 14.6833 2.2625 15.9 2.7875C17.1167 3.3125 18.175 4.025 19.075 4.925C19.975 5.825 20.6875 6.88333 21.2125 8.1C21.7375 9.31667 22 10.6167 22 12C22 13.3833 21.7375 14.6833 21.2125 15.9C20.6875 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6875 15.9 21.2125C14.6833 21.7375 13.3833 22 12 22ZM12 20C14.2333 20 16.125 19.225 17.675 17.675C19.225 16.125 20 14.2333 20 12C20 9.76667 19.225 7.875 17.675 6.325C16.125 4.775 14.2333 4 12 4C9.76667 4 7.875 4.775 6.325 6.325C4.775 7.875 4 9.76667 4 12C4 14.2333 4.775 16.125 6.325 17.675C7.875 19.225 9.76667 20 12 20Z" fill="white"/>
-                            </svg>                                                            
-                            <div class="sm:ml-5">
-                                <p class="font-body">
-                                    <span id="member_user" class="font-bold mr-2"></span>
-                                </p>
-
-                                <span id="member_role" class="text-twhite3 mr-2"></span>
+                    <p class="font-body text-[14px] mb-7 w-full">
+                        (it might take a few seconds, realtime features are getting implemented now so hold tight) -- thanks, the almighty admin thelocaltemp
+                    </p>
+                    <div id="members" class="p-6 rounded-md border-solid border-transparent-100 border-2 grid grid-cols-1 gap-6 max-w-full">
+                        <div id="member" class="hidden flex flex-col">                                                         
+                            <p class="font-body">
+                                <span id="member_user" class="font-bold mr-2"></span>
+                            </p>
+                            <div>
+                                <span id="member_role" class="text-transparent-750 mr-2"></span>
                                 <a class="font-body cursor-pointer" id="member_rm_lnk" onclick="remove_member(this)">
-                                    <span id="member_rm_span" class="text-twhite3"></span>
+                                    <span id="member_rm_span" class="text-transparent-750"></span>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div id="view_exams" class="hidden">
-                    <h4 class="font-display font-bold text-xl mb-1">Exams</h4>
-                    <p class="font-body text-[14px] mb-7 w-full">
-                        If you don't see the exam you're supposed to be doing, you can try to
-
-                        <a onclick="load_workhomedotjson()" class="text-enabled cursor-pointer">refresh the page.</a>
-                    </p>
-
-                    <div id="exams" class="p-6 rounded-xl border-solid border-twhite10 border-2 grid grid-cols-1 gap-6 max-w-full">
-                        <div id="exam" class="hidden flex flex-row items-center">
-                            <a class="font-body" id="exam_link">
-                                <span id="exam_display" class="font-bold"></span>
-                            </a>
-                            <p class="text-twhite3">
-                                <span id="exam_visibility"></span>
-                                <span>test</span>
-                            </p>
+                    <div class="mb-10">
+                        <h4 class="font-display font-bold text-xl mb-1">Exams</h4>
+                        <p class="font-body text-[14px] mb-1 w-full">
+                            If you don't see the exam you're supposed to be doing, you can try to
+    
+                            <a onclick="load_workhomedotjson()" class="text-enabled cursor-pointer">refresh the page.</a>
+                        </p>
+                        <p class="font-body text-[14px] mb-7 w-full">
+                            (it might take a few seconds, realtime features are getting implemented now so hold tight) -- thanks, the almighty admin thelocaltemp
+                        </p>
+    
+                        <div id="exams" class="p-6 rounded-md border-solid border-transparent-100 border-2 grid grid-cols-1 gap-6 max-w-full">
+                            <div id="exam" class="hidden flex flex-col">
+                                <a class="font-body" id="exam_link">
+                                    <span id="exam_display" class="font-bold"></span>
+                                </a>
+                                <p class="text-transparent-750">
+                                    <span id="exam_visibility"></span>
+                                    <span>test</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
-
-
-
-                </div>
-                <div id="create_exam" class="hidden">
-                    <h4 class="font-display mb-1 font-bold text-xl">Create Exam</h4>
-                    <p class="font-body mb-6 text-[14px] sm:w-[580px] w-full" id="create_errors">All exams are private by default, meaning that only the teacher can access it.</p>
-
-                    <p class="font-body font-bold mb-1">Reference Name</p>
-                    <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">For example: "Trigonometriai függvények alapszinten"</p>
-                    <input type="text" id="create_display" class="bg-dark-1 border-dashed border-2 border-twhite h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-twhite3">
-
-                    <p></p>
-
-                    <button onclick="create_submit()" class="h-10 px-5 mb-6 bg-enabled border-enabled border-dashed border-2 hover:border-disabled rounded-md font-semibold">Create new exam</button>
                 </div>
                 <div id="view_settings" class="hidden">
-                    <h4 class="font-display font-bold text-xl mb-1">Settings</h4>
-                    <p class="font-body text-[14px] mb-6">This feature is still in progress and will be released in 1-2 business days!</p>
+                    <div id="create_exam">
+                        <h4 class="font-display mb-1 font-bold text-xl">Create Exam</h4>
+                        <p class="font-body mb-6 text-[14px] sm:w-[580px] w-full" id="create_errors">All exams are private by default, meaning that only the teacher can access it.</p>
+    
+                        <p class="font-body font-bold mb-1">Reference Name</p>
+                        <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">For example: Irregular verbs I. ('be' to 'read')</p>
+                        <input type="text" id="create_display" class="bg-background border-solid border-2 border-transparent-100 h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-transparent-750">
+    
+                        <p></p>
+    
+                        <button onclick="create_submit()" class="h-10 px-5 mb-6 bg-enabled border-enabled border-solid border-2 hover:border-disabled rounded-md font-semibold">Create new exam</button>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p class="text-twhite2 m-8 select-none">
-                    <a href="https://github.com/thelocaltemp/chalkgrades/blob/main/docs/privacy.md" class="mr-5">Privacy Policy</a>
-                    <a href="http://carpaltunnel.notion.site/About-the-project-375b56b34c8c44b8b5d233be4a36e9a5?pvs=73" class="mr-5">View documentation</a>
-                    <a href="https://github.com/thelocaltemp/chalkgrades" class="mr-5">GitHub repository</a>
-                </p>
             </div>
         </main>
     </body>
