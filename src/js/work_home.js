@@ -44,7 +44,7 @@ function load_workhomedotjson() {
                 window.location.href = '/login';
                 removeCookie("token");
 
-            } else if (data.error == "w-mal-25-11") {
+            } else if (data.error == "w-mal-25-11" || data.error == "w-mal-25-2") {
                 window.location.href = 'https://en.wikipedia.org/wiki/HTTP_404';
 
             } else if (data.error == "w-mal-26") {
@@ -100,7 +100,12 @@ function load_workhomedotjson() {
                     memberClone.dataset.identifier = selected_user_id;
 
                     memberClone.querySelector("#member_user").textContent = username;
-                    memberClone.querySelector("#member_role").textContent = selected_role;
+
+                    if (selected_role == "superuser") {
+                        memberClone.querySelector("#member_role").textContent = "teacher";
+                    } else {
+                        memberClone.querySelector("#member_role").textContent = "student";
+                    }
 
                     memberClone.dataset.origin = "clone";
 

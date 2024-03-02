@@ -900,6 +900,3 @@ def handle_exam_check_stat(creator_username, url):
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
     return jsonify({'status': session_status})
-
-if __name__ == '__main__':
-    app.run(host='localhost', port=3000, debug=True)

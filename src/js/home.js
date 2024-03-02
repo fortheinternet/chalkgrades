@@ -19,7 +19,6 @@ function load_homedotjson() {
     const workspacesDiv = document.getElementById("workspaces");
     const username_fields = document.querySelectorAll(".username_field")
 
-    const loading = document.getElementById("loading")
     const main = document.getElementById("main")
 
     const user_token = getCookie("token")
@@ -69,7 +68,6 @@ function load_homedotjson() {
                 });
 
                 main.style.display = "flex"
-                loading.style.display = "none"
                 document.title = username + " - Chalk"
 
             }
