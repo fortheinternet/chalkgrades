@@ -210,33 +210,33 @@ def handle_work_join(creator_username, url):
     creator_id = creator_data.data[0]['user_id'] if creator_data.data else None
 
     conditions = [
-        (not user_id, 'w-mal-25-1', 'Work: Invalid token', 'r1'),
-        (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist', 'r1'),
+        (not user_id, 'w-mal-25-1', 'Work: Invalid token'),
+        (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist'),
     ]
 
     for condition in conditions:
-        if condition[0] and condition[3] == "r1": return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
     work_query = supabase.table('work_data').select('work_id','auth').eq('url', url).eq('creator_id', creator_id).execute()
     work_id = work_query.data[0]['work_id'] if work_query.data else None
     work_auth = work_query.data[0]['auth'] if work_query.data else None
 
-    conditions = [(not work_id, 'w-mal-25-2', 'Work: That workspace does not exist', 'r2')]
+    conditions = [(not work_id, 'w-mal-25-2', 'Work: That workspace does not exist')]
     for condition in conditions:
-        if condition[0] and condition[3] == "r2": return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
     salted_password = password_salt_2 + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
-    conditions = [(sha256_hash != work_auth, 'w-mal-55', 'Work: Invalid access credentials', 'r3')]
+    conditions = [(sha256_hash != work_auth, 'w-mal-55', 'Work: Invalid access credentials')]
     for condition in conditions:
-        if condition[0] and condition[3] == "r3": return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
     existing_member = supabase.table('members_data').select('member_id').eq('member_id', user_id).eq('work_id', work_id).execute().data
 
-    conditions = [(existing_member, 'w-mal-60', 'Work: User is already a member of this workspace', 'r4')]
+    conditions = [(existing_member, 'w-mal-60', 'Work: User is already a member of this workspace')]
     for condition in conditions:
-        if condition[0] and condition[3] == "r4": return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
     
     supabase.table("members_data").insert({"member_id": user_id, "work_id": work_id, "role": "member"}).execute()
     return jsonify({'success': 'Work: Workspace joined successfully'})
@@ -255,12 +255,12 @@ def handle_work_home(creator_username, url):
     creator_id = creator_data[0]['user_id'] if creator_data else None
 
     conditions = [
-        (not user_id, 'w-mal-25-1', 'Work: Invalid token', 'r1'),
-        (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist', 'r1'),
+        (not user_id, 'w-mal-25-1', 'Work: Invalid token'),
+        (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist'),
     ]
 
     for condition in conditions:
-        if condition[0] and condition[3] == "r1": return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
     work_query = supabase.table('work_data').select('work_id','display').eq('url', url).eq('creator_id', creator_id).execute().data
 
