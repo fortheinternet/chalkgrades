@@ -1,4 +1,4 @@
-Flask==3.0.0
+Flask[async]==3.0.0
 supabase
 python-dotenv==1.0.0
 ably
