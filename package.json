@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "ably": "^1.2.49",
     "vercel": "^32.3.0"
   },
   "devDependencies": {

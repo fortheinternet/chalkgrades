@@ -1,3 +1,4 @@
+# This is the start of the legendary Python document index.py.
 from flask import Flask, send_from_directory, request, jsonify
 from dotenv import load_dotenv
 import hashlib
@@ -6,11 +7,13 @@ import re
 import os
 from supabase import create_client, Client
 from datetime import datetime, timezone
+from ably import AblyRest, AblyRealtime
 
 load_dotenv()
 
 supabase_url = os.getenv("supabase_url")
 supabase_key = os.getenv("supabase_key")
+ably_key = os.getenv("ably_key")
 
 accesskey_user = os.getenv("user_key")
 accesskey_work = os.getenv("work_key")
@@ -19,6 +22,7 @@ password_salt = os.getenv("password_salt")
 password_salt_2 = os.getenv("password_salt_2")
 
 supabase: Client = create_client(supabase_url, supabase_key)
+ably = AblyRest(ably_key)
 
 app = Flask(__name__)
 
@@ -196,15 +200,17 @@ def handle_work_create():
     supabase.table("members_data").insert({"member_id": creator_id, "work_id": work_id, "role": "superuser"}).execute()
     return jsonify({'success': 'Work: Workspace created successfully'})
 
-@app.route('/api/work/<string:creator_username>/<string:url>/join.json', methods=['POST'])
-def handle_work_join(creator_username, url):
+@app.route('/api/work/<string:creator_username>/<string:url>/join.json', methods=['POST']) # member_join
+async def handle_work_join(creator_username, url):
     data = request.get_json()
 
     password = data.get('password')
     token = data.get('token')
 
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute()
-    user_id = user_data.data[0]['user_id'] if user_data.data else None
+    user_data = supabase.table('users_data').select('user_id', 'username').eq('token', token).execute().data
+
+    user_id = user_data[0]['user_id'] if user_data else None
+    username = user_data[0]['username'] if user_data else None
 
     creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute()
     creator_id = creator_data.data[0]['user_id'] if creator_data.data else None
@@ -237,8 +243,29 @@ def handle_work_join(creator_username, url):
     conditions = [(existing_member, 'w-mal-60', 'Work: User is already a member of this workspace')]
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+
+    # REALTIME
+    existing_row = supabase.table('realtime_pages').select('*').eq('work_id', work_id).execute().data
+
+    if existing_row:
+        realtime_access = existing_row[0]['access']
+    else:
+        realtime_access = None
+        while not realtime_access or supabase.table('realtime_pages').select('access').eq('access', realtime_access).execute().data:
+            realtime_access = random.randint(10**15, (10**16)-1)
+    
+        supabase.table('realtime_pages').insert({'work_id': work_id, 'access': realtime_access}).execute()
     
     supabase.table("members_data").insert({"member_id": user_id, "work_id": work_id, "role": "member"}).execute()
+    
+    channel = ably.channels.get(realtime_access)
+    channel_message = {
+        "username": username,
+        "selected_role": "member",
+        "selected_user_id": user_id
+    }
+    await channel.publish('member_join', channel_message)
+
     return jsonify({'success': 'Work: Workspace joined successfully'})
 
 @app.route('/api/work/<string:creator_username>/<string:url>/home.json', methods=['POST'])
@@ -317,23 +344,17 @@ def handle_work_home(creator_username, url):
             'exam_id': exam_id
         })
 
-    # REALTIME
     existing_row = supabase.table('realtime_pages').select('*').eq('work_id', work_id).execute().data
 
     if existing_row:
         realtime_access = existing_row[0]['access']
-        realtime_reference = existing_row[0]['reference']
     else:
         realtime_access = None
         while not realtime_access or supabase.table('realtime_pages').select('access').eq('access', realtime_access).execute().data:
             realtime_access = random.randint(10**15, (10**16)-1)
     
-        realtime_reference = None
-        while not realtime_reference or supabase.table('realtime_pages').select('reference').eq('reference', realtime_reference).execute().data:
-            realtime_reference = random.randint(10**15, (10**16)-1)
+        supabase.table('realtime_pages').insert({'work_id': work_id, 'access': realtime_access}).execute()
     
-        supabase.table('realtime_pages').insert({'work_id': work_id, 'reference': realtime_reference, 'access': realtime_access}).execute()
-
     response = ({
         'display': display,
         'username': username,
@@ -341,13 +362,70 @@ def handle_work_home(creator_username, url):
         'user_role': user_role,
         'members': members_response,
         'exams': exams,
-        'realtime_access': realtime_access 
+        'realtime_access': realtime_access
     })
 
     return jsonify(response)
 
+@app.route('/api/work/<string:creator_username>/<string:url>/home_realtime.json', methods=['POST'])
+async def handle_work_home_realtime(creator_username, url):
+    data = request.get_json()
+    token = data.get('token')
+
+    user_data = supabase.table('users_data').select('user_id', 'username').eq('token', token).execute().data
+
+    user_id = user_data[0]['user_id'] if user_data else None
+    username = user_data[0]['username'] if user_data else None
+
+    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
+    creator_id = creator_data[0]['user_id'] if creator_data else None
+
+    conditions = [
+        (not user_id, 'w-mal-25-1', 'Work: Invalid token'),
+        (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist'),
+    ]
+
+    for condition in conditions:
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        
+    work_query = supabase.table('work_data').select('work_id','display').eq('url', url).eq('creator_id', creator_id).execute().data
+
+    work_id = work_query[0]['work_id'] if work_query else None
+
+    conditions = [(not work_id, 'w-mal-25-2', 'Work: That workspace does not exist'),]
+    for condition in conditions:
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        
+    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute().data
+    user_role = user_role_data[0]['role'] if user_role_data else None
+
+    conditions = [(not user_role, 'w-mal-26', 'Work: You are not a member of that workspace')]
+    for condition in conditions:
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+
+    # REALTIME
+    existing_row = supabase.table('realtime_pages').select('*').eq('work_id', work_id).execute().data
+
+    if existing_row:
+        realtime_access = existing_row[0]['access']
+    else:
+        realtime_access = None
+        while not realtime_access or supabase.table('realtime_pages').select('access').eq('access', realtime_access).execute().data:
+            realtime_access = random.randint(10**15, (10**16)-1)
+    
+        supabase.table('realtime_pages').insert({'work_id': work_id, 'access': realtime_access}).execute()
+
+    token_details = await ably.auth.create_token_request({'ttl': 3600000, 'capability': {realtime_access: ['subscribe']}})
+    token_details_dict = token_details.to_dict()
+
+    response = {
+        'ably_token': token_details_dict
+    }
+
+    return jsonify(response)
+
 @app.route('/api/work/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
-def handle_work_settings(creator_username, url):
+async def handle_work_settings(creator_username, url):
     data = request.get_json()
 
     token = data.get('token')
@@ -388,6 +466,20 @@ def handle_work_settings(creator_username, url):
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
+    # REALTIME
+    existing_row = supabase.table('realtime_pages').select('*').eq('work_id', work_id).execute().data
+
+    if existing_row:
+        realtime_access = existing_row[0]['access']
+    else:
+        realtime_access = None
+        while not realtime_access or supabase.table('realtime_pages').select('access').eq('access', realtime_access).execute().data:
+            realtime_access = random.randint(10**15, (10**16)-1)
+    
+        supabase.table('realtime_pages').insert({'work_id': work_id, 'access': realtime_access}).execute()
+    
+    supabase.table("members_data").insert({"member_id": user_id, "work_id": work_id, "role": "member"}).execute()
+
     if action == "santa":
         conditions = [
             (user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
@@ -425,7 +517,7 @@ def handle_work_settings(creator_username, url):
         supabase.table('work_data').update({'url': value}).eq('work_id', work_id).execute()
         return jsonify({'success': 'Work: Settings updated successfully'})
     
-    elif action == "leave":
+    elif action == "leave": # member_leave
         conditions = [
             (user_role == "superuser", 'w-mal-20-2', 'Work: You do not have the correct permissions to exit this workspace.')
         ]
@@ -434,6 +526,13 @@ def handle_work_settings(creator_username, url):
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
         supabase.table('members_data').delete().eq('work_id', work_id).eq('member_id', user_id).execute()
+
+        channel = ably.channels.get(realtime_access)
+        channel_message = {
+            "selected_user_id": user_id
+        }
+        await channel.publish('member_leave', channel_message)
+
         return jsonify({'success': 'Work: Left workspace successfully'})
     
     elif action == "delete":
@@ -453,17 +552,15 @@ def handle_work_settings(creator_username, url):
         
 
         supabase.table('members_data').delete().eq('work_id', work_id).execute()
+        supabase.table('realtime_pages').delete().eq('work_id', work_id).execute()
         supabase.table('work_data').delete().eq('work_id', work_id).execute()
 
         return jsonify({'success': 'Work: Removed workspace successfully'})
     
-    elif action == "remove_member":
+    elif action == "remove_member": # member_remove
         exams_data = supabase.table('exams_data').select('exam_id').eq('work_id', work_id).execute().data
 
-        conditions = [
-            (user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
-        ]
-
+        conditions = [(user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
@@ -472,6 +569,12 @@ def handle_work_settings(creator_username, url):
         for exam in exams_data:
             exam_id = exam.get('exam_id')
             supabase.table('sessions_data').delete().eq('exam_id', exam_id).eq('user_id', value).execute()
+
+        channel = ably.channels.get(realtime_access)
+        channel_message = {
+            "selected_user_id": value
+        }
+        await channel.publish('member_remove', channel_message)
 
         return jsonify({'success': 'Work: Removed member successfully'})
 

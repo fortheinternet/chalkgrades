@@ -61,6 +61,8 @@ function load_workhomedotjson() {
                 work_user.textContent = creator_username;
                 work_url.textContent = url;
 
+                realtime_access = data.realtime_access;
+
                 const membersDiv = document.getElementById("members")
                 const memberDiv = document.getElementById("member")
 
@@ -134,8 +136,6 @@ function load_workhomedotjson() {
 
                 });
 
-                // exams
-
                 exams_data.forEach(exam => {
                     const { display_name, exam_id, visibility} = exam;
 
@@ -150,6 +150,98 @@ function load_workhomedotjson() {
                     examClone.dataset.origin = "clone";
 
                     examsDiv.appendChild(examClone);
+                });
+
+                // IT'S REALTIME
+
+                const ably = new Ably.Realtime({
+                    authCallback: (userData, callback) => {
+                        fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/home_realtime.json`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                        body: JSON.stringify({token: getCookie("token")})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        callback(null, data.ably_token);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching token:', error);
+                        callback(error, null);
+                    });
+                    }
+                });
+                
+                const channel = ably.channels.get(realtime_access);
+
+                channel.subscribe(function(message) {
+                    console.log('Received message:', message);
+
+                    if (message.name == "member_join") {
+                        const { username, selected_role, selected_user_id } = message.data
+
+                        const memberClone = memberDiv.cloneNode(true);
+                        memberClone.style.display = "flex";
+
+                        memberClone.dataset.identifier = selected_user_id;
+
+                        memberClone.querySelector("#member_user").textContent = username;
+
+                        if (selected_role == "superuser") {
+                            memberClone.querySelector("#member_role").textContent = "teacher";
+                        } else {
+                            memberClone.querySelector("#member_role").textContent = "student";
+                        }
+
+                        memberClone.dataset.origin = "clone";
+
+                        if(user_role == "superuser") {
+                            if(user_id == selected_user_id) {
+                                memberClone.querySelector("#member_rm_span").textContent = "can't remove member";
+                                memberClone.querySelector("#member_rm_lnk").dataset.action = "na";
+                                memberClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
+                            } else {
+                                memberClone.querySelector("#member_rm_span").textContent = "remove member";
+                                memberClone.querySelector("#member_rm_lnk").dataset.action = "remove_member";
+                                memberClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
+                            }
+                        } else { 
+                            if(user_id == selected_user_id) {
+                                memberClone.querySelector("#member_rm_span").textContent = "leave workspace";
+                                memberClone.querySelector("#member_rm_lnk").dataset.action = "leave";
+                                memberClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
+                            } else {
+                                memberClone.querySelector("#member_rm_span").textContent = "";
+                                memberClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
+                            }
+                        }
+
+                        membersDiv.appendChild(memberClone);
+
+                    } else if (message.name == "member_leave" || message.name == "member_remove") {
+                        const { selected_user_id } = message.data
+                        
+                        if (selected_user_id == user_id) {
+                            window.location.href = '/home';
+                        } else {
+                            const userElements = document.querySelectorAll(`[data-identifier="${selected_user_id}"]`);
+                            userElements.forEach(element => {element.remove()});
+                        }
+                    }
+                });
+                
+                ably.connection.on('connected', function() {
+                    console.log('Ably connection established');
+                });
+                
+                ably.connection.on('failed', function() {
+                    console.error('Ably connection failed');
+                });
+                
+                ably.connection.on('closed', function() {
+                    console.log('Ably connection closed');
                 });
 
                 main.style.display = "flex"
