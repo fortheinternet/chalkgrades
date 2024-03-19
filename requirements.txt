@@ -1,5 +1,4 @@
 Flask==3.0.0
-supabase==2.0.3
+supabase
 python-dotenv==1.0.0
-flask-socketio==5.3.6
-ably==2.0.4
+ably
