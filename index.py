@@ -477,8 +477,6 @@ async def handle_work_settings(creator_username, url):
             realtime_access = random.randint(10**15, (10**16)-1)
     
         supabase.table('realtime_pages').insert({'work_id': work_id, 'access': realtime_access}).execute()
-    
-    supabase.table("members_data").insert({"member_id": user_id, "work_id": work_id, "role": "member"}).execute()
 
     if action == "santa":
         conditions = [
@@ -543,17 +541,12 @@ async def handle_work_settings(creator_username, url):
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
-        supabase.table('options_data').delete().eq('work_id', work_id).execute()
-        supabase.table('questions_data').delete().eq('work_id', work_id).execute()
-        supabase.table('results_data').delete().eq('work_id', work_id).execute()
-        supabase.table('answers_data').delete().eq('work_id', work_id).execute()
-        supabase.table('sessions_data').delete().eq('work_id', work_id).execute()
         supabase.table('exams_data').delete().eq('work_id', work_id).execute()
-        
-
         supabase.table('members_data').delete().eq('work_id', work_id).execute()
         supabase.table('realtime_pages').delete().eq('work_id', work_id).execute()
         supabase.table('work_data').delete().eq('work_id', work_id).execute()
+
+        # TODO: actually finish this
 
         return jsonify({'success': 'Work: Removed workspace successfully'})
     
@@ -561,14 +554,16 @@ async def handle_work_settings(creator_username, url):
         exams_data = supabase.table('exams_data').select('exam_id').eq('work_id', work_id).execute().data
 
         conditions = [(user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
+
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
-        supabase.table('members_data').delete().eq('work_id', work_id).eq('member_id', value).execute()
-        
         for exam in exams_data:
             exam_id = exam.get('exam_id')
             supabase.table('sessions_data').delete().eq('exam_id', exam_id).eq('user_id', value).execute()
+        
+        supabase.table('members_data').delete().eq('work_id', work_id).eq('member_id', value).execute()
+        print("got em")
 
         channel = ably.channels.get(realtime_access)
         channel_message = {
@@ -577,6 +572,9 @@ async def handle_work_settings(creator_username, url):
         await channel.publish('member_remove', channel_message)
 
         return jsonify({'success': 'Work: Removed member successfully'})
+    
+    else:
+        return jsonify({'error': 'You entered something incorrect.'})
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/create.json', methods=['POST'])
 def handle_exams_create(creator_username, url):
