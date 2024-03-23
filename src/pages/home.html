@@ -9,20 +9,23 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="../../src/output.css">
-        <link rel="stylesheet" href="../../src/styles/custom.css">
 
         <link rel="icon" href="../../src/favicon.png" type="image/png">
         <script src="../../src/js/home.js"></script>
     </head>
     <body class="bg-background">
         <main class="flex flex-col h-screen hidden" id="main">
-            <div id="navbar" class="bg-background sticky top-0 overflow-x-auto min-h-[50px] py-3 px-8 lg:pl-[20vw] lg:pr-[20vw] border-solid border-b-[1px] border-transparent-100 flex flex-row  whitespace-nowrap text-[16px] select-none items-center">
-                <p class="mr-6 text-transparent-750 username_field"></p>
-                <a onclick="view_workspaces()" class="mr-6 cursor-pointer">Your Workspaces</a>
-                <a onclick="join_new_workspace()" class="mr-6 cursor-pointer">Join Workspace</a>
-                <a onclick="create_new_workspace()" class="mr-6 cursor-pointer">Create New Workspace</a>
-                <a onclick="logout()" class="cursor-pointer">Log out</a>
-            </div>
+            <nav>
+                <div class="flex flex-row">
+                    <a onclick="view_workspaces()" class="nav_btn">Workspaces</a>
+                    <a onclick="join_new_workspace()" class="nav_btn">Join Workspace</a>
+                    <a onclick="create_new_workspace()" class="nav_btn">Create New Workspace</a>
+                </div>
+                <div class="flex flex-row">
+                    <a onclick="logout()" class="nav_btn">Log out</a>
+                    <a class="nav_display username_field"></a>
+                </div>
+            </nav>
             <div id="selected_content" class="flex-grow px-8 py-12 lg:pl-[20vw] lg:pr-[20vw]">
                 <div id="workspaces_wrap">
                     <h4 class="font-display mb-2 font-bold text-2xl">Workspaces</h4>

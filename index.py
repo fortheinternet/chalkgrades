@@ -93,7 +93,6 @@ def handle_logins():
 
     return jsonify({'token': token})
 
-
 @app.route('/api/logins/signups.json', methods=['POST'])
 def handle_signups():
     data = request.get_json()
@@ -102,6 +101,7 @@ def handle_signups():
     password_confirm = data.get('password_confirm')
     accesskey = data.get('accesskey')
 
+    # todo: fix this code to not query all usernames
     response = supabase.table('users_data').select('username').execute()
     all_usernames = [user['username'] for user in response.data] if response.data else []
 
@@ -109,7 +109,7 @@ def handle_signups():
         (password != password_confirm, 's-mal-10', 'Signup: Passwords dont match'),
         (accesskey != accesskey_user, 's-mal-15', 'Signup: Bad access key'),
         (username.lower() in map(str.lower, all_usernames), 's-mal-20', 'Signup: Username already taken'),
-        (not re.match(r'^[A-Za-z\d_]{3,16}$', username), 's-mal-50', 'Signup: Invalid username'),
+        (not re.match(r'^[A-Za-z\d_-ÁáÍíŰűÉéŐőÚúÓóÜüÖö]{3,45}$', username), 's-mal-50', 'Signup: Invalid username'),
     ]
 
     for condition in conditions:
@@ -477,18 +477,8 @@ async def handle_work_settings(creator_username, url):
             realtime_access = random.randint(10**15, (10**16)-1)
     
         supabase.table('realtime_pages').insert({'work_id': work_id, 'access': realtime_access}).execute()
-
-    if action == "santa":
-        conditions = [
-            (user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
-        ]
-
-        for condition in conditions:
-            if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-        return jsonify({'message':'Ho ho ho! please message me read.cv/thelocaltemp and explain what you were supposed to be doing when you found this'})
     
-    elif action == "display":
+    if action == "display":
         conditions = [
             (user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
         ]
@@ -563,7 +553,6 @@ async def handle_work_settings(creator_username, url):
             supabase.table('sessions_data').delete().eq('exam_id', exam_id).eq('user_id', value).execute()
         
         supabase.table('members_data').delete().eq('work_id', work_id).eq('member_id', value).execute()
-        print("got em")
 
         channel = ably.channels.get(realtime_access)
         channel_message = {
@@ -667,10 +656,7 @@ def handle_exam_settings(creator_username, url):
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
-    if action == "santa":
-        return jsonify({'message':'Ho ho ho! please message me read.cv/thelocaltemp and explain what you were supposed to be doing when you found this'})
-    
-    elif action == "remove":
+    if action == "remove":
         supabase.table('options_data').delete().eq('exam_id', exam_id).execute()
         supabase.table('questions_data').delete().eq('exam_id', exam_id).execute()
         supabase.table('exams_data').delete().eq('exam_id', exam_id).eq('work_id', work_id).execute()

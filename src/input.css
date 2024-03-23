@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Navigation Menu */
+nav {
+    @apply bg-background-2 sticky top-0 overflow-x-auto min-h-[60px] max-h-[60px] py-3 px-8 lg:pl-[20vw] lg:pr-[20vw] flex flex-row justify-between border-solid border-transparent-100 border-b-[1px] whitespace-nowrap select-none items-center
+}
+
+.nav_btn {
+    @apply px-[16px] py-[6px] hover:bg-transparent-100 cursor-pointer mr-1 rounded-full text-transparent-750 hover:text-white transition text-[15px]
+}
+
+.nav_display {
+    @apply pl-[16px] py-[6px] rounded-full text-transparent-750 transition text-[15px]
+}

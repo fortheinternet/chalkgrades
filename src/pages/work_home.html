@@ -9,7 +9,6 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="../../src/output.css">
-        <link rel="stylesheet" href="../../src/styles/custom.css">
 
         <link rel="icon" href="../../src/favicon.png" type="image/png">
 
@@ -18,17 +17,22 @@
     </head>
     <body class="bg-background">
         <main class="flex flex-col h-screen hidden" id="main">
-            <div id="navbar" class="bg-background sticky top-0 overflow-x-auto min-h-[50px] py-3 px-8 lg:pl-[20vw] lg:pr-[20vw] border-solid border-b-[1px] border-transparent-100 flex flex-row  whitespace-nowrap text-[16px] select-none items-center">
-                <a onclick="nav_user()" class="mr-6 text-transparent-750 cursor-pointer username_field"></a>
-                <a onclick="view_members()" class="mr-6 cursor-pointer">Members</a>
-                <a onclick="view_exams()" class="mr-6 cursor-pointer">Exams</a>
-                <a onclick="view_settings()" class="mr-6 cursor-pointer hidden" id="view_settings_btn">Settings</a>
-            </div>
+            <nav>
+                <div class="flex flex-row">
+                    <a onclick="nav_user()" class="nav_btn">Workspaces</a>
+                    <a onclick="view_members()" class="nav_btn">Members</a>
+                    <a onclick="view_exams()" class="nav_btn">Exams</a>
+                    <a onclick="view_settings()" class="nav_btn hidden" id="view_settings_btn">Settings</a>    
+                </div>
+                <div class="flex flex-row">
+                    <a class="nav_display username_field"></a>
+                </div>
+            </nav>
 
             <div id="selected_content" class="flex-grow px-8 py-12 lg:pl-[20vw] lg:pr-[20vw]">
-                <div class="mb-10">
+                <div class="mb-7 border-b-[1px] border-solid border-transparent-100">
                     <h4 id="work_display" class="font-display mb-1 font-bold text-xl"></h4>
-                    <p class="font-body text-transparent-750">
+                    <p class="font-body text-transparent-750 mb-10">
                         <span id="work_user" class="mr-1"></span>
                         <span class="mr-1">/</span>
                         <span id="work_url"></span>
@@ -37,13 +41,8 @@
 
                 <div id="view_members">
                     <h4 class="font-display font-bold text-xl mb-1">Members</h4>
-                    <p class="font-body text-[14px] mb-1 w-full">
-                        Don't see everyone? It's possible that they left, or are not loaded yet. You can
-
-                        <a onclick="load_workhomedotjson()" class="text-enabled cursor-pointer">refresh the page. </a>
-                    </p>
                     <p class="font-body text-[14px] mb-7 w-full">
-                        (it might take a few seconds, realtime features are getting implemented now so hold tight) -- thanks, the almighty admin thelocaltemp
+                        This list updates in real-time to these events: <i>member_leave, member_join, </i> and <i> member_remove.</i>
                     </p>
                     <div class="h-[1px] w-full bg-transparent-100"></div>
                     <div id="members" class="p-6 rounded-md grid grid-cols-1 gap-6 max-w-full">
@@ -63,13 +62,8 @@
                 <div id="view_exams" class="hidden">
                     <div class="mb-10">
                         <h4 class="font-display font-bold text-xl mb-1">Exams</h4>
-                        <p class="font-body text-[14px] mb-1 w-full">
-                            If you don't see the exam you're supposed to be doing, you can try to
-    
-                            <a onclick="load_workhomedotjson()" class="text-enabled cursor-pointer">refresh the page.</a>
-                        </p>
                         <p class="font-body text-[14px] mb-7 w-full">
-                            (it might take a few seconds, realtime features are getting implemented now so hold tight) -- thanks, the almighty admin thelocaltemp
+                            Realtime features for exam updates, and the ability to view & edit exams on the website are currently being implemented.
                         </p>
                         <div class="h-[1px] w-full bg-transparent-100"></div>
                         <div id="exams" class="p-6 rounded-md grid grid-cols-1 gap-6 max-w-full">
@@ -90,8 +84,8 @@
                         <h4 class="font-display mb-1 font-bold text-xl">Create Exam</h4>
                         <p class="font-body mb-6 text-[14px] sm:w-[580px] w-full" id="create_errors">All exams are private by default, meaning that only the teacher can access it.</p>
     
-                        <p class="font-body font-bold mb-1">Reference Name</p>
-                        <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">For example: Irregular verbs I. ('be' to 'read')</p>
+                        <p class="font-body font-bold mb-1">Display Name</p>
+                        <p class="font-body text-[14px] mb-3 sm:w-[580px] w-full">Basically the name of the exam, or the unit/chapter the test is on.</p>
                         <input type="text" id="create_display" class="bg-background border-solid border-2 border-transparent-100 h-11 px-5 mb-6 sm:w-[580px] w-full outline-none rounded-md text-transparent-750">
     
                         <p></p>
