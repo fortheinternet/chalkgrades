@@ -109,7 +109,7 @@ def handle_signups():
         (password != password_confirm, 's-mal-10', 'Signup: Passwords dont match'),
         (accesskey != accesskey_user, 's-mal-15', 'Signup: Bad access key'),
         (username.lower() in map(str.lower, all_usernames), 's-mal-20', 'Signup: Username already taken'),
-        (not re.match(r'^[A-Za-z\d_-ÁáÍíŰűÉéŐőÚúÓóÜüÖö]{3,45}$', username), 's-mal-50', 'Signup: Invalid username'),
+        (not re.match(r'^[A-Za-z\d_ -ÁáÍíŰűÉéŐőÚúÓóÜüÖö]{3,45}$', username), 's-mal-50', 'Signup: Invalid username'),
     ]
 
     for condition in conditions:
