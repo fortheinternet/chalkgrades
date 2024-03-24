@@ -88,6 +88,22 @@ function nav_viewlogin() {
     signups.style.display = "none"
 }
 
+function nav_viewlanding() {
+    window.location.href = '/'
+}
+
+function nav_loginsignup() {
+    console.log("You are already there!")
+}
+
+function nav_viewdocuments() {
+    window.location.href = '';
+}
+
+function nav_viewrepository() {
+    window.location.href = 'https://github.com/fortheinternet/chalkgrades';
+}
+
 // This code does not look professional, it looks like a cat fell asleep on the keyboard. But it works so it won't be fixed. Or at least not by me ¯\_(ツ)_/¯
 
 function setCookie(cname, cvalue) {

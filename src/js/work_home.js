@@ -23,7 +23,9 @@ function load_workhomedotjson() {
     const currentUrl = window.location.href;
     const urlParts = currentUrl.split('/');
 
-    const creator_username = urlParts[urlParts.length - 2];
+    let creator_username = urlParts[urlParts.length - 2];
+    creator_username = decodeURIComponent(creator_username)
+
     const url = urlParts[urlParts.length - 1];
 
     const user_token = getCookie("token")

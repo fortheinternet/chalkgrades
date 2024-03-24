@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 /* Navigation Menu */
+
 nav {
     @apply bg-background-2 sticky top-0 overflow-x-auto min-h-[60px] max-h-[60px] py-3 px-8 lg:pl-[20vw] lg:pr-[20vw] flex flex-row justify-between border-solid border-transparent-100 border-b-[1px] whitespace-nowrap select-none items-center
 }
@@ -13,4 +14,20 @@ nav {
 
 .nav_display {
     @apply pl-[16px] py-[6px] rounded-full text-transparent-750 transition text-[15px]
+}
+
+/* Landing Page */
+
+h1 {@apply font-display mb-3 font-bold sm:text-4xl text-3xl}
+h2 {@apply font-display mb-3 font-bold sm:text-3xl text-2xl}
+h3 {@apply font-display mb-3 font-bold sm:text-xl text-xl}
+
+p {@apply font-body}
+
+.cta-btn {
+    @apply h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-enabled border-enabled border-solid border-2 hover:border-disabled rounded-md font-semibold
+}
+
+.gray-btn {
+    @apply h-10 mb-5 px-5 mr-3 w-full sm:w-max border-transparent-250 border-solid border-2 rounded-md font-semibold
 }

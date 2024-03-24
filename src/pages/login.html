@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>log in or sign up</title>
+        <title>chalkgrades - log in or sign up</title>
         <meta name="description" content="this is where you log in or make an account, but you might not be able to :/">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="color-scheme" content="dark">
@@ -17,7 +17,17 @@
     </head>
     <body class="bg-background text-cwhite">
         <main class="flex flex-col h-full">
-            <div id="top_section" class="border-b-2 border-transparent-100 border-solid flex min-h-0 max-h-fit p-8">
+            <nav>
+                <div class="flex flex-row">
+                    <a onclick="nav_viewlanding()" class="nav_btn">Homepage</a>
+                    <a onclick="nav_viewdocuments()" class="nav_btn">View documentation</a>
+                    <a onclick="nav_viewrepository()" class="nav_btn">GitHub repository</a>
+                </div>
+                <div class="flex flex-row">
+                    <a onclick="nav_loginsignup()" class="nav_btn">log in or sign up</a>
+                </div>
+            </nav>
+            <div id="top_section" class="flex min-h-0 max-h-fit p-8">
                 <div class="h-max lg:w-[400px] lg:mr-8 md:w-1/2 md:mr-8 w-full mr-0" id="login">
                     <h6 class="font-display mb-2 font-bold text-xl">Log in</h6>
                     <p class="font-body mb-6 text-[14px] lg:w-[400px] w-full" id="login_errors"></p>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>landing page title :|</title>
+        <title>chalkgrades - landing page</title>
         <meta name="description" content="TODO: make a landing page description for daddy google to use in search results">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="color-scheme" content="dark">
@@ -9,7 +9,6 @@
 
         <meta charset="UTF-8">
 
-        <link rel="stylesheet" href="../../src/styles/custom.css">
         <link rel="stylesheet" href="../../src/output.css">
         <link rel="icon" href="../../src/favicon.png" type="image/png">
 
@@ -18,16 +17,32 @@
     </head>
     <body>
         <main class="flex flex-col h-screen">
-            <div id="top_section" class="bg-background border-b-2 border-transparent-100 border-solid flex-none sm:h-2/5 h-1/6">
+            <nav>
+                <div class="flex flex-row">
+                    <a onclick="nav_viewlanding()" class="nav_btn">Homepage</a>
+                    <a onclick="nav_viewdocuments()" class="nav_btn">View documentation</a>
+                    <a onclick="nav_viewrepository()" class="nav_btn">GitHub repository</a>
+                </div>
+                <div class="flex flex-row">
+                    <a onclick="nav_loginsignup()" class="nav_btn">log in or sign up</a>
+                </div>
+            </nav>
+            <div class="bg-background flex-grow p-8 py-12 lg:pl-[20vw] lg:pr-[20vw]">
+                <h2>chalkgrades is the <u>ultimate</u> tool for accessing student's exams in real-time.</h2>
 
-            </div>
-            <div id="primary_section" class="bg-background flex-grow p-8">
-                <h1 class="font-display mb-5 font-bold sm:text-4xl text-3xl">Chalk is an online examination software</h1>
-                <p class="font-body mb-6">If you know Python and want to help fix my bad code, you can visit the GitHub repository at github.com/thelocaltemp/chalkgrades.</p>
+                <p class="mb-6">Made with care and attention to detail, over a year, in Hungary. If you want to help contribute or just want to chat, use the options below. <b>And for students, welcome to hell.</b></p>
 
-                <button onclick="nav_loginsignup()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-enabled border-enabled border-solid border-2 hover:border-disabled rounded-md font-semibold">log in or sign up</button>
-                <button onclick="nav_viewdocuments()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-transparent border-transparent-250 border-solid border-2 rounded-md font-semibold">View documentation</button>
-                <button onclick="nav_viewrepository()" class="h-10 mb-5 px-5 mr-3 w-full sm:w-max bg-transparent border-transparent-250 border-solid border-2 rounded-md font-semibold">GitHub repository</button>
+                <button onclick="nav_loginsignup()" class="cta-btn">log in or sign up</button>
+                <button onclick="nav_viewdocuments()" class="gray-btn">View documentation</button>
+                <button onclick="nav_viewrepository()" class="gray-btn">GitHub repository</button>
+
+                <div class="h-[1px] w-full bg-transparent-100 mt-5 mb-10"></div>
+
+                <h3>How does it work?</h3>
+                <p class="mb-10">Every student has an account, and every teacher has multiple classes they test in. Teachers can make exams in workspaces, that students can start when it's public, not see when it's private, and see their grade once it's public again.</p>
+
+                <h3>Work in progress</h3>
+                <p class="mb-10">Chalk is still in it's somewhat early stages, so I would absolutely appriciate your contributions! The links to the documentation (useful for debugging error codes) and the GitHub repository are on the navigation bar.</p>
             </div>
         </main>
     </body>

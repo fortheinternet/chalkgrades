@@ -187,7 +187,7 @@ def handle_work_create():
 
     conditions = [
         (url.lower() in existing_urls, 'w-mal-30', 'Work: url already exists for this user'),
-        (not re.match(r'^[A-Za-z\d_]{3,20}$', url), 'w-mal-31', 'Work: Invalid URL'),
+        (not re.match(r'^[A-Za-z\d_-]{3,20}$', url), 'w-mal-31', 'Work: Invalid URL'),
     ]
 
     for condition in conditions:
