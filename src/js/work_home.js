@@ -33,7 +33,7 @@ function load_workhomedotjson() {
 
     const main = document.getElementById("main")
 
-    fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/home.json`, {
+    fetch(`https://chalk.fortheinternet.xyz/api/work/${creator_username}/${url}/home.json`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -158,7 +158,7 @@ function load_workhomedotjson() {
 
                 const ably = new Ably.Realtime({
                     authCallback: (userData, callback) => {
-                        fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/home_realtime.json`, {
+                        fetch(`https://chalk.fortheinternet.xyz/api/work/${creator_username}/${url}/home_realtime.json`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -279,7 +279,7 @@ function remove_member(element) {
             value: identifier
         }
     
-        fetch(`https://chalkgrades.vercel.app/api/work/${creator_username}/${url}/settings.json`, {
+        fetch(`https://chalk.fortheinternet.xyz/api/work/${creator_username}/${url}/settings.json`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -324,7 +324,7 @@ function create_submit() {
 
     const examData = {token: getCookie("token"), exam_name: createDisplay.value};
 
-    fetch(`https://chalkgrades.vercel.app/api/exams/${creator_username}/${url}/create.json`, {
+    fetch(`https://chalk.fortheinternet.xyz/api/exams/${creator_username}/${url}/create.json`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
