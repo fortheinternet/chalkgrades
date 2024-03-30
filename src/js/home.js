@@ -106,7 +106,7 @@ function join_new_workspace() {
     const work_section = document.getElementById("workspaces_wrap");
 
     const work_section_j1 = document.getElementById("join_errors");
-    const work_section_j2 = document.getElementById("join_superuser");
+    const work_section_j2 = document.getElementById("join_work_admin");
     const work_section_j3 = document.getElementById("join_url");
     const work_section_j4 = document.getElementById("join_password");
 
@@ -165,7 +165,7 @@ function create_submit() {
         if (data.error) {
             createErrors.textContent = data.message;
 
-            if (data.error == "w-mal-20") {
+            if (data.error == "w-mal-25-1") {
                 window.location.href = '/login';
                 removeCookie("token");
             }
@@ -180,16 +180,16 @@ function create_submit() {
 
 function join_submit() {
     const joinErrors = document.getElementById("join_errors");
-    const joinSuperuser = document.getElementById("join_superuser");
+    const joinwork_admin = document.getElementById("join_work_admin");
     const joinURL = document.getElementById("join_url");
     const joinPassword = document.getElementById("join_password");
 
-    superuser_value = joinSuperuser.value;
+    work_admin_value = joinwork_admin.value;
     url_value = joinURL.value;
 
     const workData = {token: getCookie("token"), password: joinPassword.value};
 
-    fetch(`https://chalk.fortheinternet.xyz/api/work/${superuser_value}/${url_value}/join.json`, {
+    fetch(`https://chalk.fortheinternet.xyz/api/work/${work_admin_value}/${url_value}/join.json`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -206,7 +206,7 @@ function join_submit() {
                 removeCookie("token");
             }
         } else {
-            window.location.href = `/${superuser_value}/${url_value}`
+            window.location.href = `/${work_admin_value}/${url_value}`
         }
     })
     .catch(error => {

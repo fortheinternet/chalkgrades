@@ -46,7 +46,7 @@ function load_workhomedotjson() {
                 window.location.href = '/login';
                 removeCookie("token");
 
-            } else if (data.error == "w-mal-25-11" || data.error == "w-mal-25-2") {
+            } else if (data.error == "w-mal-4000") {
                 window.location.href = 'https://en.wikipedia.org/wiki/HTTP_404';
 
             } else if (data.error == "w-mal-26") {
@@ -85,7 +85,7 @@ function load_workhomedotjson() {
                 
                 const view_settings_btn = document.getElementById("view_settings_btn")
 
-                if (user_role == "superuser") {
+                if (user_role == "work_admin") {
                     view_settings_btn.style.display = "block";
                 }
 
@@ -105,7 +105,7 @@ function load_workhomedotjson() {
 
                     memberClone.querySelector("#member_user").textContent = username;
 
-                    if (selected_role == "superuser") {
+                    if (selected_role == "work_admin") {
                         memberClone.querySelector("#member_role").textContent = "teacher";
                     } else {
                         memberClone.querySelector("#member_role").textContent = "student";
@@ -113,7 +113,7 @@ function load_workhomedotjson() {
 
                     memberClone.dataset.origin = "clone";
 
-                    if(user_role == "superuser") {
+                    if(user_role == "work_admin") {
                         if(user_id == selected_user_id) {
                             memberClone.querySelector("#member_rm_span").textContent = "can't remove member";
                             memberClone.querySelector("#member_rm_lnk").dataset.action = "na";
@@ -154,8 +154,6 @@ function load_workhomedotjson() {
                     examsDiv.appendChild(examClone);
                 });
 
-                // IT'S REALTIME
-
                 const ably = new Ably.Realtime({
                     authCallback: (userData, callback) => {
                         fetch(`https://chalk.fortheinternet.xyz/api/work/${creator_username}/${url}/home_realtime.json`, {
@@ -191,7 +189,7 @@ function load_workhomedotjson() {
 
                         memberClone.querySelector("#member_user").textContent = username;
 
-                        if (selected_role == "superuser") {
+                        if (selected_role == "work_admin") {
                             memberClone.querySelector("#member_role").textContent = "teacher";
                         } else {
                             memberClone.querySelector("#member_role").textContent = "student";
@@ -199,7 +197,7 @@ function load_workhomedotjson() {
 
                         memberClone.dataset.origin = "clone";
 
-                        if(user_role == "superuser") {
+                        if(user_role == "work_admin") {
                             if(user_id == selected_user_id) {
                                 memberClone.querySelector("#member_rm_span").textContent = "can't remove member";
                                 memberClone.querySelector("#member_rm_lnk").dataset.action = "na";

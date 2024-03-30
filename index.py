@@ -1,4 +1,3 @@
-# This is the start of the legendary Python document index.py.
 from flask import Flask, send_from_directory, request, jsonify
 from dotenv import load_dotenv
 import hashlib
@@ -25,6 +24,8 @@ supabase: Client = create_client(supabase_url, supabase_key)
 ably = AblyRest(ably_key)
 
 app = Flask(__name__)
+
+# Static Files
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -66,7 +67,80 @@ def serve_output():
 def serve_favicon():
     return send_from_directory('src', 'favicon.png')
 
-# Logins
+# User Authentication Functions
+
+def userauth(token):
+    response = supabase.table('users_data').select('username','user_id').eq('token', token).execute().data
+
+    username = response[0]['username'] if response else None
+    user_id = response[0]['user_id'] if response else None
+
+    conditions = [
+        (not user_id, 'w-mal-25-1', 'Your token is invalid, as its not associated with a user account.')
+    ]
+
+    for condition in conditions:
+        if condition[0]: return {'error': condition[1], 'message': condition[2]}
+
+    return {'username': username, 'user_id': user_id}
+
+def workauth(token, creator_username, url, required_role):
+    user_data = userauth(token)
+
+    if "error" in user_data:
+        return user_data
+    else:
+        username = user_data.get("username")
+        user_id = user_data.get("user_id")
+
+    response = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
+    creator_id = response[0]['user_id'] if response else None
+
+    conditions = [
+        (not creator_id, 'w-mal-4000', 'That workspace does not exist.')
+    ]
+
+    for condition in conditions:
+        if condition[0]: return {'error': condition[1], 'message': condition[2]}
+
+    response = supabase.table('work_data').select('work_id','display','auth').eq('url', url).eq('creator_id', creator_id).execute().data
+
+    work_id = response[0]['work_id'] if response else None
+    work_display = response[0]['display'] if response else None
+    work_auth = response[0]['auth'] if response else None
+
+    conditions = [
+        (not work_id, 'w-mal-4000', 'That workspace does not exist.')
+    ]
+
+    for condition in conditions:
+        if condition[0]: return {'error': condition[1], 'message': condition[2]}
+    
+    user_role = "none"
+    if required_role != "none":
+        response = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute().data
+        user_role = response[0]['role'] if response else None
+
+        conditions = [
+            (required_role == "member" and user_role == None, 'workspace-noperms', 'Work: You have incorrect permissions.'),
+            (required_role == "work_admin" and user_role == None, 'workspace-noperms', 'Work: You have incorrect permissions.'),
+            (required_role == "work_admin" and user_role == "member", 'workspace-noperms', 'Work: You have incorrect permissions.')
+        ]
+
+        for condition in conditions:
+            if condition[0]: return {'error': condition[1], 'message': condition[2]}
+
+    return {
+        'username': username,
+        'user_id': user_id,
+        'creator_id': creator_id,
+        'work_id': work_id,
+        'work_display': work_display,
+        'user_role': user_role,
+        'work_auth': work_auth
+    }
+
+# Endpoints
 
 @app.route('/api/logins/logins.json', methods=['POST'])
 def handle_logins():
@@ -75,14 +149,14 @@ def handle_logins():
     username = data.get('username')
     password = data.get('password')
 
-    result = supabase.table('users_data').select('auth, token').eq('username', username).execute().data
+    response = supabase.table('users_data').select('auth, token').eq('username', username).execute().data
 
-    conditions = [(not result, 'l-fatal-20', 'Login: User not found')]
+    conditions = [(not response, 'l-fatal-20', 'Login: User not found')]
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
-    auth = result[0]['auth'] if result else None
-    token = result[0]['token'] if result else None
+    auth = response[0]['auth'] if response else None
+    token = response[0]['token'] if response else None
 
     salted_password = password_salt + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
@@ -101,14 +175,13 @@ def handle_signups():
     password_confirm = data.get('password_confirm')
     accesskey = data.get('accesskey')
 
-    # todo: fix this code to not query all usernames
-    response = supabase.table('users_data').select('username').execute()
-    all_usernames = [user['username'] for user in response.data] if response.data else []
+    response = supabase.table('users_data').select('username').eq('username', username).execute().data
+    usernames = response[0]['username'] if response else None
 
     conditions = [
         (password != password_confirm, 's-mal-10', 'Signup: Passwords dont match'),
         (accesskey != accesskey_user, 's-mal-15', 'Signup: Bad access key'),
-        (username.lower() in map(str.lower, all_usernames), 's-mal-20', 'Signup: Username already taken'),
+        (usernames, 's-mal-20', 'Signup: Username already taken'),
         (not re.match(r'^[A-Za-z\d_ -ÁáÍíŰűÉéŐőÚúÓóÜüÖö]{3,45}$', username), 's-mal-50', 'Signup: Invalid username'),
     ]
 
@@ -132,31 +205,36 @@ def handle_home():
     data = request.get_json()
     token = data.get('token')
 
-    result = supabase.table('users_data').select('username','user_id').eq('token', token).execute().data
-    username = result[0]['username'] if result else None
-    user_id = result[0]['user_id'] if result else None
+    # Authentication
+    user_data = userauth(token)
 
-    conditions = [(not username, 'h-mal-10', 'Home: Invalid token')]
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+    if "error" in user_data:
+        return jsonify(user_data), 401
+    else:
+        username = user_data.get("username")
+        user_id = user_data.get("user_id")
 
-    work_data = supabase.table('members_data').select('work_id').eq('member_id', user_id).execute().data
-    
+    # Endpoint Logic
+    response = supabase.table('members_data').select('work_id').eq('member_id', user_id).execute().data
     workspace_info = []
-    for workspace_entry in work_data:
-        work_id = workspace_entry.get('work_id')
 
-        result = supabase.table('work_data').select('creator_id','url','display').eq('work_id', work_id).execute()
-        display_name = result.data[0].get('display')
-        url = result.data[0].get('url')
-        creator_id = result.data[0].get('creator_id')
+    for workspace in response:
+        work_id = workspace.get('work_id')
+
+        response = supabase.table('work_data').select('creator_id','url','display').eq('work_id', work_id).execute()
+        display_name = response.data[0].get('display')
+        url = response.data[0].get('url')
+        creator_id = response.data[0].get('creator_id')
 
         creator_info = supabase.table('users_data').select('username').eq('user_id', creator_id).execute()
         creator_username = creator_info.data[0].get('username')
         
         workspace_info.append({'display_name': display_name, 'url': url, 'creator_username': creator_username})
 
-    return jsonify({'username': username, 'workspaces': workspace_info})
+    return jsonify({
+        'username': username,
+        'workspaces': workspace_info
+    })
     
 @app.route('/api/work/create.json', methods=['POST'])
 def handle_work_create():
@@ -168,24 +246,23 @@ def handle_work_create():
     display = data.get('display')
     accesskey = data.get('accesskey')
 
+    # Authentication
+    user_data = userauth(token)
+
+    if "error" in user_data:
+        return jsonify(user_data), 401
+    else:
+        user_id = user_data.get("user_id")
+
+    # Endpoint Logic
     salted_password = password_salt_2 + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
-    creator_response = supabase.table('users_data').select('user_id').eq('token', token).execute()
-    creator_id = creator_response.data[0]['user_id'] if creator_response.data else None
-
-    conditions = [
-        (not creator_id, 'w-mal-20', 'Work: Invalid token'),
-        (accesskey != accesskey_work, 'w-mal-15', 'Work: Bad access key'),
-    ]
-    
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-    
-    existing_workspaces = supabase.table('work_data').select('url').eq('creator_id', creator_id).execute()
+    existing_workspaces = supabase.table('work_data').select('url').eq('creator_id', user_id).execute()
     existing_urls = [workspace['url'].lower() for workspace in existing_workspaces.data] if existing_workspaces.data else []
 
     conditions = [
+        (accesskey != accesskey_work, 'w-mal-15', 'Work: Bad access key'),
         (url.lower() in existing_urls, 'w-mal-30', 'Work: url already exists for this user'),
         (not re.match(r'^[A-Za-z\d_-]{3,20}$', url), 'w-mal-31', 'Work: Invalid URL'),
     ]
@@ -193,11 +270,11 @@ def handle_work_create():
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
-    supabase.table("work_data").insert({"creator_id": creator_id, "auth": sha256_hash, "url": url, "display": display}).execute()
+    supabase.table("work_data").insert({"creator_id": user_id, "auth": sha256_hash, "url": url, "display": display}).execute()
 
-    work_id = supabase.table('work_data').select('work_id').eq('creator_id', creator_id).eq('url', url).execute().data[0]['work_id']
+    work_id = supabase.table('work_data').select('work_id').eq('creator_id', user_id).eq('url', url).execute().data[0]['work_id']
+    supabase.table("members_data").insert({"member_id": user_id, "work_id": work_id, "role": "work_admin"}).execute()
 
-    supabase.table("members_data").insert({"member_id": creator_id, "work_id": work_id, "role": "superuser"}).execute()
     return jsonify({'success': 'Work: Workspace created successfully'})
 
 @app.route('/api/work/<string:creator_username>/<string:url>/join.json', methods=['POST']) # member_join
@@ -207,44 +284,32 @@ async def handle_work_join(creator_username, url):
     password = data.get('password')
     token = data.get('token')
 
-    user_data = supabase.table('users_data').select('user_id', 'username').eq('token', token).execute().data
+    # Authentication
+    work_data = workauth(token, creator_username, url, "none")
 
-    user_id = user_data[0]['user_id'] if user_data else None
-    username = user_data[0]['username'] if user_data else None
+    if "error" in work_data:
+        return jsonify(work_data), 403
+    else:
+        username = work_data.get("username")
+        user_id = work_data.get("user_id")
+        work_id = work_data.get("work_id")
+        work_auth = work_data.get("work_auth")
 
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute()
-    creator_id = creator_data.data[0]['user_id'] if creator_data.data else None
-
-    conditions = [
-        (not user_id, 'w-mal-25-1', 'Work: Invalid token'),
-        (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id','auth').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-    work_auth = work_query.data[0]['auth'] if work_query.data else None
-
-    conditions = [(not work_id, 'w-mal-25-2', 'Work: That workspace does not exist')]
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
+    # Endpoint Logic
     salted_password = password_salt_2 + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
     conditions = [(sha256_hash != work_auth, 'w-mal-55', 'Work: Invalid access credentials')]
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-        
+     
     existing_member = supabase.table('members_data').select('member_id').eq('member_id', user_id).eq('work_id', work_id).execute().data
 
     conditions = [(existing_member, 'w-mal-60', 'Work: User is already a member of this workspace')]
     for condition in conditions:
         if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
-    # REALTIME
+    # Realtime Endpoint Logic
     existing_row = supabase.table('realtime_pages').select('*').eq('work_id', work_id).execute().data
 
     if existing_row:
@@ -264,8 +329,8 @@ async def handle_work_join(creator_username, url):
         "selected_role": "member",
         "selected_user_id": user_id
     }
-    await channel.publish('member_join', channel_message)
 
+    await channel.publish('member_join', channel_message)
     return jsonify({'success': 'Work: Workspace joined successfully'})
 
 @app.route('/api/work/<string:creator_username>/<string:url>/home.json', methods=['POST'])
@@ -273,37 +338,17 @@ def handle_work_home(creator_username, url):
     data = request.get_json()
     token = data.get('token')
 
-    user_data = supabase.table('users_data').select('user_id', 'username').eq('token', token).execute().data
+    # Authentication
+    work_data = workauth(token, creator_username, url, "member")
 
-    user_id = user_data[0]['user_id'] if user_data else None
-    username = user_data[0]['username'] if user_data else None
-
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
-
-    conditions = [
-        (not user_id, 'w-mal-25-1', 'Work: Invalid token'),
-        (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-        
-    work_query = supabase.table('work_data').select('work_id','display').eq('url', url).eq('creator_id', creator_id).execute().data
-
-    work_id = work_query[0]['work_id'] if work_query else None
-    display = work_query[0]['display'] if work_query else None
-
-    conditions = [(not work_id, 'w-mal-25-2', 'Work: That workspace does not exist'),]
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-        
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute().data
-    user_role = user_role_data[0]['role'] if user_role_data else None
-
-    conditions = [(not user_role, 'w-mal-26', 'Work: You are not a member of that workspace')]
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+    if "error" in work_data:
+        return jsonify(work_data), 403
+    else:
+        username = work_data.get("username")
+        user_id = work_data.get("user_id")
+        work_id = work_data.get("work_id")
+        work_display = work_data.get("work_display")
+        user_role = work_data.get("user_role")
 
     members_data = supabase.table('members_data').select('member_id', 'role').eq('work_id', work_id).execute().data
 
@@ -312,8 +357,8 @@ def handle_work_home(creator_username, url):
         member_id = member_data.get('member_id')
         member_role = member_data.get('role')
 
-        result = supabase.table('users_data').select('username').eq('user_id', member_id).execute()
-        member_username = result.data[0].get('username')
+        response = supabase.table('users_data').select('username').eq('user_id', member_id).execute()
+        member_username = response.data[0].get('username')
 
         members_response.append({
             'username': member_username,
@@ -325,7 +370,7 @@ def handle_work_home(creator_username, url):
         exams_data = supabase.table("exams_data").select('exam_id').eq('work_id', work_id).eq('visibility', "public").execute()
         exam_ids = exams_data.data
     
-    elif user_role == "superuser":
+    elif user_role == "work_admin":
         exams_data = supabase.table("exams_data").select('exam_id').eq('work_id', work_id).execute()
         exam_ids = exams_data.data
             
@@ -333,10 +378,10 @@ def handle_work_home(creator_username, url):
     for exam in exam_ids:
         exam_id = exam.get('exam_id')
 
-        result = supabase.table('exams_data').select('display_name','visibility').eq('exam_id', exam_id).execute()
+        response = supabase.table('exams_data').select('display_name','visibility').eq('exam_id', exam_id).execute()
 
-        exam_name = result.data[0]['display_name'] if result.data else None
-        visibility = result.data[0]['visibility'] if result.data else None
+        exam_name = response.data[0]['display_name'] if response.data else None
+        visibility = response.data[0]['visibility'] if response.data else None
 
         exams.append({
             'display_name': exam_name,
@@ -354,9 +399,9 @@ def handle_work_home(creator_username, url):
             realtime_access = random.randint(10**15, (10**16)-1)
     
         supabase.table('realtime_pages').insert({'work_id': work_id, 'access': realtime_access}).execute()
-    
-    response = ({
-        'display': display,
+
+    return jsonify({
+        'display': work_display,
         'username': username,
         'user_id': user_id,
         'user_role': user_role,
@@ -365,45 +410,20 @@ def handle_work_home(creator_username, url):
         'realtime_access': realtime_access
     })
 
-    return jsonify(response)
-
 @app.route('/api/work/<string:creator_username>/<string:url>/home_realtime.json', methods=['POST'])
-async def handle_work_home_realtime(creator_username, url):
+async def handle_work_ably_token(creator_username, url):
     data = request.get_json()
     token = data.get('token')
 
-    user_data = supabase.table('users_data').select('user_id', 'username').eq('token', token).execute().data
+    # Authentication
+    work_data = workauth(token, creator_username, url, "none")
 
-    user_id = user_data[0]['user_id'] if user_data else None
-    username = user_data[0]['username'] if user_data else None
+    if "error" in work_data:
+        return jsonify(work_data), 403
+    else:
+        work_id = work_data.get("work_id")
 
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
-
-    conditions = [
-        (not user_id, 'w-mal-25-1', 'Work: Invalid token'),
-        (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-        
-    work_query = supabase.table('work_data').select('work_id','display').eq('url', url).eq('creator_id', creator_id).execute().data
-
-    work_id = work_query[0]['work_id'] if work_query else None
-
-    conditions = [(not work_id, 'w-mal-25-2', 'Work: That workspace does not exist'),]
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-        
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute().data
-    user_role = user_role_data[0]['role'] if user_role_data else None
-
-    conditions = [(not user_role, 'w-mal-26', 'Work: You are not a member of that workspace')]
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    # REALTIME
+    # Realtime Endpoint Logic
     existing_row = supabase.table('realtime_pages').select('*').eq('work_id', work_id).execute().data
 
     if existing_row:
@@ -418,11 +438,9 @@ async def handle_work_home_realtime(creator_username, url):
     token_details = await ably.auth.create_token_request({'ttl': 3600000, 'capability': {realtime_access: ['subscribe']}})
     token_details_dict = token_details.to_dict()
 
-    response = {
+    return jsonify({
         'ably_token': token_details_dict
-    }
-
-    return jsonify(response)
+    })
 
 @app.route('/api/work/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
 async def handle_work_settings(creator_username, url):
@@ -432,41 +450,18 @@ async def handle_work_settings(creator_username, url):
     value = data.get('value')
     action = data.get('action')
 
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
-    user_id = user_data[0]['user_id'] if user_data else None
+    # Authentication
+    work_data = workauth(token, creator_username, url, "member")
 
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
+    if "error" in work_data:
+        return jsonify(work_data), 403
+    else:
+        user_id = work_data.get("user_id")
+        creator_id = work_data.get("creator_id")
+        work_id = work_data.get("work_id")
+        user_role = work_data.get("user_role")
 
-    conditions = [
-        (not user_id, 'w-mal-25-1', 'Work: Invalid token'),
-        (not creator_id, 'w-mal-25-11', 'Work: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    conditions = [
-        (not work_id, 'w-mal-25-2', 'Work: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute().data
-    user_role = user_role_data[0]['role'] if user_role_data else None
-
-    conditions = [
-        (not user_role, 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    # REALTIME
+    # Realtime Endpoint Logic
     existing_row = supabase.table('realtime_pages').select('*').eq('work_id', work_id).execute().data
 
     if existing_row:
@@ -478,11 +473,8 @@ async def handle_work_settings(creator_username, url):
     
         supabase.table('realtime_pages').insert({'work_id': work_id, 'access': realtime_access}).execute()
     
-    if action == "display":
-        conditions = [
-            (user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
-        ]
-
+    if action == "display": # work_display
+        conditions = [(user_role != "work_admin", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
@@ -496,7 +488,7 @@ async def handle_work_settings(creator_username, url):
         conditions = [
             (value.lower() in existing_urls, 'w-mal-30-11', 'Work: url already exists for this user'),
             (not re.match(r'^[A-Za-z_]{1,20}$', value), 'w-mal-50', 'Work: Invalid url you silly'),
-            (user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
+            (user_role != "work_admin", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
         ]
 
         for condition in conditions:
@@ -506,10 +498,7 @@ async def handle_work_settings(creator_username, url):
         return jsonify({'success': 'Work: Settings updated successfully'})
     
     elif action == "leave": # member_leave
-        conditions = [
-            (user_role == "superuser", 'w-mal-20-2', 'Work: You do not have the correct permissions to exit this workspace.')
-        ]
-
+        conditions = [(user_role != "work_admin", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
@@ -523,28 +512,13 @@ async def handle_work_settings(creator_username, url):
 
         return jsonify({'success': 'Work: Left workspace successfully'})
     
-    elif action == "delete":
-        conditions = [
-            (user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
-        ]
-
-        for condition in conditions:
-            if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-        
-        supabase.table('exams_data').delete().eq('work_id', work_id).execute()
-        supabase.table('members_data').delete().eq('work_id', work_id).execute()
-        supabase.table('realtime_pages').delete().eq('work_id', work_id).execute()
-        supabase.table('work_data').delete().eq('work_id', work_id).execute()
-
-        # TODO: actually finish this
-
-        return jsonify({'success': 'Work: Removed workspace successfully'})
+    elif action == "delete": # work_detete
+        return jsonify({'wip': 'Deleting workspaces is not finished yet, please contact your administrator.'})
     
     elif action == "remove_member": # member_remove
         exams_data = supabase.table('exams_data').select('exam_id').eq('work_id', work_id).execute().data
 
-        conditions = [(user_role != "superuser", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
-
+        conditions = [(user_role != "work_admin", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
@@ -572,37 +546,15 @@ def handle_exams_create(creator_username, url):
     token = data.get("token")
     exam_name = data.get("exam_name")
 
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
-    user_id = user_data[0]['user_id'] if user_data else None
+    # Authentication
+    work_data = workauth(token, creator_username, url, "member")
 
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
-
-    conditions = [
-        (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
-        (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    conditions = [(not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),]
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute().data
-    user_role = user_role_data[0]['role'] if user_role_data else None
-
-    conditions = [
-        (not user_role or user_role != "superuser", 'e-mal-20', 'Exams: You do not have the proper permissions to create tests.')
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+    if "error" in work_data:
+        return jsonify(work_data), 403
+    else:
+        work_id = work_data.get("work_id")
     
+    # Endpoint Logic
     supabase.table('exams_data').insert({"display_name": exam_name, "work_id": work_id, "visibility": "private"}).execute()
     return jsonify({'success': 'Exams: Created test successfully'})
 
@@ -614,33 +566,15 @@ def handle_exam_settings(creator_username, url):
     exam_id = data.get('value')
     action = data.get('action')
 
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
-    user_id = user_data[0]['user_id'] if user_data else None
+    # Authentication
+    work_data = workauth(token, creator_username, url, "work_admin")
 
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
+    if "error" in work_data:
+        return jsonify(work_data), 403
+    else:
+        work_id = work_data.get("work_id")
 
-    conditions = [
-        (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
-        (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    conditions = [
-        (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
-    user_role = user_role_data.data[0]['role'] if user_role_data.data else None
-
+    # Endpoint Logic
     exam_work_data = supabase.table('exams_data').select('work_id').eq('exam_id', exam_id).execute()
     exam_work_id = exam_work_data.data[0]['work_id'] if exam_work_data.data else None
 
@@ -648,7 +582,6 @@ def handle_exam_settings(creator_username, url):
     session_id = session_data.data[0]['session_id'] if session_data.data else None
 
     conditions = [
-        (not user_role or user_role != "superuser", 'e-mal-20', 'Exams: You do not have the proper permissions to change settings.'),
         (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.'),
         (session_id, 'e-mal-26-61', 'Exams: This exam has one or more active sessions so it cant be accessed traditionally')
     ]
@@ -676,43 +609,24 @@ def handle_exam_build(creator_username, url):
     action = data.get('action')
     questions = data.get('questions', [])
 
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
-    user_id = user_data[0]['user_id'] if user_data else None
+    # Authentication
+    work_data = workauth(token, creator_username, url, "work_admin")
 
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
+    if "error" in work_data:
+        return jsonify(work_data), 403
+    else:
+        work_id = work_data.get("work_id")
 
-    conditions = [
-        (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
-        (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    conditions = [
-        (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
-    user_role = user_role_data.data[0]['role'] if user_role_data.data else None
-
+    # Endpoint Logic
     exam_work_data = supabase.table('exams_data').select('work_id').eq('exam_id', exam_id).execute()
     exam_work_id = exam_work_data.data[0]['work_id'] if exam_work_data.data else None
 
-    session_data = supabase.table('sessions_data').select('session_id').eq('exam_id', exam_id).execute()
+    session_data = supabase.table('sessions_data').select('session_id').eq('status', "active").eq('exam_id', exam_id).execute()
     session_id = session_data.data[0]['session_id'] if session_data.data else None
 
     conditions = [
-        (not user_role or user_role != "superuser", 'e-mal-20', 'Exams: You do not have the proper permissions to change exam configurations.'),
         (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.'),
-        (session_id, 'e-mal-26-61', 'Exams: This exam has one or more sessions so it cant be modified.')
+        (session_id, 'e-mal-26-61', 'Exams: This exam has one or more active sessions so it cant be accessed traditionally')
     ]
 
     for condition in conditions:
@@ -767,34 +681,18 @@ def handle_exam_home(creator_username, url):
     token = data.get('token')
     exam_id = data.get('value')
 
-    user_data = supabase.table('users_data').select('user_id', 'username').eq('token', token).execute().data
-    
-    user_id = user_data[0]['user_id'] if user_data else None
-    username = user_data[0]['username'] if user_data else None
+    # Authentication
+    work_data = workauth(token, creator_username, url, "member")
 
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
+    if "error" in work_data:
+        return jsonify(work_data), 403
+    else:
+        username = work_data.get("username")
+        work_id = work_data.get("work_id")
+        work_display = work_data.get("work_display")
+        user_role = work_data.get("user_role")
 
-    conditions = [
-        (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
-        (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-    
-    work_query = supabase.table('work_data').select('work_id', 'display').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-    work_display = work_query.data[0]['display'] if work_query.data else None
-
-    conditions = [(not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
-    user_role = user_role_data.data[0]['role'] if user_role_data.data else None
-
+    # Endpoint Logic
     exam_work_data = supabase.table('exams_data').select('work_id', 'visibility', 'display_name').eq('exam_id', exam_id).execute()
     exam_work_id = exam_work_data.data[0]['work_id'] if exam_work_data.data else None
     exam_visibility = exam_work_data.data[0]['visibility'] if exam_work_data.data else None
@@ -803,6 +701,7 @@ def handle_exam_home(creator_username, url):
     conditions = [
         (not user_role, 'e-mal-20', 'Exams: You do not have the proper permissions to change exam configurations.'),
         (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.'),
+        (user_role != "work_admin" and exam_visibility != "public", 'exam_not_public', 'You are only allowed to view public exams, not private ones.')
     ]
 
     for condition in conditions:
@@ -840,7 +739,7 @@ def handle_exam_home(creator_username, url):
             'user_role': user_role,
             'username': username
         }
-    elif user_role == "superuser":
+    elif user_role == "work_admin":
         response_data = {
             'work_display': work_display,
             'exam_display': exam_display,
@@ -851,8 +750,7 @@ def handle_exam_home(creator_username, url):
             'sessions': student_sessions
         }
 
-    # REALTIME
-        
+    # Realtime Endpoint Logic
     realtime_access = None
     while not realtime_access or supabase.table('realtime_pages').select('access').eq('access', realtime_access).execute().data:
         realtime_access = random.randint(10**15, (10**16)-1)
@@ -872,35 +770,17 @@ def handle_exam_start(creator_username, url):
     token = data.get('token')
     exam_id = data.get('value')
 
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
-    user_id = user_data[0]['user_id'] if user_data else None
+    # Authentication
+    work_data = workauth(token, creator_username, url, "MIN_PERM_LVL")
 
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
+    if "error" in work_data:
+        return jsonify(work_data), 403
+    else:
+        user_id = work_data.get("user_id")
+        work_id = work_data.get("work_id")
 
-    conditions = [
-        (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
-        (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    conditions = [
-        (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
-    user_role = user_role_data.data[0]['role'] if user_role_data.data else None
-
+    # Endpoint Logic
     exam_work_data = supabase.table('exams_data').select('work_id', 'visibility').eq('exam_id', exam_id).execute()
-
     exam_work_id = exam_work_data.data[0]['work_id'] if exam_work_data.data else None
     exam_visibility = exam_work_data.data[0]['visibility'] if exam_work_data.data else None
 
@@ -908,7 +788,6 @@ def handle_exam_start(creator_username, url):
     session_id = session_data.data[0]['session_id'] if session_data.data else None
 
     conditions = [
-        (not user_role or user_role == "superuser", 'e-mal-20', 'Exams: You do not have the proper permissions to start an exam.'),
         (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.'),
         (exam_visibility != "public", 'e-mal-22-01', 'Exams: You are only allowed to start public exams.'),
         (session_id, 'e-mal-26-60', 'Exams: You already started this exam!')
@@ -931,59 +810,3 @@ def handle_exam_start(creator_username, url):
         formatted_questions.append(formatted_question)
 
     return jsonify({'questions': formatted_questions})
-
-@app.route('/api/exams/<string:creator_username>/<string:url>/check_stat.json', methods=['POST'])
-def handle_exam_check_stat(creator_username, url):
-    data = request.get_json()
-    
-    token = data.get('token')
-    exam_id = data.get('value')
-
-    user_data = supabase.table('users_data').select('user_id').eq('token', token).execute().data
-    user_id = user_data[0]['user_id'] if user_data else None
-
-    creator_data = supabase.table('users_data').select('user_id').eq('username', creator_username).execute().data
-    creator_id = creator_data[0]['user_id'] if creator_data else None
-
-    conditions = [
-        (not user_id, 'e-mal-25-1', 'Exams: Invalid token'),
-        (not creator_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    work_query = supabase.table('work_data').select('work_id').eq('url', url).eq('creator_id', creator_id).execute()
-    work_id = work_query.data[0]['work_id'] if work_query.data else None
-
-    conditions = [
-        (not work_id, 'e-mal-25-2', 'Exams: That workspace does not exist'),
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    user_role_data = supabase.table('members_data').select('role').eq('member_id', user_id).eq('work_id', work_id).execute()
-    user_role = user_role_data.data[0]['role'] if user_role_data.data else None
-
-    exam_work_data = supabase.table('exams_data').select('work_id', 'visibility').eq('exam_id', exam_id).execute()
-
-    exam_work_id = exam_work_data.data[0]['work_id'] if exam_work_data.data else None
-    exam_visibility = exam_work_data.data[0]['visibility'] if exam_work_data.data else None
-
-    session_data = supabase.table('sessions_data').select('session_id', 'status').eq('exam_id', exam_id).eq('user_id', user_id).execute()
-
-    session_status = session_data.data[0]['status'] if session_data.data else None
-    session_id = session_data.data[0]['session_id'] if session_data.data else None
-
-    conditions = [
-        (not user_role, 'e-mal-20', 'Exams: You do not have the proper permissions to check an exam.'),
-        (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.'),
-        (exam_visibility != "public", 'e-mal-22-01', 'Exams: You are only allowed to check public exams.'),
-        (session_id, 'e-mal-20-21', 'Exams: You have not started this exam yet!')
-    ]
-
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-
-    return jsonify({'status': session_status})

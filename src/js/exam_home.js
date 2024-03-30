@@ -17,10 +17,24 @@ document.addEventListener("DOMContentLoaded", function() {
 let alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
 function load_examhomedotjson() {
-    
-}
+    const username_fields = document.querySelectorAll(".username_field")
+    const work_user = document.getElementById("work_user")
+    const work_url = document.getElementById("work_url")
+    const work_display = document.getElementById("work_display")
 
-// This code does not look professional, it looks like a cat fell asleep on the keyboard. But it works so it won't be fixed. Or at least not by me ¯\_(ツ)_/¯
+    const currentUrl = window.location.href;
+    const urlParts = currentUrl.split('/');
+
+    let creator_username = urlParts[urlParts.length - 2];
+    creator_username = decodeURIComponent(creator_username)
+
+    const url = urlParts[urlParts.length - 1];
+
+    const user_token = getCookie("token")
+    const userData = {token: user_token}
+
+    const main = document.getElementById("main")
+}
 
 function setCookie(cname, cvalue) {
     let d = new Date();
