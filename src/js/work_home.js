@@ -1,118 +1,99 @@
 document.addEventListener("DOMContentLoaded", function() {
+    const token = getCookie("token")
+
     console.info("INFORMATION: Loading of JavaScript file 'work_home.js' was successful.")
     console.warn(
         '%cWARNING: Pasting any script into this console will give attackers access to your account authentication details. If you know what you are doing you should come working here, details at read.cv/thelocaltemp',
         'font-weight: bold;'
     );
 
-    const user_token = getCookie("token")
+    // Get URL Data
+    const currentUrl = window.location.href
+    const urlParts = currentUrl.split('/')
 
-    if (user_token) {
-        load_workhomedotjson()
-    } else {
-        window.location.href = '/login';
-    }
-})
+    let creator_username = urlParts[urlParts.length - 2]
+    creator_username = decodeURIComponent(creator_username)
 
-function load_workhomedotjson() {
+    const url = urlParts[urlParts.length - 1]
+    const main = document.getElementById("main")
+
+    // Get document stuff
     const username_fields = document.querySelectorAll(".username_field")
     const work_user = document.getElementById("work_user")
     const work_url = document.getElementById("work_url")
-    const work_display = document.getElementById("work_display")
+    const work_display_h4 = document.getElementById("work_display")
+    const view_settings_btn = document.getElementById("view_settings_btn")
 
-    const currentUrl = window.location.href;
-    const urlParts = currentUrl.split('/');
+    const membersDiv = document.getElementById("members")
+    const memberDiv = document.getElementById("member")
 
-    let creator_username = urlParts[urlParts.length - 2];
-    creator_username = decodeURIComponent(creator_username)
+    const examDiv = document.getElementById("exam")
+    const examsDiv = document.getElementById("exams")
 
-    const url = urlParts[urlParts.length - 1];
+    const clones = document.querySelectorAll('[data-origin="clone"]') 
 
-    const user_token = getCookie("token")
-    const userData = {token: user_token}
+    work_details = fetch_work_details(token, creator_username, url)
+        .then(work_details => {
+            if (work_details.error) {
+                error = work_details.error
+                console.error(error)
 
-    const main = document.getElementById("main")
+                if (error == "mal-25-1") {window.location.href = '/login'; removeCookie("token")}
+                if (error == "w-mal-403") {window.location.href = '/home'}
+                if (error == "w-mal-4000") {window.location.href = '/home'}
+                else {
+                    alert("You encountered a super rare error. You should contact a maintainer @ read.cv/thelocaltemp")
+                }
+            }
 
-    fetch(`https://chalk.fortheinternet.xyz/api/work/${creator_username}/${url}/home.json`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error == "w-mal-25-1") {
-                window.location.href = '/login';
-                removeCookie("token");
+            else {
+                const username = work_details.username
+                const work_display = work_details.display
+                const realtime_access = work_details.realtime_access
 
-            } else if (data.error == "w-mal-4000") {
-                window.location.href = 'https://en.wikipedia.org/wiki/HTTP_404';
+                const members_data = work_details.members
+                const exams_data = work_details.exams
+                const user_id = work_details.user_id
+                const user_role = work_details.user_role
 
-            } else if (data.error == "w-mal-26") {
-                window.location.href = '/home';
+                // Populate screen
+                work_display_h4.textContent = work_display
 
-            } else {
-                username = data.username;
-                console.info("User authenticated successfully as " + username)
-                username_fields.forEach(username_field => {
-                    username_field.textContent = username;
-                })
-                work_display.textContent = data.display;
-
-                work_user.textContent = creator_username;
-                work_url.textContent = url;
-
-                realtime_access = data.realtime_access;
-
-                const membersDiv = document.getElementById("members")
-                const memberDiv = document.getElementById("member")
-
-                const examDiv = document.getElementById("exam")
-                const examsDiv = document.getElementById("exams")
-                
-                const members_data = data.members;
-                const exams_data = data.exams;
-                const user_id = data.user_id;
-                const user_role = data.user_role;
-
-                console.table([
-                    ["members_data", members_data],
-                    ["exams_data", exams_data],
-                    ["user_id", user_id],
-                    ["user_role", user_role]
-                ])
-                
-                const view_settings_btn = document.getElementById("view_settings_btn")
+                work_user.textContent = creator_username
+                work_url.textContent = url
 
                 if (user_role == "work_admin") {
                     view_settings_btn.style.display = "block";
                 }
 
-                anyClones = document.querySelectorAll('[data-origin="clone"]') 
+                console.info("User authenticated successfully as " + username)
+                username_fields.forEach(username_field => {
+                    username_field.textContent = username
+                })
 
-                anyClones.forEach(clone => {
+                clones.forEach(clone => {
                     clone.remove()
                 });
-                
+
+                // members
                 members_data.forEach(member => {
                     const { username, selected_role, selected_user_id } = member;
-
+        
                     const memberClone = memberDiv.cloneNode(true);
                     memberClone.style.display = "flex";
-
+        
                     memberClone.dataset.identifier = selected_user_id;
-
+        
                     memberClone.querySelector("#member_user").textContent = username;
-
+        
                     if (selected_role == "work_admin") {
                         memberClone.querySelector("#member_role").textContent = "teacher";
                     } else {
                         memberClone.querySelector("#member_role").textContent = "student";
                     }
-
+        
                     memberClone.dataset.origin = "clone";
-
+        
                     if(user_role == "work_admin") {
                         if(user_id == selected_user_id) {
                             memberClone.querySelector("#member_rm_span").textContent = "can't remove member";
@@ -133,70 +114,74 @@ function load_workhomedotjson() {
                             memberClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
                         }
                     }
-
+        
                     membersDiv.appendChild(memberClone);
-
+        
                 });
-
+        
+                // exams
                 exams_data.forEach(exam => {
                     const { display_name, exam_id, visibility} = exam;
-
+        
                     const examClone = examDiv.cloneNode(true);
                     examClone.style.display = "flex";
-
+        
                     examClone.querySelector("#exam_display").textContent = display_name;
                     examClone.querySelector("#exam_visibility").textContent = visibility;
                     examClone.querySelector("#exam_link").href = "/" + creator_username + "/" + url + "/" + exam_id;
-
+        
                     examClone.dataset.identifier = exam_id;
                     examClone.dataset.origin = "clone";
-
+        
                     examsDiv.appendChild(examClone);
                 });
-
+        
+                // realtime
                 const ably = new Ably.Realtime({
-                    authCallback: (userData, callback) => {
+                    authCallback: (anything_at_all, callback) => {
                         fetch(`https://chalk.fortheinternet.xyz/api/work/${creator_username}/${url}/home_realtime.json`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                        body: JSON.stringify({token: getCookie("token")})
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        callback(null, data.ably_token);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching token:', error);
-                        callback(error, null);
-                    });
+                            body: JSON.stringify({
+                                token: token
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            callback(null, data.ably_token);
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            callback(error, null);
+                        });
                     }
-                });
+                });                
                 
                 const channel = ably.channels.get(realtime_access);
-
+        
                 channel.subscribe(function(message) {
                     console.log('Received message:', message);
-
+        
                     if (message.name == "member_join") {
                         const { username, selected_role, selected_user_id } = message.data
-
+        
                         const memberClone = memberDiv.cloneNode(true);
                         memberClone.style.display = "flex";
-
+        
                         memberClone.dataset.identifier = selected_user_id;
-
+        
                         memberClone.querySelector("#member_user").textContent = username;
-
+        
                         if (selected_role == "work_admin") {
                             memberClone.querySelector("#member_role").textContent = "teacher";
                         } else {
                             memberClone.querySelector("#member_role").textContent = "student";
                         }
-
+        
                         memberClone.dataset.origin = "clone";
-
+        
                         if(user_role == "work_admin") {
                             if(user_id == selected_user_id) {
                                 memberClone.querySelector("#member_rm_span").textContent = "can't remove member";
@@ -217,9 +202,9 @@ function load_workhomedotjson() {
                                 memberClone.querySelector("#member_rm_lnk").dataset.identifier = selected_user_id;
                             }
                         }
-
+        
                         membersDiv.appendChild(memberClone);
-
+        
                     } else if (message.name == "member_leave" || message.name == "member_remove") {
                         const { selected_user_id } = message.data
                         
@@ -243,15 +228,34 @@ function load_workhomedotjson() {
                 ably.connection.on('closed', function() {
                     console.log('Ably connection closed');
                 });
-
+        
                 main.style.display = "flex"
-                document.title = data.display + " - Chalk"
+                document.title = work_display + " - Chalk"
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+})
+
+const token = getCookie("token")
+
+function fetch_work_details(token, creator_username, url) {
+    return fetch(`https://chalk.fortheinternet.xyz/api/work/${creator_username}/${url}/home.json`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            token: token
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        return data
+    })
+    .catch(error => {
+        console.error('Error:', error)
+    });
 }
+
 
 function remove_member(element) {
     const action = element.getAttribute('data-action');
@@ -268,21 +272,17 @@ function remove_member(element) {
             ["identifier", identifier],
             ["action", action]
         ])
-    
-        const user_token = getCookie("token")
-    
-        const userData = {
-            token: user_token,
-            action: action,
-            value: identifier
-        }
-    
+        
         fetch(`https://chalk.fortheinternet.xyz/api/work/${creator_username}/${url}/settings.json`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData)
+                body: JSON.stringify({
+                    action: action,
+                    value: identifier,
+                    token: user_token
+                })
             })
             .then(response => response.json())
             .then(data => {
@@ -320,14 +320,15 @@ function create_submit() {
     const creator_username = urlParts[urlParts.length - 2];
     const url = urlParts[urlParts.length - 1];
 
-    const examData = {token: getCookie("token"), exam_name: createDisplay.value};
-
     fetch(`https://chalk.fortheinternet.xyz/api/exams/${creator_username}/${url}/create.json`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(examData)
+        body: JSON.stringify({
+            token: token,
+            exam_name: createDisplay.value
+        })
     })
     .then(response => response.json())
     .then(data => {
@@ -355,8 +356,7 @@ function view_members() {
     view_members.style.display = "block";
     view_exams.style.display = "none";
     view_settings.style.display = "none";
-
-    load_workhomedotjson()
+    
 }
 
 function view_settings() {
@@ -369,8 +369,7 @@ function view_settings() {
     view_exams.style.display = "none";
     view_settings.style.display = "block";
     create_exam.style.display = "block";
-
-    load_workhomedotjson()
+    
 }
 
 function view_exams() {
@@ -382,7 +381,6 @@ function view_exams() {
     view_exams.style.display = "block";
     view_settings.style.display = "none";
 
-    load_workhomedotjson()
 }
 
 function logout() {

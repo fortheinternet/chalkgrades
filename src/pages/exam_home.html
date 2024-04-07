@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>loading, please wait</title>
+        <meta name="description" content="its not loading!! please don't click on this thinking it is 🤦">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="color-scheme" content="dark">
+
+        <meta charset="UTF-8">
+
+        <link rel="stylesheet" href="../../src/output.css">
+
+        <link rel="icon" href="../../src/favicon.png" type="image/png">
+
+        <script src="https://cdn.ably.com/lib/ably.min-1.js"></script>
+        <script src="../../src/js/exam_home.js"></script>
+    </head>
+    <body class="bg-background">
+        <main class="flex flex-col h-screen hidden" id="main">
+            <nav>
+                <div class="flex flex-row">
+                    <a onclick="nav_user()" class="nav_btn">Workspaces</a>
+                </div>
+                <div class="flex flex-row">
+                    <a class="nav_display username_field"></a>
+                </div>
+            </nav>
+
+            <div id="selected_content" class="flex-grow px-8 py-12 lg:pl-[20vw] lg:pr-[20vw]">
+
+                <div class="mb-7 border-b-[1px] border-solid border-transparent-100">
+                    <h4 id="work_display" class="font-display mb-1 font-bold text-xl"></h4>
+                    <p class="font-body text-transparent-750 mb-10">
+                        <span id="work_user" class="mr-1"></span>
+                        <span class="mr-1">/</span>
+                        <span id="work_url"></span>
+                    </p>
+                </div>
+
+            </div>
+        </main>
+    </body>
+</html>

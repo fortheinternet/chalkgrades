@@ -5,16 +5,16 @@ document.addEventListener("DOMContentLoaded", function() {
         'font-weight: bold;'
     );
 
-    const user_token = getCookie("token")
+    const token = getCookie("token")
 
-    if (user_token) {
+    if (token) {
         load_examhomedotjson()
     } else {
         window.location.href = '/login';
     }
 })
 
-let alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+const token = getCookie("token")
 
 function load_examhomedotjson() {
     const username_fields = document.querySelectorAll(".username_field")
@@ -25,15 +25,49 @@ function load_examhomedotjson() {
     const currentUrl = window.location.href;
     const urlParts = currentUrl.split('/');
 
-    let creator_username = urlParts[urlParts.length - 2];
+    let creator_username = urlParts[urlParts.length - 3];
     creator_username = decodeURIComponent(creator_username)
 
-    const url = urlParts[urlParts.length - 1];
-
-    const user_token = getCookie("token")
-    const userData = {token: user_token}
+    const url = urlParts[urlParts.length - 2];
+    const exam_id = urlParts[urlParts.length - 1]
 
     const main = document.getElementById("main")
+
+    fetch(`https://chalk.fortheinternet.xyz/api/exams/${creator_username}/${url}/home.json`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    token: token,
+                    exam_id: exam_id
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error == "w-mal-25-1") {
+                    window.location.href = '/login';
+                    removeCookie("token");
+    
+                } else if (data.error == "w-mal-4000") {
+                    window.location.href = 'https://en.wikipedia.org/wiki/HTTP_404';
+    
+                } else if (data.error == "w-mal-26") {
+                    window.location.href = '/home';
+    
+                } else {
+                    username = data.username;
+                    console.info("User authenticated successfully as " + username)
+                    username_fields.forEach(username_field => {
+                        username_field.textContent = username;
+                    })
+                    work_display.textContent = data.display;
+                    
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
 }
 
 function setCookie(cname, cvalue) {

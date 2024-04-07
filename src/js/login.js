@@ -5,26 +5,29 @@ document.addEventListener("DOMContentLoaded", function() {
         'font-weight: bold;'
     );
 
-    const user_token = getCookie("token")
+    const token = getCookie("token")
 
-    if(user_token) {
+    if(token) {
         window.location.href = '/home';
     }
 })
+
+const token = getCookie("token")
 
 function login_submit() {
     const usernameInput = document.getElementById('login_username');
     const passwordInput = document.getElementById('login_password');
     const loginErrors = document.getElementById('login_errors')
 
-    const userData = {username: usernameInput.value, password: passwordInput.value}; 
-
     fetch('https://chalk.fortheinternet.xyz/api/logins/logins.json', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify({
+            username: usernameInput.value,
+            password: passwordInput.value
+        })
     })
     .then(response => response.json())
     .then(data => {
@@ -48,14 +51,17 @@ function signup_submit() {
     const accessInput = document.getElementById('signup_access');
     const signupErrors = document.getElementById('signup_errors')
 
-    const userData = {username: usernameInput.value, password: passwordInput.value, password_confirm: passwordConfirmInput.value, accesskey: accessInput.value};
-
     fetch('https://chalk.fortheinternet.xyz/api/logins/signups.json', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify({
+            username: usernameInput.value,
+            password: passwordInput.value,
+            password_confirm: passwordConfirmInput.value,
+            accesskey: accessInput.value
+        })
     })
     .then(response => response.json())
     .then(data => {

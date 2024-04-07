@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>chalkgrades - landing page</title>
-        <meta name="description" content="TODO: make a landing page description for daddy google to use in search results">
+        <title>chalkgrades - the ultimate exams app</title>
+        <meta name="description" content="chalkgrades is the easiest way to check up on your students' work">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="color-scheme" content="dark">
         <meta name="google-site-verification" content="Bna_oyWRq9fk1v3jRuyMWbTmc9ukQqFoR8epqnKtyBU" />
@@ -16,33 +16,25 @@
 
     </head>
     <body>
-        <main class="flex flex-col h-screen">
-            <nav>
-                <div class="flex flex-row">
-                    <a onclick="nav_viewlanding()" class="nav_btn">Homepage</a>
-                    <a onclick="nav_viewdocuments()" class="nav_btn">View documentation</a>
-                    <a onclick="nav_viewrepository()" class="nav_btn">GitHub repository</a>
-                </div>
-                <div class="flex flex-row">
-                    <a onclick="nav_loginsignup()" class="nav_btn">log in or sign up</a>
-                </div>
-            </nav>
-            <div class="bg-background flex-grow p-8 py-12 lg:pl-[20vw] lg:pr-[20vw]">
-                <h2>chalkgrades is the <u>ultimate</u> tool for accessing student's exams in real-time.</h2>
+        <main class="flex lg:items-center lg:justify-center h-screen">
+            <div class="lg:max-w-[60vw] lg:m-0 m-10">
+                <h2>Dolgozatok, számonkérések, feleletek, úgy, hogy a feladatlap saját magát írja.*</h2>
 
-                <p class="mb-6">Made with care and attention to detail, over a year, in Hungary. If you want to help contribute or just want to chat, use the options below. <b>And for students, welcome to hell.</b></p>
+                <p class="mb-6">Az oldal egyenlőre csak angol nyelven érhető el. A magyar nyelvű oldal is folyamatban van!</p>
 
                 <button onclick="nav_loginsignup()" class="cta-btn">log in or sign up</button>
                 <button onclick="nav_viewdocuments()" class="gray-btn">View documentation</button>
                 <button onclick="nav_viewrepository()" class="gray-btn">GitHub repository</button>
 
-                <div class="h-[1px] w-full bg-transparent-100 mt-5 mb-10"></div>
+                <div class="h-[1px] w-full bg-transparent-100 mt-5 mb-8"></div>
 
                 <h3>How does it work?</h3>
                 <p class="mb-10">Every student has an account, and every teacher has multiple classes they test in. Teachers can make exams in workspaces, that students can start when it's public, not see when it's private, and see their grade once it's public again.</p>
 
                 <h3>Work in progress</h3>
                 <p class="mb-10">Chalk is still in it's somewhat early stages, so I would absolutely appriciate your contributions! The links to the documentation (useful for debugging error codes) and the GitHub repository are on the navigation bar.</p>
+
+                <p class="text-[12px] text-transparent-500">* hamarosan</p>
             </div>
         </main>
     </body>

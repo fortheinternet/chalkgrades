@@ -1,49 +1,36 @@
 document.addEventListener("DOMContentLoaded", function() {
+    const token = getCookie("token")
+    
     console.info("INFORMATION: Loading of JavaScript file 'home.js' was successful.")
     console.warn(
         '%cWARNING: Pasting any script into this console will give attackers access to your account authentication details. If you know what you are doing you should come working here, details at read.cv/thelocaltemp',
         'font-weight: bold;'
     );
 
-    const user_token = getCookie("token")
+    const main = document.getElementById("main")
 
-    if(user_token) {
-        load_homedotjson()
-    } else {
-        window.location.href = '/login';
-    }
-})
-
-function load_homedotjson() {
     const workspaceDiv = document.getElementById("workspace");
     const workspacesDiv = document.getElementById("workspaces");
     const username_fields = document.querySelectorAll(".username_field")
 
-    const main = document.getElementById("main")
+    user_details = fetch_user_details(token)
+        .then(user_details => {
+            if (user_details.error) {
+                error = user_details.error
+                console.error(error)
+                
+                if (error == "mal-25-1") {window.location.href = '/login'; removeCookie("token")}
+            }
 
-    const user_token = getCookie("token")
-    const userData = {token: user_token};
+            else {
+                username = user_details.username
+                workspaces_data = user_details.workspaces
 
-    fetch('https://chalk.fortheinternet.xyz/api/logins/home.json', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error == "h-mal-10") {
-                window.location.href = '/login';
-                removeCookie("token");
-            } else {
-                username = data.username;
                 console.info("User authenticated successfully as " + username)
                 username_fields.forEach(username_field => {
                     username_field.textContent = username;
                 })
 
-                const workspaces_data = data.workspaces;
                 const workspaceClones = workspacesDiv.querySelectorAll('[data-origin="clone"]')
 
                 workspaceClones.forEach(workspaceClone => {
@@ -66,15 +53,31 @@ function load_homedotjson() {
                     workspaceClone.style.display = "flex";
 
                 });
-
+   
                 main.style.display = "flex"
                 document.title = username + " - Chalk"
 
             }
         })
+})
+
+function fetch_user_details(token) {
+    return fetch('https://chalk.fortheinternet.xyz/api/logins/home.json', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
         .catch(error => {
             console.error('Error:', error);
-        });
+    });
 }
 
 function create_new_workspace() {
@@ -151,14 +154,18 @@ function create_submit() {
     const createPassword = document.getElementById("create_password");
     const createAccess = document.getElementById("create_access");
 
-    const workData = {token: getCookie("token"), display: createDisplay.value, url: createURL.value, password: createPassword.value, accesskey: createAccess.value}; 
-
     fetch('https://chalk.fortheinternet.xyz/api/work/create.json', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(workData)
+        body: JSON.stringify({
+            token: token,
+            display: createDisplay.value,
+            url: createURL.value,
+            password: createPassword.value,
+            accesskey: createAccess.value
+        })
     })
     .then(response => response.json())
     .then(data => {
@@ -187,14 +194,16 @@ function join_submit() {
     work_admin_value = joinwork_admin.value;
     url_value = joinURL.value;
 
-    const workData = {token: getCookie("token"), password: joinPassword.value};
 
     fetch(`https://chalk.fortheinternet.xyz/api/work/${work_admin_value}/${url_value}/join.json`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(workData)
+        body: JSON.stringify({
+            token: token,
+            password: joinPassword.value
+        })
     })
     .then(response => response.json())
     .then(data => {
