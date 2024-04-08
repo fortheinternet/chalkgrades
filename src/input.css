@@ -18,6 +18,10 @@ nav {
 
 /* Landing Page */
 
+body {
+    @apply bg-background
+}
+
 h1 {@apply font-display mb-3 font-bold sm:text-4xl text-3xl}
 h2 {@apply font-display mb-3 font-bold sm:text-2xl text-2xl}
 h3 {@apply font-display mb-3 font-bold sm:text-xl text-xl}

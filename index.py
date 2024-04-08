@@ -213,7 +213,7 @@ def handle_home():
     user_data = userauth(token)
 
     if "error" in user_data:
-        return jsonify(user_data), 401
+        return jsonify(user_data)
     else:
         username = user_data.get("username")
         user_id = user_data.get("user_id")
@@ -254,7 +254,7 @@ def handle_work_create():
     user_data = userauth(token)
 
     if "error" in user_data:
-        return jsonify(user_data), 401
+        return jsonify(user_data)
     else:
         user_id = user_data.get("user_id")
 
@@ -279,7 +279,7 @@ def handle_work_create():
     work_id = supabase.table('work_data').select('work_id').eq('creator_id', user_id).eq('url', url).execute().data[0]['work_id']
     supabase.table("members_data").insert({"member_id": user_id, "work_id": work_id, "role": "work_admin"}).execute()
 
-    return 200
+    return jsonify({'success': True})
 
 @app.route('/api/work/<string:creator_username>/<string:url>/join.json', methods=['POST']) # member_join
 async def handle_work_join(creator_username, url):
@@ -293,14 +293,10 @@ async def handle_work_join(creator_username, url):
 
     if "error" in work_data:
         error = work_data.get("error")
-        responses = [
-            (error == "mal-25-1", 401),
-            (error == "w-mal-403", 403),
-            (error == "w-mal-4000", 403)
-        ]
+        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
 
-        for response in responses:
-            if response[0]: return jsonify(work_data), response[1]
+        if error in responses:
+            return jsonify(work_data)
 
         return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
     else:
@@ -345,7 +341,7 @@ async def handle_work_join(creator_username, url):
     }
 
     await channel.publish('member_join', channel_message)
-    return 200
+    return jsonify({'success': True})
 
 @app.route('/api/work/<string:creator_username>/<string:url>/home.json', methods=['POST'])
 def handle_work_home(creator_username, url):
@@ -357,14 +353,10 @@ def handle_work_home(creator_username, url):
 
     if "error" in work_data:
         error = work_data.get("error")
-        responses = [
-            (error == "mal-25-1", 401),
-            (error == "w-mal-403", 403),
-            (error == "w-mal-4000", 403)
-        ]
+        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
 
-        for response in responses:
-            if response[0]: return jsonify(work_data), response[1]
+        if error in responses:
+            return jsonify(work_data)
 
         return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
     else:
@@ -446,14 +438,10 @@ async def handle_work_ably_token(creator_username, url):
 
     if "error" in work_data:
         error = work_data.get("error")
-        responses = [
-            (error == "mal-25-1", 401),
-            (error == "w-mal-403", 403),
-            (error == "w-mal-4000", 403)
-        ]
+        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
 
-        for response in responses:
-            if response[0]: return jsonify(work_data), response[1]
+        if error in responses:
+            return jsonify(work_data)
 
         return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
     else:
@@ -491,14 +479,10 @@ async def handle_work_settings(creator_username, url):
 
     if "error" in work_data:
         error = work_data.get("error")
-        responses = [
-            (error == "mal-25-1", 401),
-            (error == "w-mal-403", 403),
-            (error == "w-mal-4000", 403)
-        ]
+        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
 
-        for response in responses:
-            if response[0]: return jsonify(work_data), response[1]
+        if error in responses:
+            return jsonify(work_data)
 
         return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
     else:
@@ -525,7 +509,7 @@ async def handle_work_settings(creator_username, url):
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
         supabase.table('work_data').update({'display': value}).eq('work_id', work_id).execute()
-        return 200
+        return jsonify({'success': True})
     
     elif action == "url":
         existing_workspaces = supabase.table('work_data').select('url').eq('creator_id', creator_id).execute()
@@ -541,10 +525,10 @@ async def handle_work_settings(creator_username, url):
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
         supabase.table('work_data').update({'url': value}).eq('work_id', work_id).execute()
-        return 200
+        return jsonify({'success': True})
     
     elif action == "leave": # member_leave
-        conditions = [(user_role != "work_admin", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
+        conditions = [(user_role != "member", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
@@ -556,7 +540,7 @@ async def handle_work_settings(creator_username, url):
         }
         await channel.publish('member_leave', channel_message)
 
-        return 200
+        return jsonify({'success': True})
     
     elif action == "delete": # work_detete
         return jsonify({'wip': 'Deleting workspaces is not finished yet, please contact your administrator.'})
@@ -580,10 +564,10 @@ async def handle_work_settings(creator_username, url):
         }
         await channel.publish('member_remove', channel_message)
 
-        return 200
+        return jsonify({'success': True})
     
     else:
-        return 400
+        return jsonify({'error': 'You entered something incorrectly.'})
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/create.json', methods=['POST'])
 def handle_exams_create(creator_username, url):
@@ -597,14 +581,10 @@ def handle_exams_create(creator_username, url):
 
     if "error" in work_data:
         error = work_data.get("error")
-        responses = [
-            (error == "mal-25-1", 401),
-            (error == "w-mal-403", 403),
-            (error == "w-mal-4000", 403)
-        ]
+        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
 
-        for response in responses:
-            if response[0]: return jsonify(work_data), response[1]
+        if error in responses:
+            return jsonify(work_data)
 
         return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
     else:
@@ -612,7 +592,7 @@ def handle_exams_create(creator_username, url):
     
     # Endpoint Logic
     supabase.table('exams_data').insert({"display_name": exam_name, "work_id": work_id, "visibility": "private"}).execute()
-    return 200
+    return jsonify({'success': True})
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
 def handle_exam_settings(creator_username, url):
@@ -627,14 +607,10 @@ def handle_exam_settings(creator_username, url):
 
     if "error" in work_data:
         error = work_data.get("error")
-        responses = [
-            (error == "mal-25-1", 401),
-            (error == "w-mal-403", 403),
-            (error == "w-mal-4000", 403)
-        ]
+        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
 
-        for response in responses:
-            if response[0]: return jsonify(work_data), response[1]
+        if error in responses:
+            return jsonify(work_data)
 
         return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
     else:
@@ -660,13 +636,13 @@ def handle_exam_settings(creator_username, url):
         supabase.table('questions_data').delete().eq('exam_id', exam_id).execute()
         supabase.table('exams_data').delete().eq('exam_id', exam_id).eq('work_id', work_id).execute()
 
-        return 200
+        return jsonify({'success': True})
     
     elif action == "toggle":
         supabase.table('exams_data').update({'visibility': 'public'}).eq('exam_id', exam_id).eq('work_id', work_id).execute()
-        return 200
+        return jsonify({'success': True})
     else:
-        return 400
+        return jsonify({'error': 'You entered something incorrectly.'})
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/build.json', methods=['POST'])
 def handle_exam_build(creator_username, url):
@@ -682,14 +658,10 @@ def handle_exam_build(creator_username, url):
 
     if "error" in work_data:
         error = work_data.get("error")
-        responses = [
-            (error == "mal-25-1", 401),
-            (error == "w-mal-403", 403),
-            (error == "w-mal-4000", 403)
-        ]
+        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
 
-        for response in responses:
-            if response[0]: return jsonify(work_data), response[1]
+        if error in responses:
+            return jsonify(work_data)
 
         return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
     else:
@@ -750,7 +722,7 @@ def handle_exam_build(creator_username, url):
 
                 supabase.table('options_data').insert({'question_id': question_id, 'content': content, 'exam_id': exam_id, 'option_order': order}).execute()
 
-    return 200
+    return jsonify({'success': True})
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/home.json', methods=['POST'])
 def handle_exam_home(creator_username, url):
@@ -764,14 +736,10 @@ def handle_exam_home(creator_username, url):
 
     if "error" in work_data:
         error = work_data.get("error")
-        responses = [
-            (error == "mal-25-1", 401),
-            (error == "w-mal-403", 403),
-            (error == "w-mal-4000", 403)
-        ]
+        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
 
-        for response in responses:
-            if response[0]: return jsonify(work_data), response[1]
+        if error in responses:
+            return jsonify(work_data)
 
         return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
     else:
@@ -868,14 +836,10 @@ def handle_exam_start(creator_username, url):
 
     if "error" in work_data:
         error = work_data.get("error")
-        responses = [
-            (error == "mal-25-1", 401),
-            (error == "w-mal-403", 403),
-            (error == "w-mal-4000", 403)
-        ]
+        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
 
-        for response in responses:
-            if response[0]: return jsonify(work_data), response[1]
+        if error in responses:
+            return jsonify(work_data)
 
         return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
     else:

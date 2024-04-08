@@ -1,11 +1,12 @@
 document.addEventListener("DOMContentLoaded", function() {
+    const token = getCookie("token")
+
     console.info("INFORMATION: Loading of JavaScript file 'exam_home.js' was successful.")
     console.warn(
         '%cWARNING: Pasting any script into this console will give attackers access to your account authentication details. If you know what you are doing you should come working here, details at read.cv/thelocaltemp',
         'font-weight: bold;'
     );
 
-    const token = getCookie("token")
 
     if (token) {
         load_examhomedotjson()

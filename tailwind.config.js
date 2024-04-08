@@ -17,8 +17,8 @@ module.exports = {
       'enabled': '#7189ff',
       'disabled': '#5567c0',
       'border': '#1e1e1e',
-      'background': '#0f0f0f',
-      'background-2': '#111111'
+      'background': '#232323',
+      'background-2': '#2b2a2b'
     }
   },
   plugins: [],

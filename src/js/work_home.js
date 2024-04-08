@@ -41,9 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (error == "mal-25-1") {window.location.href = '/login'; removeCookie("token")}
                 if (error == "w-mal-403") {window.location.href = '/home'}
                 if (error == "w-mal-4000") {window.location.href = '/home'}
-                else {
-                    alert("You encountered a super rare error. You should contact a maintainer @ read.cv/thelocaltemp")
-                }
+                
             }
 
             else {
@@ -281,7 +279,7 @@ function remove_member(element) {
                 body: JSON.stringify({
                     action: action,
                     value: identifier,
-                    token: user_token
+                    token: token
                 })
             })
             .then(response => response.json())

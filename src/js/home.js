@@ -61,6 +61,8 @@ document.addEventListener("DOMContentLoaded", function() {
         })
 })
 
+const token = getCookie("token")
+
 function fetch_user_details(token) {
     return fetch('https://chalk.fortheinternet.xyz/api/logins/home.json', {
             method: 'POST',
