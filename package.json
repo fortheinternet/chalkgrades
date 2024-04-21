@@ -1,8 +1,9 @@
 {
-  "dependencies": {
-    "vercel": "^32.3.0"
-  },
   "devDependencies": {
-    "tailwindcss": "^3.4.0"
+    "tailwindcss": "^3.4.3"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38"
   }
 }

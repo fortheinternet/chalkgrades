@@ -29,15 +29,27 @@ app = Flask(__name__)
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return send_from_directory('src/pages', '404.html'), 404
+    if request.method == 'GET':
+        return send_from_directory('src/pages', '404.html'), 404
+    else:
+        return jsonify({'error': 'not-exists', 'message': 'That resource does not exist.'}), 404
 
 @app.route('/')
 def serve_root():
-    return send_from_directory('src/pages', 'landing.html')
+    lang = request.args.get('lang', 'hu')
+    if lang == 'hu':
+        return send_from_directory('src/pages', 'landing-hu.html')
+    else:
+        return send_from_directory('src/pages', 'landing-en.html')
+
 
 @app.route('/login')
 def serve_login():
-    return send_from_directory('src/pages', 'login.html')
+    lang = request.args.get('lang', 'hu')
+    if lang == 'hu':
+        return send_from_directory('src/pages', 'login-hu.html')
+    else:
+        return send_from_directory('src/pages', 'login-en.html')
 
 @app.route('/home')
 def serve_home():
@@ -76,11 +88,11 @@ def userauth(token):
     user_id = response[0]['user_id'] if response else None
 
     conditions = [
-        (not user_id, 'mal-25-1', 'Your token is invalid, as its not associated with a user account.')
+        (not user_id, 'invalid-token', 'Your token is invalid, as its not associated with a user account.', '401')
     ]
 
     for condition in conditions:
-        if condition[0]: return {'error': condition[1], 'message': condition[2]}
+        if condition[0]: return {'error': condition[1], 'message': condition[2], 'code': condition[3]}
 
     return {'username': username, 'user_id': user_id}
 
@@ -97,11 +109,11 @@ def workauth(token, creator_username, url, required_role):
     creator_id = response[0]['user_id'] if response else None
 
     conditions = [
-        (not creator_id, 'w-mal-4000', 'That workspace does not exist.')
+        (not creator_id, 'not-exists', 'That resource does not exist.', '404')
     ]
 
     for condition in conditions:
-        if condition[0]: return {'error': condition[1], 'message': condition[2]}
+        if condition[0]: return {'error': condition[1], 'message': condition[2], 'code': condition[3]}
 
     response = supabase.table('work_data').select('work_id','display','auth').eq('url', url).eq('creator_id', creator_id).execute().data
 
@@ -110,11 +122,11 @@ def workauth(token, creator_username, url, required_role):
     work_auth = response[0]['auth'] if response else None
 
     conditions = [
-        (not work_id, 'w-mal-4000', 'That workspace does not exist.')
+        (not work_id, 'not-exists', 'That resource does not exist.', '404')
     ]
 
     for condition in conditions:
-        if condition[0]: return {'error': condition[1], 'message': condition[2]}
+        if condition[0]: return {'error': condition[1], 'message': condition[2], 'code': condition[3]}
     
     user_role = "none"
     if required_role != "none":
@@ -122,13 +134,13 @@ def workauth(token, creator_username, url, required_role):
         user_role = response[0]['role'] if response else None
 
         conditions = [
-            (required_role == "member" and user_role == None, 'w-mal-4000', 'That workspace does not exist.'),
-            (required_role == "work_admin" and user_role == None, 'w-mal-4000', 'That workspace does not exist.'),
-            (required_role == "work_admin" and user_role == "member", 'w-mal-403', 'Work: You have incorrect permissions.')
+            (required_role == "member" and user_role == None, 'not-exists', 'That resource does not exist.', '404'),
+            (required_role == "work_admin" and user_role == None, 'not-exists', 'That resource does not exist.', '404'),
+            (required_role == "work_admin" and user_role == "member", 'bad-permissions', 'You have incorrect permissions.', '403')
         ]
 
         for condition in conditions:
-            if condition[0]: return {'error': condition[1], 'message': condition[2]}
+            if condition[0]: return {'error': condition[1], 'message': condition[2], 'code': condition[3]}
 
     return {
         'username': username,
@@ -145,15 +157,20 @@ def workauth(token, creator_username, url, required_role):
 @app.route('/api/logins/logins.json', methods=['POST'])
 def handle_logins():
     data = request.get_json()
+    required_values = ['username', 'password']
 
     username = data.get('username')
     password = data.get('password')
 
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+
     response = supabase.table('users_data').select('auth, token').eq('username', username).execute().data
 
-    conditions = [(not response, 'l-fatal-20', 'Login: User not found')]
+    conditions = [(not response, 'user-not-exist', 'That user does not exist.', '400')]
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
 
     auth = response[0]['auth'] if response else None
     token = response[0]['token'] if response else None
@@ -161,9 +178,9 @@ def handle_logins():
     salted_password = password_salt + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
-    conditions = [(sha256_hash != auth, 'l-mal-10', 'Login: Passwords dont match')]
+    conditions = [(sha256_hash != auth, 'bad-password', 'The password provided is incorrect.', '400')]
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
 
     return jsonify({
         'token': token
@@ -172,23 +189,29 @@ def handle_logins():
 @app.route('/api/logins/signups.json', methods=['POST'])
 def handle_signups():
     data = request.get_json()
+    required_values = ['username', 'password', 'password_confirm', 'accesskey']
+
     username = data.get('username')
     password = data.get('password')
     password_confirm = data.get('password_confirm')
     accesskey = data.get('accesskey')
 
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+        
     response = supabase.table('users_data').select('username').eq('username', username).execute().data
     usernames = response[0]['username'] if response else None
 
     conditions = [
-        (password != password_confirm, 's-mal-10', 'Signup: Passwords dont match'),
-        (accesskey != accesskey_user, 's-mal-15', 'Signup: Bad access key'),
-        (usernames, 's-mal-20', 'Signup: Username already taken'),
-        (not re.match(r'^[A-Za-z\d_ -ÁáÍíŰűÉéŐőÚúÓóÜüÖö]{3,45}$', username), 's-mal-50', 'Signup: Invalid username'),
+        (password != password_confirm, 'confirmation-no-match', 'The passwords you entered did not match.', '400'),
+        (accesskey != accesskey_user, 'bad-access', 'The access key provided is incorrect.', '400'),
+        (usernames, 'username-taken', 'The username you chose is already taken. Please choose another.', '400'),
+        (not re.match(r'^[A-Za-z\d_ -ÁáÍíŰűÉéŐőÚúÓóÜüÖö]{3,45}$', username), 'invalid-username', 'The username you entered does not meet standard requirements.', '400'),
     ]
 
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
         
     salted_password = password_salt + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
@@ -207,13 +230,22 @@ def handle_signups():
 @app.route('/api/logins/home.json', methods=['POST'])
 def handle_home():
     data = request.get_json()
+    required_values = ['token']
+
     token = data.get('token')
+    
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
 
     # Authentication
     user_data = userauth(token)
 
     if "error" in user_data:
-        return jsonify(user_data)
+        return jsonify({
+            'error': user_data.get('error'),
+            'message': user_data.get('message')
+        }), user_data.get('code')
     else:
         username = user_data.get("username")
         user_id = user_data.get("user_id")
@@ -243,6 +275,7 @@ def handle_home():
 @app.route('/api/work/create.json', methods=['POST'])
 def handle_work_create():
     data = request.get_json()
+    required_values = ['password', 'token', 'url', 'display', 'accesskey']
 
     password = data.get('password')
     token = data.get('token')
@@ -250,11 +283,18 @@ def handle_work_create():
     display = data.get('display')
     accesskey = data.get('accesskey')
 
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+
     # Authentication
     user_data = userauth(token)
 
     if "error" in user_data:
-        return jsonify(user_data)
+        return jsonify({
+            'error': user_data.get('error'),
+            'message': user_data.get('message')
+        }), user_data.get('code')
     else:
         user_id = user_data.get("user_id")
 
@@ -266,39 +306,43 @@ def handle_work_create():
     existing_urls = [workspace['url'].lower() for workspace in existing_workspaces.data] if existing_workspaces.data else []
 
     conditions = [
-        (accesskey != accesskey_work, 'w-mal-15', 'Work: Bad access key'),
-        (url.lower() in existing_urls, 'w-mal-30', 'Work: url already exists for this user'),
-        (not re.match(r'^[A-Za-z\d_-]{3,20}$', url), 'w-mal-31', 'Work: Invalid URL'),
+        (accesskey != accesskey_work, 'bad-access', 'The access key provided is incorrect.', '400'),
+        (url.lower() in existing_urls, 'work-already-exists', 'That workspace resource (aka slug/url) already exists for this user.', '400'),
+        (not re.match(r'^[A-Za-z\d_-]{3,20}$', url), 'invalid-work-resource', 'That workspace resource does not meet standard requirements.', '400'),
     ]
 
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
         
     supabase.table("work_data").insert({"creator_id": user_id, "auth": sha256_hash, "url": url, "display": display}).execute()
 
     work_id = supabase.table('work_data').select('work_id').eq('creator_id', user_id).eq('url', url).execute().data[0]['work_id']
     supabase.table("members_data").insert({"member_id": user_id, "work_id": work_id, "role": "work_admin"}).execute()
 
-    return jsonify({'success': True})
+    return jsonify({
+        'success': True
+    }), 200
 
 @app.route('/api/work/<string:creator_username>/<string:url>/join.json', methods=['POST']) # member_join
 async def handle_work_join(creator_username, url):
     data = request.get_json()
+    required_values = ['password','token']
 
     password = data.get('password')
     token = data.get('token')
+
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "none")
 
     if "error" in work_data:
-        error = work_data.get("error")
-        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
-
-        if error in responses:
-            return jsonify(work_data)
-
-        return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
+        return jsonify({
+            'error': work_data.get('error'),
+            'message': work_data.get('message')
+        }), work_data.get('code')
     else:
         username = work_data.get("username")
         user_id = work_data.get("user_id")
@@ -309,15 +353,21 @@ async def handle_work_join(creator_username, url):
     salted_password = password_salt_2 + password
     sha256_hash = hashlib.sha256(salted_password.encode()).hexdigest()
 
-    conditions = [(sha256_hash != work_auth, 'w-mal-55', 'Work: Invalid access credentials')]
+    conditions = [
+        (sha256_hash != work_auth, 'bad-password', 'Your password is incorrect.', '400')
+    ]
+
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
      
     existing_member = supabase.table('members_data').select('member_id').eq('member_id', user_id).eq('work_id', work_id).execute().data
 
-    conditions = [(existing_member, 'w-mal-60', 'Work: User is already a member of this workspace')]
+    conditions = [
+        (existing_member, 'already-member', 'You are already a member of that workspace!', '400')
+    ]
+    
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
 
     # Realtime Endpoint Logic
     existing_row = supabase.table('realtime_pages').select('*').eq('work_id', work_id).execute().data
@@ -341,24 +391,29 @@ async def handle_work_join(creator_username, url):
     }
 
     await channel.publish('member_join', channel_message)
-    return jsonify({'success': True})
+    return jsonify({
+        'success': True
+    }), 200
 
 @app.route('/api/work/<string:creator_username>/<string:url>/home.json', methods=['POST'])
 def handle_work_home(creator_username, url):
     data = request.get_json()
+    required_values = ['token']
+
     token = data.get('token')
+
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "member")
 
     if "error" in work_data:
-        error = work_data.get("error")
-        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
-
-        if error in responses:
-            return jsonify(work_data)
-
-        return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
+        return jsonify({
+            'error': work_data.get('error'),
+            'message': work_data.get('message')
+        }), work_data.get('code')
     else:
         username = work_data.get("username")
         user_id = work_data.get("user_id")
@@ -431,19 +486,22 @@ def handle_work_home(creator_username, url):
 @app.route('/api/work/<string:creator_username>/<string:url>/home_realtime.json', methods=['POST'])
 async def handle_work_ably_token(creator_username, url):
     data = request.get_json()
+    required_values = ['token']
+
     token = data.get('token')
+
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "none")
 
     if "error" in work_data:
-        error = work_data.get("error")
-        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
-
-        if error in responses:
-            return jsonify(work_data)
-
-        return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
+        return jsonify({
+            'error': work_data.get('error'),
+            'message': work_data.get('message')
+        }), work_data.get('code')
     else:
         work_id = work_data.get("work_id")
 
@@ -469,22 +527,24 @@ async def handle_work_ably_token(creator_username, url):
 @app.route('/api/work/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
 async def handle_work_settings(creator_username, url):
     data = request.get_json()
+    required_values = ['token', 'value', 'action']
 
     token = data.get('token')
     value = data.get('value')
     action = data.get('action')
 
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+
     # Authentication
     work_data = workauth(token, creator_username, url, "member")
 
     if "error" in work_data:
-        error = work_data.get("error")
-        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
-
-        if error in responses:
-            return jsonify(work_data)
-
-        return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
+        return jsonify({
+            'error': work_data.get('error'),
+            'message': work_data.get('message')
+        }), work_data.get('code')
     else:
         user_id = work_data.get("user_id")
         creator_id = work_data.get("creator_id")
@@ -502,9 +562,11 @@ async def handle_work_settings(creator_username, url):
             realtime_access = random.randint(10**15, (10**16)-1)
     
         supabase.table('realtime_pages').insert({'work_id': work_id, 'access': realtime_access}).execute()
-    
+
+    # Settings
+        
     if action == "display": # work_display
-        conditions = [(user_role != "work_admin", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
+        conditions = [(user_role != "work_admin", 'bad-permissions', 'You have incorrect permissions.')]
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
@@ -516,9 +578,9 @@ async def handle_work_settings(creator_username, url):
         existing_urls = [workspace['url'].lower() for workspace in existing_workspaces.data] if existing_workspaces.data else []
 
         conditions = [
-            (value.lower() in existing_urls, 'w-mal-30-11', 'Work: url already exists for this user'),
-            (not re.match(r'^[A-Za-z_]{1,20}$', value), 'w-mal-50', 'Work: Invalid url you silly'),
-            (user_role != "work_admin", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')
+            (value.lower() in existing_urls, 'work-already-exists', 'That workspace resource (aka slug/url) already exists for this user.', '400'),
+            (not re.match(r'^[A-Za-z\d_-]{3,20}$', value), 'invalid-work-resource', 'That workspace resource does not meet standard requirements.', '400'),
+            (user_role != "work_admin", 'bad-permissions', 'You have incorrect permissions.', '400')
         ]
 
         for condition in conditions:
@@ -528,7 +590,7 @@ async def handle_work_settings(creator_username, url):
         return jsonify({'success': True})
     
     elif action == "leave": # member_leave
-        conditions = [(user_role != "member", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
+        conditions = [(user_role != "member", 'bad-permissions', 'You have incorrect permissions.', '400')]
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
         
@@ -543,12 +605,12 @@ async def handle_work_settings(creator_username, url):
         return jsonify({'success': True})
     
     elif action == "delete": # work_detete
-        return jsonify({'wip': 'Deleting workspaces is not finished yet, please contact your administrator.'})
+        return jsonify({'message': 'This feature is not implemented. You can help expand the functionality of the project by opening a pull request - github.com/fortheinternet/chalkgrades/'})
     
     elif action == "remove_member": # member_remove
         exams_data = supabase.table('exams_data').select('exam_id').eq('work_id', work_id).execute().data
 
-        conditions = [(user_role != "work_admin", 'w-mal-20', 'Work: You do not have the proper permissions to change settings.')]
+        conditions = [(user_role != "work_admin", 'bad-permissions', 'You have incorrect permissions.', '400')]
         for condition in conditions:
             if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
 
@@ -567,26 +629,28 @@ async def handle_work_settings(creator_username, url):
         return jsonify({'success': True})
     
     else:
-        return jsonify({'error': 'You entered something incorrectly.'})
+        return jsonify({'error': 'You entered something incorrectly.'}), 400
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/create.json', methods=['POST'])
 def handle_exams_create(creator_username, url):
     data = request.get_json()
+    required_values = ['token', 'exam_home']
 
     token = data.get("token")
     exam_name = data.get("exam_name")
 
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+
     # Authentication
-    work_data = workauth(token, creator_username, url, "member")
+    work_data = workauth(token, creator_username, url, "work_admin")
 
     if "error" in work_data:
-        error = work_data.get("error")
-        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
-
-        if error in responses:
-            return jsonify(work_data)
-
-        return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
+        return jsonify({
+            'error': work_data.get('error'),
+            'message': work_data.get('message')
+        }), work_data.get('code')
     else:
         work_id = work_data.get("work_id")
     
@@ -597,22 +661,24 @@ def handle_exams_create(creator_username, url):
 @app.route('/api/exams/<string:creator_username>/<string:url>/settings.json', methods=['POST'])
 def handle_exam_settings(creator_username, url):
     data = request.get_json()
+    required_values = ['token', 'value', 'action']
 
     token = data.get('token')
     exam_id = data.get('value')
     action = data.get('action')
 
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+
     # Authentication
     work_data = workauth(token, creator_username, url, "work_admin")
 
     if "error" in work_data:
-        error = work_data.get("error")
-        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
-
-        if error in responses:
-            return jsonify(work_data)
-
-        return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
+        return jsonify({
+            'error': work_data.get('error'),
+            'message': work_data.get('message')
+        }), work_data.get('code')
     else:
         work_id = work_data.get("work_id")
 
@@ -624,12 +690,14 @@ def handle_exam_settings(creator_username, url):
     session_id = session_data.data[0]['session_id'] if session_data.data else None
 
     conditions = [
-        (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.'),
-        (session_id, 'e-mal-26-61', 'Exams: This exam has one or more active sessions so it cant be accessed traditionally')
+        (exam_work_id != work_id, 'not-exists', 'That resource does not exist.', '404'),
+        (session_id, 'has-active-sessions', 'This exam has one or more active sessions. Please end these sessions before changing settings.', '400')
     ]
 
-    for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+    for condition in conditions: 
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
+
+    # Settings
 
     if action == "remove":
         supabase.table('options_data').delete().eq('exam_id', exam_id).execute()
@@ -642,28 +710,30 @@ def handle_exam_settings(creator_username, url):
         supabase.table('exams_data').update({'visibility': 'public'}).eq('exam_id', exam_id).eq('work_id', work_id).execute()
         return jsonify({'success': True})
     else:
-        return jsonify({'error': 'You entered something incorrectly.'})
+        return jsonify({'error': 'You entered something incorrectly.'}), 400
 
 @app.route('/api/exams/<string:creator_username>/<string:url>/build.json', methods=['POST'])
 def handle_exam_build(creator_username, url):
     data = request.get_json()
+    required_values = ['token', 'exam_id', 'questions'] # TODO: add action in future if used
 
     token = data.get('token')
     exam_id = data.get('exam_id')
     action = data.get('action')
     questions = data.get('questions', [])
 
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+
     # Authentication
     work_data = workauth(token, creator_username, url, "work_admin")
 
     if "error" in work_data:
-        error = work_data.get("error")
-        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
-
-        if error in responses:
-            return jsonify(work_data)
-
-        return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
+        return jsonify({
+            'error': work_data.get('error'),
+            'message': work_data.get('message')
+        }), work_data.get('code')
     else:
         work_id = work_data.get("work_id")
 
@@ -671,17 +741,18 @@ def handle_exam_build(creator_username, url):
     exam_work_data = supabase.table('exams_data').select('work_id').eq('exam_id', exam_id).execute()
     exam_work_id = exam_work_data.data[0]['work_id'] if exam_work_data.data else None
 
-    session_data = supabase.table('sessions_data').select('session_id').eq('status', "active").eq('exam_id', exam_id).execute()
+    session_data = supabase.table('sessions_data').select('session_id').eq('exam_id', exam_id).execute()
     session_id = session_data.data[0]['session_id'] if session_data.data else None
 
     conditions = [
-        (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.'),
-        (session_id, 'e-mal-26-61', 'Exams: This exam has one or more active sessions so it cant be accessed traditionally')
+        (exam_work_id != work_id, 'not-exists', 'That resource does not exist.', '404'),
+        (session_id, 'has-any-sessions', 'This exam can no longer be modified since a session exists for it.', '400')
     ]
 
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
-        
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
+    
+    # Deletes existing data!
     supabase.table('options_data').delete().eq('exam_id', exam_id).execute()
     supabase.table('questions_data').delete().eq('exam_id', exam_id).execute()
 
@@ -693,8 +764,8 @@ def handle_exam_build(creator_username, url):
 
         supabase.table('questions_data').insert({'exam_id': exam_id, 'question_order': question_order, 'content': question_content, 'description': question_description, "type": question_type}).execute()
 
-        question_current_data = supabase.table('questions_data').select('question_id').eq('exam_id', exam_id).eq('question_order', question_order).execute()
-        question_id = question_current_data.data[0]['question_id'] if question_current_data.data else None
+        response = supabase.table('questions_data').select('question_id').eq('exam_id', exam_id).eq('question_order', question_order).execute()
+        question_id = response.data[0]['question_id'] if response.data else None
 
         if question_type in ['multi', 'select']:
             options = question_data.get('options', [])
@@ -703,16 +774,12 @@ def handle_exam_build(creator_username, url):
             for option_data in options:
                 option_order = option_data.get('order')
 
-                existing_data = supabase.table('options_data').select('option_order').eq('exam_id', exam_id).eq('question_id', question_id).execute().data
-                existing_orders = [item['option_order'] for item in existing_data]
-
                 conditions = [
-                    (option_order in existing_orders, 'e-mal-99-00', 'Exams: One or more of the orders are duplicated.'),
-                    (option_order in orders, 'e-mal-99-11', 'Exams: One or more of the orders are duplicated.')
+                    (option_order in orders, 'syntax-fatal-overdupe', 'One or more of the orders are duplicated.', '400')
                 ]
 
                 for condition in conditions:
-                    if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+                    if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
 
                 orders.append(option_order)
             
@@ -727,21 +794,23 @@ def handle_exam_build(creator_username, url):
 @app.route('/api/exams/<string:creator_username>/<string:url>/home.json', methods=['POST'])
 def handle_exam_home(creator_username, url):
     data = request.get_json()
+    required_values = ['token', 'exam_id']
 
     token = data.get('token')
-    exam_id = data.get('exam_id')
+    exam_id = data.get('value')
+
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "member")
 
     if "error" in work_data:
-        error = work_data.get("error")
-        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
-
-        if error in responses:
-            return jsonify(work_data)
-
-        return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
+        return jsonify({
+            'error': work_data.get('error'),
+            'message': work_data.get('message')
+        }), work_data.get('code')
     else:
         username = work_data.get("username")
         work_id = work_data.get("work_id")
@@ -756,13 +825,12 @@ def handle_exam_home(creator_username, url):
     exam_display = exam_work_data.data[0]['display_name'] if exam_work_data.data else None
 
     conditions = [
-        (not user_role, 'e-mal-20', 'Exams: You do not have the proper permissions to change exam configurations.'),
-        (exam_work_id != work_id, '>:(', 'Exams: You are only allowed to modify exams in your workspace.'),
-        (user_role != "work_admin" and exam_visibility != "public", 'exam_not_public', 'You are only allowed to view public exams, not private ones.')
+        (exam_work_id != work_id, 'not-exists', 'That resource does not exist.', 404),
+        (user_role != "work_admin" and exam_visibility != "public", 'not-exists', 'That resource does not exist.', 404)
     ]
 
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
 
     questions_data = supabase.table('questions_data').select('question_order', 'content', 'description', 'type', 'question_id').eq('exam_id', exam_id).execute().data
 
@@ -827,21 +895,23 @@ def handle_exam_home(creator_username, url):
 @app.route('/api/exams/<string:creator_username>/<string:url>/start.json', methods=['POST'])
 def handle_exam_start(creator_username, url):
     data = request.get_json()
-    
+    required_values = ['token', 'exam_id']
+
     token = data.get('token')
     exam_id = data.get('value')
+
+    for value in required_values:
+        if data.get(value) is None:
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "MIN_PERM_LVL")
 
     if "error" in work_data:
-        error = work_data.get("error")
-        responses = ["mal-25-1", "w-mal-403", "w-mal-4000"]
-
-        if error in responses:
-            return jsonify(work_data)
-
-        return jsonify({"message":"you encountered a rare error! ^-^ you should contact a maintainer :3 read.cv/thelocaltemp"}), 500
+        return jsonify({
+            'error': work_data.get('error'),
+            'message': work_data.get('message')
+        }), work_data.get('code')
     else:
         user_id = work_data.get("user_id")
         work_id = work_data.get("work_id")
@@ -861,7 +931,7 @@ def handle_exam_start(creator_username, url):
     ]
 
     for condition in conditions:
-        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]})
+        if condition[0]: return jsonify({'error': condition[1], 'message': condition[2]}), condition[3]
 
     supabase.table('sessions_data').insert({'user_id': user_id, 'exam_id': exam_id, 'status': "active"}).execute() # inserts the session as active
     questions_data = supabase.table('questions_data').select('question_order', 'content', 'description', 'type', 'question_id').eq('exam_id', exam_id).execute().data

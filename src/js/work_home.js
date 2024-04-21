@@ -231,6 +231,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.title = work_display + " - Chalk"
             }
         })
+        
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme:dark)').matches)) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+
 })
 
 const token = getCookie("token")
@@ -309,7 +316,6 @@ function remove_member(element) {
 }
 
 function create_submit() {
-    const createErrors = document.getElementById("create_errors");
     const createDisplay = document.getElementById("create_display")
     
     const currentUrl = window.location.href;
@@ -331,12 +337,13 @@ function create_submit() {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            createErrors.textContent = data.message;
-
-            if (data.error == "e-mal-25-1") {
+            if (data.error == "invalid-token") {
                 window.location.href = '/login';
                 removeCookie("token");
             }
+
+            alert("ISSUE: " + data.message)
+            console.error(data.error + " - " + data.message)
         } else {
             createErrors.textContent = "Test created successfully, you can go to the 'Exams' tab to check."
         }
@@ -390,7 +397,25 @@ function nav_user() {
     window.location.href = '/home';
 }
 
-// This code does not look professional, it looks like a cat fell asleep on the keyboard. But it works so it won't be fixed. Or at least not by me ¯\_(ツ)_/¯
+function theme(input) {
+    if (input == "remove") {
+        localStorage.removeItem('theme')
+    }
+
+    if (input == "light") {
+        localStorage.theme = 'light'
+    }
+
+    if (input == "dark") {
+        localStorage.theme = 'dark'
+    }
+    
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+}
 
 function setCookie(cname, cvalue) {
     let d = new Date();

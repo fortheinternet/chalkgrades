@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 error = user_details.error
                 console.error(error)
                 
-                if (error == "mal-25-1") {window.location.href = '/login'; removeCookie("token")}
+                if (error == "invalid-token") {window.location.href = '/login'; removeCookie("token")}
             }
 
             else {
@@ -54,11 +54,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 });
    
-                main.style.display = "flex"
+                main.style.display = "block"
                 document.title = username + " - Chalk"
 
             }
         })
+
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme:dark)').matches)) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
 })
 
 const token = getCookie("token")
@@ -83,22 +89,9 @@ function fetch_user_details(token) {
 }
 
 function create_new_workspace() {
-    const create_section = document.getElementById("create_workspace");
-    const join_section = document.getElementById("join_workspace");
-    const work_section = document.getElementById("workspaces_wrap");
-
-    const work_section_c1 = document.getElementById("create_errors");
-    const work_section_c2 = document.getElementById("create_url");
-    const work_section_c3 = document.getElementById("create_password");
-    const work_section_c4 = document.getElementById("create_display");
-    const work_section_c5 = document.getElementById("create_access");
-
-
-    work_section_c1.textContent = "Workspaces are for classes you attend. You must have an access credential to create a workspace."
-    work_section_c2.value = ""
-    work_section_c3.value = ""
-    work_section_c4.value = ""
-    work_section_c5.value = ""
+    const create_section = document.getElementById("create_workspace")
+    const join_section = document.getElementById("join_workspace")
+    const work_section = document.getElementById("workspaces_wrap")
 
     create_section.style.display = "block";
     join_section.style.display = "none";
@@ -106,20 +99,9 @@ function create_new_workspace() {
 }
 
 function join_new_workspace() {
-    const create_section = document.getElementById("create_workspace");
-    const join_section = document.getElementById("join_workspace");
-    const work_section = document.getElementById("workspaces_wrap");
-
-    const work_section_j1 = document.getElementById("join_errors");
-    const work_section_j2 = document.getElementById("join_work_admin");
-    const work_section_j3 = document.getElementById("join_url");
-    const work_section_j4 = document.getElementById("join_password");
-
-    work_section_j1.textContent = "Workspaces are for classes you attend. You must have an access credential to create a workspace."
-    work_section_j2.value = ""
-    work_section_j3.value = ""
-    work_section_j4.value = ""
-
+    const create_section = document.getElementById("create_workspace")
+    const join_section = document.getElementById("join_workspace")
+    const work_section = document.getElementById("workspaces_wrap")
 
     create_section.style.display = "none";
     join_section.style.display = "block";
@@ -127,15 +109,13 @@ function join_new_workspace() {
 }
 
 function view_workspaces() {
-    const create_section = document.getElementById("create_workspace");
-    const join_section = document.getElementById("join_workspace");
-    const work_section = document.getElementById("workspaces_wrap");
+    const create_section = document.getElementById("create_workspace")
+    const join_section = document.getElementById("join_workspace")
+    const work_section = document.getElementById("workspaces_wrap")
 
     create_section.style.display = "none";
     join_section.style.display = "none";
     work_section.style.display = "block";
-
-    load_homedotjson()
 }
 
 function logout() {
@@ -147,10 +127,27 @@ function nav_user() {
     window.location.href = '/home';
 }
 
-//
+function theme(input) {
+    if (input == "remove") {
+        localStorage.removeItem('theme')
+    }
+
+    if (input == "light") {
+        localStorage.theme = 'light'
+    }
+
+    if (input == "dark") {
+        localStorage.theme = 'dark'
+    }
+    
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+}
 
 function create_submit() {
-    const createErrors = document.getElementById("create_errors");
     const createDisplay = document.getElementById("create_display");
     const createURL = document.getElementById("create_url");
     const createPassword = document.getElementById("create_password");
@@ -172,12 +169,13 @@ function create_submit() {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            createErrors.textContent = data.message;
-
-            if (data.error == "w-mal-25-1") {
+            if (data.error == "invalid-token") {
                 window.location.href = '/login';
                 removeCookie("token");
             }
+
+            alert("ISSUE: " + data.message)
+            console.error(data.error + " - " + data.message)
         } else {
             window.location.href = `/${username}/${createURL.value}`
         }
@@ -188,7 +186,6 @@ function create_submit() {
 }
 
 function join_submit() {
-    const joinErrors = document.getElementById("join_errors");
     const joinwork_admin = document.getElementById("join_work_admin");
     const joinURL = document.getElementById("join_url");
     const joinPassword = document.getElementById("join_password");
@@ -210,12 +207,13 @@ function join_submit() {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            joinErrors.textContent = data.message;
-
-            if (data.error == "w-mal-25-1") {
+            if (data.error == "invalid-token") {
                 window.location.href = '/login';
                 removeCookie("token");
             }
+
+            alert("ISSUE: " + data.message)
+            console.error(data.error + " - " + data.message)
         } else {
             window.location.href = `/${work_admin_value}/${url_value}`
         }

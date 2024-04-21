@@ -7,9 +7,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const token = getCookie("token")
 
-    if(token) {
+    if (token) {
         window.location.href = '/home';
     }
+
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme:dark)').matches)) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+
+    const main = document.getElementById("main")
+    main.style.display = "flex"
 })
 
 const token = getCookie("token")
@@ -17,7 +26,6 @@ const token = getCookie("token")
 function login_submit() {
     const usernameInput = document.getElementById('login_username');
     const passwordInput = document.getElementById('login_password');
-    const loginErrors = document.getElementById('login_errors')
 
     fetch('https://chalk.fortheinternet.xyz/api/logins/logins.json', {
         method: 'POST',
@@ -32,12 +40,13 @@ function login_submit() {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            loginErrors.textContent = data.message;
-        } else {
-            loginErrors.textContent = "";
-            setCookie("token", data.token);
-            window.location.href = '/home';
+            alert("ISSUE: " + data.message)
+            console.error(data.error + " - " + data.message)    
         }
+        
+        setCookie("token", data.token);
+        window.location.href = '/home';
+        
     })
     .catch(error => {
         console.error('Error:', error);
@@ -49,7 +58,6 @@ function signup_submit() {
     const passwordInput = document.getElementById('signup_password');
     const passwordConfirmInput = document.getElementById('signup_repassword');
     const accessInput = document.getElementById('signup_access');
-    const signupErrors = document.getElementById('signup_errors')
 
     fetch('https://chalk.fortheinternet.xyz/api/logins/signups.json', {
         method: 'POST',
@@ -66,36 +74,25 @@ function signup_submit() {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            signupErrors.textContent = data.message;
-        } else {
-            signupErrors.textContent = "";
-            setCookie("token", data.token);
-            window.location.href = '/home';
+            alert("ISSUE: " + data.message)
+            console.error(data.error + " - " + data.message)    
         }
+
+        setCookie("token", data.token);
+        window.location.href = '/home';
+        
     })
     .catch(error => {
         console.error('Error:', error);
     });
 }
 
-function nav_viewsignup() {
-    const login = document.getElementById("login")
-    const signups = document.getElementById("signups")
-
-    login.style.display = "none"
-    signups.style.display = "block"
-}
-
-function nav_viewlogin() {
-    const login = document.getElementById("login")
-    const signups = document.getElementById("signups")
-
-    login.style.display = "block"
-    signups.style.display = "none"
-}
-
-function nav_viewlanding() {
-    window.location.href = '/'
+function nav_viewlanding(lang) {
+    if (lang == 'hu') {
+        window.location.href = '/?lang=hu'
+    } else {
+        window.location.href = '/?lang=en'
+    }
 }
 
 function nav_loginsignup() {
@@ -110,7 +107,33 @@ function nav_viewrepository() {
     window.location.href = 'https://github.com/fortheinternet/chalkgrades';
 }
 
-// This code does not look professional, it looks like a cat fell asleep on the keyboard. But it works so it won't be fixed. Or at least not by me ¯\_(ツ)_/¯
+function nav_changelang(lang) {
+    if (lang == 'hu') {
+        window.location.href = '/login?lang=hu'
+    } else {
+        window.location.href = '/login?lang=en'
+    }
+}
+
+function theme(input) {
+    if (input == "remove") {
+        localStorage.removeItem('theme')
+    }
+
+    if (input == "light") {
+        localStorage.theme = 'light'
+    }
+
+    if (input == "dark") {
+        localStorage.theme = 'dark'
+    }
+    
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+}
 
 function setCookie(cname, cvalue) {
     let d = new Date();
