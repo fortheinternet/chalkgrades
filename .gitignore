@@ -1,4 +1,4 @@
 .vercel
 server/.env
 server/__pycache__
-legacy/node_modules
+legacy

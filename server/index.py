@@ -34,6 +34,14 @@ def page_not_found(error):
     else:
         return jsonify({'error': 'not-exists', 'message': 'That resource does not exist.'}), 404
 
+@app.route('/')
+def serve_root():
+    return send_from_directory('../client/dist/', 'index.html')
+
+@app.route('/client/dist/<path:filename>')
+def serve_dist(filename):
+    return send_from_directory('../client/dist/', filename)
+
 # User Authentication Functions
 
 def userauth(token):
