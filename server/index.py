@@ -38,9 +38,13 @@ def page_not_found(error):
 def serve_root():
     return send_from_directory('../client/dist/', 'index.html')
 
-@app.route('/client/dist/<path:filename>')
+@app.route('/<path:filename>')
 def serve_dist(filename):
     return send_from_directory('../client/dist/', filename)
+
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    return send_from_directory('../client/dist/assets', filename)
 
 # User Authentication Functions
 
