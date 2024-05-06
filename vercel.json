@@ -8,8 +8,5 @@
   ],
   "routes": [
       { "src": "/(.*)", "dest": "server/index.py" }
-  ],
-  "env": {
-      "PYTHON_VERSION": "3.8"
-  }
+  ]
 }
