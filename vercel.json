@@ -1,6 +1,9 @@
 {
     "functions" : {
-        "server/index.py": {}
+        "server/index.py": {
+            "memory": 1024,
+            "maxDuration": 10
+        }
     },
     "framework": "vite"
 }
