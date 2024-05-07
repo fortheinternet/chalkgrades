@@ -25,15 +25,6 @@ ably = AblyRest(ably_key)
 
 app = Flask(__name__)
 
-# Static Files
-
-@app.errorhandler(404)
-def page_not_found(error):
-    if request.method == 'GET':
-        return send_from_directory('src/pages', '404.html'), 404
-    else:
-        return jsonify({'error': 'not-exists', 'message': 'That resource does not exist.'}), 404
-
 # User Authentication Functions
 
 def userauth(token):
