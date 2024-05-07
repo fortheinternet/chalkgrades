@@ -1,4 +1,3 @@
-.vercel
-server/.env
-server/__pycache__
+api/.env
+api/__pycache__
 legacy

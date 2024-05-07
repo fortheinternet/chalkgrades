@@ -1,6 +1,6 @@
 {
-    "rewrites": [
-        { "source": "/api/:path*", "destination": "/server/index.py" }
-    ],
+    "functions" : {
+        "server/index.py": {}
+    },
     "framework": "vite"
 }
