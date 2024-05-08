@@ -8,3 +8,4 @@ All timezones are CEST/GMT+1/UTC+1. Vercel requires code to be pushed to the 'ma
 3/19/2024: Added missing environment variable.
 3/24/2024: Changed function location to Frankfurt, Germany.
 5/6/2024: Tried getting Vercel to generate the client/dist folder (1).
+5/8/2024: Changed serverless function location to Frankfurt, Germany.
