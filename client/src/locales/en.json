@@ -1,0 +1,18 @@
+{
+  "title": {
+    "Home": "chalk -> homepage"
+  },
+  "button": {
+    "github": "GitHub repository",
+    "changelang": "Change language to Hungarian",
+    "changetheme": "Toggle color theme"
+  },
+  "text": {
+    "heading": {
+      "landing-1": "Everyone, take out a pen and paper."
+    },
+    "paragraph": {
+      "landing-1": "Real-time exams platform made with care and users in mind, or something like that."
+    }
+  }
+}

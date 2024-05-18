@@ -1,35 +1,24 @@
-@import './base.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+body {
+    @apply dark:text-white text-black dark:bg-dark-grey bg-light-grey
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+main {
+    @apply p-10 px-12 lg:ml-[450px] md:ml-[50%] mr-0
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+article {
+    @apply mb-7
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+h1 {@apply text-7xl font-bold mb-1}
+h2 {@apply text-6xl font-bold mb-1}
+h3 {@apply text-5xl font-bold mb-1}
+h4 {@apply text-4xl font-bold mb-1}
+h5 {@apply text-3xl font-bold mb-1}
+h6 {@apply text-2xl font-bold mb-1}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-}
+p {@apply text-base mb-4}

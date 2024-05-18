@@ -1,0 +1,19 @@
+{
+  "title": {
+    "Home": "chalk -> nyitólap"
+  },
+  "button": {
+    "github": "GitHub repository",
+    "changelang": "Váltás angol nyelvre",
+    "changetheme": "Téma váltása"
+  },
+  "text": {
+    "heading": {
+      "landing-1": "Mindenki vegyen elő egy tollat és egy lapot."
+    },
+    "paragraph": {
+      "landing-1": "Valós idejű dolgozatok igényesen és felhaználóbarátan, vagy valami olyasmi."
+    }
+  }
+}
+  
