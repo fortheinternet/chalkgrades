@@ -1,18 +1,25 @@
 {
   "title": {
-    "Home": "chalk -> homepage"
+    "Home": "chalk -> homepage",
+    "Login": "chalk -> login"
   },
   "button": {
+    "home": "Homepage",
+    "login": "Log in or sign up",
     "github": "GitHub repository",
-    "changelang": "Change language to Hungarian",
+    "regex-generator": "Regular Expressions Generator",
+    "api-docs": "API Documentation",
+    "changelang": "Change language",
     "changetheme": "Toggle color theme"
   },
   "text": {
     "heading": {
-      "landing-1": "Everyone, take out a pen and paper."
+      "landing-1": "Everyone, take out a pen and paper.",
+      "login-1": "Log in or sign up"
     },
     "paragraph": {
-      "landing-1": "Real-time exams platform made with care and users in mind, or something like that."
+      "landing-1": "Real-time exams platform made with care and users in mind, or something like that.",
+      "login-1": "The details for your account are often provided by your school or server provider."
     }
   }
 }

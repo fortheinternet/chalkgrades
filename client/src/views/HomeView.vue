@@ -1,7 +1,7 @@
 <script>
 import Aside from '@/components/Aside.vue';
 
-import { PhGithubLogo, PhTranslate, PhPalette } from '@phosphor-icons/vue';
+import { PhGithubLogo, PhTranslate, PhPalette, PhCalculator, PhCloudCheck, PhUser } from '@phosphor-icons/vue';
 
 import ChipButton from '@/components/ChipButton.vue';
 import AsideButton from '@/components/AsideButton.vue';
@@ -16,6 +16,9 @@ export default {
     PhGithubLogo,
     PhTranslate,
     PhPalette,
+    PhCalculator,
+    PhCloudCheck,
+    PhUser,
 
     // UI elements
     Aside,
@@ -34,15 +37,27 @@ export default {
 <template>
   <Aside>
     <div>
+      <AsideButton routePath="/login" :internal="true">
+        <PhUser weight="bold" size="17px"/>
+        {{ $t('button.login') }}
+      </AsideButton>
 
       <AsideButton routePath="https://github.com/fortheinternet/chalkgrades" :internal="false">
         <PhGithubLogo weight="bold" size="17px"/>
         {{ $t('button.github') }}
       </AsideButton>
-    
+
+      <AsideButton routePath="https://regex101.com" :internal="false">
+        <PhCalculator weight="bold" size="17px"/>
+        {{ $t('button.regex-generator') }}
+      </AsideButton>
+
+      <AsideButton routePath="https://fortheinternet.notion.site/API-Documentation-WIP-be3e672768d243aa855209b4f6e475bb?pvs=4" :internal="false">
+        <PhCloudCheck weight="bold" size="17px"/>
+        {{ $t('button.api-docs') }}
+      </AsideButton>
     </div>
     <div>
-
       <ToggleLocale>
         <PhTranslate weight="bold" size="17px"/>
         {{ $t('button.changelang') }}
@@ -52,7 +67,6 @@ export default {
         <PhPalette weight="bold" size="17px"/>
         {{ $t('button.changetheme') }}
       </ToggleTheme>
-
     </div>
   </Aside>
   <main>
@@ -61,6 +75,7 @@ export default {
       <p class="dark:text-opacity-55 text-opacity-55 dark:text-white text-black">{{ $t('text.paragraph.landing-1') }}</p>
     </article>
 
-    <ChipButton :buttonText="$t('button.github')" routePath="https://github.com/fortheinternet/chalkgrades" :internal="false"/>
+    <ChipButton routePath="/login" :internal="true" :highlighted="true">{{ $t('button.login') }}</ChipButton>
+    <ChipButton routePath="https://github.com/fortheinternet/chalkgrades" :internal="false" :highlighted="false">{{ $t('button.github') }}</ChipButton>
   </main>
 </template>

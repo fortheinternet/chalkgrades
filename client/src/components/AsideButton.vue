@@ -2,7 +2,6 @@
 export default {
   props: {
     routePath: String,
-    icon: String,
     internal: Boolean
   },
   methods: {

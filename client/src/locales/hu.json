@@ -1,18 +1,25 @@
 {
   "title": {
-    "Home": "chalk -> nyitólap"
+    "Home": "chalk -> nyitólap",
+    "Login": "chalk -> bejelentkezés"
   },
   "button": {
-    "github": "GitHub repository",
-    "changelang": "Váltás angol nyelvre",
+    "home": "Nyitólap",
+    "login": "Bejelentkezés",
+    "github": "GitHub adattár",
+    "regex-generator": "Általános kifejezések generátor",
+    "api-docs": "API Dokumentáció",
+    "changelang": "Nyelv váltása",
     "changetheme": "Téma váltása"
   },
   "text": {
     "heading": {
-      "landing-1": "Mindenki vegyen elő egy tollat és egy lapot."
+      "landing-1": "Mindenki vegyen elő egy tollat és egy lapot.",
+      "login-1": "Bejelentkezés"
     },
     "paragraph": {
-      "landing-1": "Valós idejű dolgozatok igényesen és felhaználóbarátan, vagy valami olyasmi."
+      "landing-1": "Valós idejű dolgozatok igényesen és felhaználóbarátan, vagy valami olyasmi.",
+      "login-1": "A felhasználói adataidat legtöbbször az iskoládtól vagy szolgáltatódtól kapod."
     }
   }
 }
