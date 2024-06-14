@@ -1,5 +1,8 @@
 <script>
 export default {
+  props: {
+    view: String
+  },
   methods: {
     toggleLocale() {
       console.log("[custom] INFO: Toggling locale")
@@ -8,7 +11,7 @@ export default {
       this.$i18n.locale = newLocale;
       localStorage.setItem('locale', newLocale)
 
-      document.title = this.$t('title.Home')
+      document.title = this.$t('title.' + this.view)
     }
   },
 };
@@ -23,6 +26,5 @@ export default {
     </div>
   -->
 
-  <a @click="toggleLocale()" class="AsideButton-btn"><slot></slot></a>
-  
+  <a @click="toggleLocale()" class="AsideButton"><slot></slot></a>
 </template>

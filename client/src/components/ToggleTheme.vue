@@ -2,13 +2,13 @@
 export default {
   methods: {
     toggleTheme() {
+      console.log("[custom] INFO: Toggling theme")
+
       localStorage.theme = localStorage.theme === 'light' ? 'dark' : 'light';
 
       if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark')
-      }
-      
-      else {
+      } else {
         document.documentElement.classList.remove('dark')
       }
     },
@@ -17,14 +17,5 @@ export default {
 </script>
 
 <template>
-  <!--
-    <div class="locale-changer">
-      <select v-model="$i18n.locale">
-        <option v-for="locale in $i18n.availableLocales" :key="`locale-${locale}`" :value="locale">{{ locale }}</option>
-      </select>
-    </div>
-  -->
-
-  <a @click="toggleTheme()" class="AsideButton-btn"><slot></slot></a>
-  
+  <a @click="toggleTheme()" class="AsideButton"><slot></slot></a>
 </template>

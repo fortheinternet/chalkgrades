@@ -2,16 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Styles used in views and layouts after this line */
+
 body {
     @apply dark:text-white text-black dark:bg-dark-grey bg-light-grey
 }
 
 main {
-    @apply p-10 px-12 lg:ml-[450px] md:ml-[50%] mr-0
+    @apply p-10 px-12 lg:ml-[375px] sm:ml-[50%] mr-0
+}
+
+aside {
+    @apply bg-black dark:bg-white bg-opacity-[2.5%] dark:bg-opacity-[1%] sm:flex flex-col justify-between whitespace-nowrap select-none items-start lg:w-[375px] sm:w-1/2 w-full h-full fixed p-8 hidden overflow-y-auto
+}
+
+aside > div {
+    @apply w-full
 }
 
 article {
-    @apply mb-7
+    @apply mb-10
+}
+
+/* Styles used in markdown after this line */
+
+.divider {
+    @apply bg-black dark:bg-white bg-opacity-5 dark:bg-opacity-5 h-[1px] w-full my-4
+}
+
+.subtext {
+    @apply dark:text-opacity-55 text-opacity-55 dark:text-white text-black mb-6
+}
+
+input {
+    @apply w-full block text-left text-small font-semibold dark:bg-white bg-black dark:bg-opacity-10 bg-opacity-10 py-2 px-5 rounded-3xl mr-3 mb-4 select-none h-[36px] outline-none;
 }
 
 h1 {@apply text-7xl font-bold mb-1}
@@ -22,3 +46,9 @@ h5 {@apply text-3xl font-bold mb-1}
 h6 {@apply text-2xl font-bold mb-1}
 
 p {@apply text-base mb-4}
+
+/* Styles used in mulitple components after this line */
+
+.AsideButton {
+    @apply w-full lg:w-max flex justify-start gap-4 items-center text-left text-[14px] p-1 rounded-full select-none cursor-pointer
+}

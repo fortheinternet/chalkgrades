@@ -14,16 +14,7 @@ export default {
 
 <template>
   <div class="flex justify-between w-full">
-    <a @click="navigateToPage" v-if="internal" class="AsideButton-btn"><slot></slot></a>
-    <a :href="routePath" v-else class="AsideButton-btn"><slot></slot></a>
+    <a @click="navigateToPage" v-if="internal" class="AsideButton"><slot></slot></a>
+    <a :href="routePath" v-else class="AsideButton"><slot></slot></a>
   </div>
-
 </template>
-
-<style>
-
-.AsideButton-btn {
-  @apply w-full lg:w-max flex justify-start gap-4 items-center text-left text-[14px] p-1 mb-0.5 rounded-full select-none cursor-pointer
-}
-
-</style>

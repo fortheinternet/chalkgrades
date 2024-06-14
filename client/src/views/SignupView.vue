@@ -7,7 +7,7 @@ import ToggleLocale from '@/components/ToggleLocale.vue';
 import ToggleTheme from '@/components/ToggleTheme.vue';
 
 export default {
-  name: 'HomeView',
+  name: 'LoginView',
   components: {
     // Phosphor Icons
     PhGithubLogo,
@@ -26,7 +26,7 @@ export default {
     ToggleTheme
   },
   created() {
-    document.title = this.$t('title.Home')
+    document.title = this.$t('title.Signup')
   }
 };
 </script>
@@ -37,7 +37,7 @@ export default {
     <div>
       <AsideButton routePath="/" :internal="true">
         <PhHouse weight="bold" size="17px"/>
-        <span class="font-bold"> {{ $t('button.home') }} </span>
+        {{ $t('button.home') }}
       </AsideButton>
 
       <AsideButton routePath="/login" :internal="true">
@@ -47,7 +47,7 @@ export default {
 
       <AsideButton routePath="/signup" :internal="true">
         <PhUserPlus weight="bold" size="17px"/>
-        {{ $t('button.signup') }}
+        <span class="font-bold"> {{ $t('button.signup') }} </span>
       </AsideButton>
 
       <div class="divider"></div>
@@ -68,7 +68,7 @@ export default {
       </AsideButton>
     </div>
     <div>
-      <ToggleLocale view="Home">
+      <ToggleLocale view="Signup">
         <PhTranslate weight="bold" size="17px"/>
         {{ $t('button.changelang') }}
       </ToggleLocale>
@@ -81,13 +81,8 @@ export default {
   </aside>
   <main>
     <article>
-      <h4>{{ $t('text.heading.landing-1') }}</h4>
-      <p class="subtext">{{ $t('text.paragraph.landing-1') }}</p>
+      <h4>{{ $t('text.heading.signup-1') }}</h4>
+      <p class="dark:text-opacity-55 text-opacity-55 dark:text-white text-black">{{ $t('text.paragraph.signup-1') }}</p>
     </article>
-
-    <div class="flex flex-row">
-      <ChipButton routePath="/login" :internal="true" :highlighted="true">{{ $t('button.login') }}</ChipButton>
-      <ChipButton routePath="https://github.com/fortheinternet/chalkgrades" :internal="false" :highlighted="false">{{ $t('button.github') }}</ChipButton>
-    </div>
   </main>
 </template>

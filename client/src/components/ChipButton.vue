@@ -12,23 +12,28 @@ export default {
   },
   computed: {
     buttonClass() {
-      return this.highlighted ? 'ChipButton-btn-highlighted' : 'ChipButton-btn-default';
+      return this.highlighted ? 'ChipButton-btn-highlighted' : null
     }
   }
 };
 </script>
 
 <template>
-  <button @click="navigateToPage" v-if="internal" :class="buttonClass"><slot></slot></button>
-  <a :href="routePath" v-else :class="buttonClass"><slot></slot></a>
+  <a @click="navigateToPage" v-if="internal" :class="buttonClass" class="ChipButton-btn">
+    <slot></slot>
+  </a>
+  
+  <a :href="routePath" v-else :class="buttonClass" class="ChipButton-btn">
+    <slot></slot>
+  </a>
 </template>
 
-<style>
-.ChipButton-btn-default {
-  @apply w-full lg:w-max lg:inline block text-left text-small font-semibold dark:bg-white bg-black dark:bg-opacity-10 bg-opacity-10 py-2 px-5 rounded-full mr-3 mb-4 select-none;
+<style scoped>
+.ChipButton-btn {
+  @apply w-max block text-left text-small font-semibold dark:bg-white bg-black dark:bg-opacity-10 bg-opacity-10 py-2 px-5 rounded-3xl mr-3 mb-4 select-none cursor-pointer;
 }
 
 .ChipButton-btn-highlighted {
-  @apply w-full lg:w-max lg:inline block text-left text-small font-semibold dark:bg-white bg-black dark:text-black text-white py-2 px-5 rounded-full mr-3 mb-4 select-none;
+  @apply dark:bg-white bg-black dark:text-black text-white;
 }
 </style>

@@ -1,25 +1,39 @@
 {
   "title": {
-    "Home": "chalk -> nyitólap",
-    "Login": "chalk -> bejelentkezés"
+    "Home": "chalk - kezdőoldal",
+    "Login": "chalk - bejelentkezés",
+    "Signup": "chalk - felhasználó létrehozása"
   },
   "button": {
-    "home": "Nyitólap",
+    "home": "Kezdőoldal",
     "login": "Bejelentkezés",
+    "signup": "Felhasználó létrehozása",
     "github": "GitHub adattár",
     "regex-generator": "Általános kifejezések generátor",
     "api-docs": "API Dokumentáció",
     "changelang": "Nyelv váltása",
-    "changetheme": "Téma váltása"
+    "changetheme": "Sötét mód váltása",
+    "submit": "Beküldés"
+  },
+  "inputs": {
+    "text": {
+      
+    },
+    "placeholders": {
+      "username": "Felhasználónév",
+      "password": "Jelszó"
+    }
   },
   "text": {
     "heading": {
-      "landing-1": "Mindenki vegyen elő egy tollat és egy lapot.",
-      "login-1": "Bejelentkezés"
+      "landing-1": "Üdvözöl a Chalk!",
+      "login-1": "Bejelentkezés",
+      "signup-1": "Felhasználó létrehozása"
     },
     "paragraph": {
-      "landing-1": "Valós idejű dolgozatok igényesen és felhaználóbarátan, vagy valami olyasmi.",
-      "login-1": "A felhasználói adataidat legtöbbször az iskoládtól vagy szolgáltatódtól kapod."
+      "landing-1": "A hagyományos oktatási eszközök szabad, nyílt forrású alternatívája.",
+      "login-1": "A felhasználói adataidat legtöbbször az iskoládtól vagy szolgáltatódtól kapod.",
+      "signup-1": "A hozzáférési kódot legtöbbször a rendszergazda vagy szolgáltató biztosítja."
     }
   }
 }

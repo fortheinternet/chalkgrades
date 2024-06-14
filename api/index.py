@@ -1,4 +1,7 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from datetime import datetime, timezone
@@ -11,9 +14,12 @@ import os
 
 load_dotenv()
 
+allowed_origin = os.getenv("allowed_origin")
 supabase_url = os.getenv("supabase_url")
 supabase_key = os.getenv("supabase_key")
 ably_key = os.getenv("ably_key")
+
+print(allowed_origin)
 
 accesskey_user = os.getenv("user_key")
 accesskey_work = os.getenv("work_key")
@@ -25,6 +31,14 @@ supabase: Client = create_client(supabase_url, supabase_key)
 ably = AblyRest(ably_key)
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": allowed_origin}})
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["60 per minute"],
+    storage_uri="memory://",
+)
 
 # User Authentication Functions
 
