@@ -1,8 +1,12 @@
 {
     "rewrites": [
         {
-          "source": "/(.*)",
+          "source": "/api/(.*)",
           "destination": "/api"
+        },
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
         }
     ],
     "framework": "vite"
