@@ -14,7 +14,12 @@ export default {
 
 <template>
   <div class="flex justify-between w-full">
-    <a @click="navigateToPage" v-if="internal" class="AsideButton"><slot></slot></a>
-    <a :href="routePath" v-else class="AsideButton"><slot></slot></a>
+    <a @click="navigateToPage" v-if="internal" class="AsideButton">
+      <slot></slot>
+    </a>
+
+    <a :href="routePath" v-else class="AsideButton">
+      <slot></slot>
+    </a>
   </div>
 </template>

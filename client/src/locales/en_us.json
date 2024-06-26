@@ -1,4 +1,8 @@
 {
+  "languages": {
+    "en_us": "English (US)",
+    "hu": "Magyar"
+  },
   "title": {
     "Home": "chalk - homepage",
     "Login": "chalk - login",
@@ -9,11 +13,12 @@
     "login": "Log in",
     "signup": "Sign up",
     "github": "GitHub repository",
-    "regex-generator": "Regular Expressions Generator",
+    "regex-generator": "Regular Expressions generator",
     "api-docs": "API Documentation",
     "changelang": "Change language",
     "changetheme": "Toggle color theme",
-    "submit": "Submit"
+    "submit": "Submit",
+    "forgot-password": "Forgot password?"
   },
   "inputs": {
     "text": {

@@ -6,16 +6,16 @@ import { createI18n } from 'vue-i18n'
 import App from './App.vue'
 import router from './router'
 
-import messages_en from './locales/en.json'
+import messages_en from './locales/en_us.json'
 import messages_hu from './locales/hu.json'
 
-const savedLocale = localStorage.getItem('locale') || 'en'
+const savedLocale = localStorage.getItem('locale') || 'en_us'
 
 const i18n = createI18n({
     locale: savedLocale,
-    fallbackLocale: 'en',
+    fallbackLocale: 'en_us',
     messages: {
-      en: messages_en,
+      en_us: messages_en,
       hu: messages_hu
     }
 });

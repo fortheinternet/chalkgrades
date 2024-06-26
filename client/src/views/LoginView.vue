@@ -1,30 +1,15 @@
 <script>
-import { PhGithubLogo, PhTranslate, PhPalette, PhCalculator, PhCloudCheck, PhUser, PhUserPlus, PhHouse } from '@phosphor-icons/vue';
+// Menus
+import LandingMenu from '@/components/menus/LandingMenu.vue'
 
-import AsideButton from '@/components/AsideButton.vue';
-import ToggleLocale from '@/components/ToggleLocale.vue';
-import ToggleTheme from '@/components/ToggleTheme.vue';
-
-import ChipButton from '@/components/ChipButton.vue';
-import FormInputs from '@/components/FormInputs.vue';
+// UI elements
+import ChipButton from '@/components/elements/ChipButton.vue';
+import FormInputs from '@/components/elements/FormInputs.vue';
 
 export default {
-  name: 'LoginView',
   components: {
-    // Phosphor Icons
-    PhGithubLogo,
-    PhTranslate,
-    PhPalette,
-    PhCalculator,
-    PhCloudCheck,
-    PhUser,
-    PhUserPlus,
-    PhHouse,
-
-    // UI elements
-    AsideButton,
-    ToggleLocale,
-    ToggleTheme,
+    // Menus
+    LandingMenu,
 
     // UI elements
     ChipButton,
@@ -33,7 +18,7 @@ export default {
   created() {
     document.title = this.$t('title.Login')
   },
-  data() { // this is here because the comp need to be reusable
+  data() {
     return {
       formData: {
         username: '',
@@ -44,64 +29,14 @@ export default {
   },
   methods: {
     handleResponse() {
-      console.log('[cast] HandleResponse in Parent Component')
-    },
-    submitForm() {
-      console.log('[cast] SubmitForm in Parent Component')
-
-      this.$refs.FormInputs.submitForm()
+      console.log('HandleResponse in Parent Component')
     }
   }
 };
 </script>
 
 <template>
-  <aside>
-    <div>
-      <AsideButton routePath="/" :internal="true">
-        <PhHouse weight="bold" size="17px"/>
-        {{ $t('button.home') }}
-      </AsideButton>
-
-      <AsideButton routePath="/login" :internal="true">
-        <PhUser weight="bold" size="17px"/>
-        <span class="font-bold"> {{ $t('button.login') }} </span>
-      </AsideButton>
-
-      <AsideButton routePath="/signup" :internal="true">
-        <PhUserPlus weight="bold" size="17px"/>
-        {{ $t('button.signup') }}
-      </AsideButton>
-
-      <div class="divider"></div>
-      
-      <AsideButton routePath="https://github.com/fortheinternet/chalkgrades" :internal="false">
-        <PhGithubLogo weight="bold" size="17px"/>
-        {{ $t('button.github') }}
-      </AsideButton>
-
-      <AsideButton routePath="https://regex101.com" :internal="false">
-        <PhCalculator weight="bold" size="17px"/>
-        {{ $t('button.regex-generator') }}
-      </AsideButton>
-
-      <AsideButton routePath="https://fortheinternet.notion.site/API-Documentation-WIP-be3e672768d243aa855209b4f6e475bb?pvs=4" :internal="false">
-        <PhCloudCheck weight="bold" size="17px"/>
-        {{ $t('button.api-docs') }}
-      </AsideButton>
-    </div>
-    <div>
-      <ToggleLocale view="Login">
-        <PhTranslate weight="bold" size="17px"/>
-        {{ $t('button.changelang') }}
-      </ToggleLocale>
-
-      <ToggleTheme>
-        <PhPalette weight="bold" size="17px"/>
-        {{ $t('button.changetheme') }}
-      </ToggleTheme>
-    </div>
-  </aside>
+  <LandingMenu view="Login"/>
   <main>
     <article>
       <h4>{{ $t('text.heading.login-1') }}</h4>
@@ -109,14 +44,16 @@ export default {
     </article>
 
     <FormInputs :formURL :formData ref="FormInputs">
-      <template #inputs>
-        <input v-model="formData.username" :placeholder="$t('inputs.placeholders.username')"></input>
-        <input v-model="formData.password" :placeholder="$t('inputs.placeholders.password')" type="password"></input>
-      </template>
+      <form>
+        <input v-model="formData.username" :placeholder="$t('inputs.placeholders.username')" autocomplete="on" name="username"></input>
+        <input v-model="formData.password" :placeholder="$t('inputs.placeholders.password')" type="password" autocomplete="on" name="password"></input>
+      </form>
       
-      <template #buttons>
-        <ChipButton @click="submitForm">{{ $t('button.submit') }}</ChipButton>
-      </template>
+      <div class="flex sm:flex-row flex-col">
+        <ChipButton @click="this.$refs.FormInputs.submitForm()" :highlighted="true">{{ $t('button.submit') }}</ChipButton>
+        <ChipButton routePath="https://fortheinternet.notion.site/How-to-reset-a-password-b1092586c9fc4893b4d373dd4b94039c?pvs=4" :internal="false">{{ $t('button.forgot-password') }}</ChipButton>
+      </div>
     </FormInputs>
+
   </main>
 </template>

@@ -9,15 +9,19 @@ body {
 }
 
 main {
-    @apply p-10 px-12 lg:ml-[375px] sm:ml-[50%] mr-0
+    @apply p-10 px-12 md:ml-[375px] mr-0
 }
 
 aside {
-    @apply bg-black dark:bg-white bg-opacity-[2.5%] dark:bg-opacity-[1%] sm:flex flex-col justify-between whitespace-nowrap select-none items-start lg:w-[375px] sm:w-1/2 w-full h-full fixed p-8 hidden overflow-y-auto
+    @apply border-r-[1px] border-solid border-black dark:border-white border-opacity-5 dark:border-opacity-5 md:flex hidden flex-col justify-between whitespace-nowrap select-none items-start w-[375px] h-full fixed py-8 overflow-y-auto
 }
 
 aside > div {
     @apply w-full
+}
+
+aside > div > div {
+    @apply w-full px-8 
 }
 
 article {
@@ -27,7 +31,7 @@ article {
 /* Styles used in markdown after this line */
 
 .divider {
-    @apply bg-black dark:bg-white bg-opacity-5 dark:bg-opacity-5 h-[1px] w-full my-4
+    @apply bg-black dark:bg-white bg-opacity-5 dark:bg-opacity-5 h-[1px] w-full my-8
 }
 
 .subtext {

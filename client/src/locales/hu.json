@@ -1,4 +1,8 @@
 {
+  "languages": {
+    "en_us": "English (US)",
+    "hu": "Magyar"
+  },
   "title": {
     "Home": "chalk - kezdőoldal",
     "Login": "chalk - bejelentkezés",
@@ -8,12 +12,13 @@
     "home": "Kezdőoldal",
     "login": "Bejelentkezés",
     "signup": "Felhasználó létrehozása",
-    "github": "GitHub adattár",
+    "github": "GitHub",
     "regex-generator": "Általános kifejezések generátor",
     "api-docs": "API Dokumentáció",
     "changelang": "Nyelv váltása",
-    "changetheme": "Sötét mód váltása",
-    "submit": "Beküldés"
+    "changetheme": "Színtéma váltása",
+    "submit": "Beküldés",
+    "forgot-password": "Elfelejtett jelszó"
   },
   "inputs": {
     "text": {
@@ -37,4 +42,3 @@
     }
   }
 }
-  

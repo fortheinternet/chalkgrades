@@ -1,8 +1,21 @@
 <script>
+// Phosphor Icons
+import { PhPalette } from '@phosphor-icons/vue';
+
+// UI elements
+import AsideButton from './AsideButton.vue';
+
 export default {
+  components: {
+    // Phosphor Icons
+    PhPalette,
+
+    // UI elements
+    AsideButton
+  },
   methods: {
     toggleTheme() {
-      console.log("[custom] INFO: Toggling theme")
+      console.log("Toggling theme")
 
       localStorage.theme = localStorage.theme === 'light' ? 'dark' : 'light';
 
@@ -11,11 +24,14 @@ export default {
       } else {
         document.documentElement.classList.remove('dark')
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
 <template>
-  <a @click="toggleTheme()" class="AsideButton"><slot></slot></a>
+  <AsideButton @click="toggleTheme()">
+    <PhPalette weight="bold" size="17px"/>
+    {{ $t('button.changetheme') }}
+  </AsideButton>
 </template>

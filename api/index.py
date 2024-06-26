@@ -19,8 +19,6 @@ supabase_url = os.getenv("supabase_url")
 supabase_key = os.getenv("supabase_key")
 ably_key = os.getenv("ably_key")
 
-print(allowed_origin)
-
 accesskey_user = os.getenv("user_key")
 accesskey_work = os.getenv("work_key")
 

@@ -1,29 +1,17 @@
 <script>
-import { PhGithubLogo, PhTranslate, PhPalette, PhCalculator, PhCloudCheck, PhUser, PhUserPlus, PhHouse } from '@phosphor-icons/vue';
+// Menus
+import LandingMenu from '@/components/menus/LandingMenu.vue'
 
-import ChipButton from '@/components/ChipButton.vue';
-import AsideButton from '@/components/AsideButton.vue';
-import ToggleLocale from '@/components/ToggleLocale.vue';
-import ToggleTheme from '@/components/ToggleTheme.vue';
+// UI elements
+import ChipButton from '@/components/elements/ChipButton.vue';
 
 export default {
-  name: 'HomeView',
   components: {
-    // Phosphor Icons
-    PhGithubLogo,
-    PhTranslate,
-    PhPalette,
-    PhCalculator,
-    PhCloudCheck,
-    PhUser,
-    PhUserPlus,
-    PhHouse,
+    // Menus
+    LandingMenu,
 
     // UI elements
-    ChipButton,
-    AsideButton,
-    ToggleLocale,
-    ToggleTheme
+    ChipButton
   },
   created() {
     document.title = this.$t('title.Home')
@@ -31,63 +19,18 @@ export default {
 };
 </script>
 
-
 <template>
-  <aside>
-    <div>
-      <AsideButton routePath="/" :internal="true">
-        <PhHouse weight="bold" size="17px"/>
-        <span class="font-bold"> {{ $t('button.home') }} </span>
-      </AsideButton>
-
-      <AsideButton routePath="/login" :internal="true">
-        <PhUser weight="bold" size="17px"/>
-        {{ $t('button.login') }}
-      </AsideButton>
-
-      <AsideButton routePath="/signup" :internal="true">
-        <PhUserPlus weight="bold" size="17px"/>
-        {{ $t('button.signup') }}
-      </AsideButton>
-
-      <div class="divider"></div>
-      
-      <AsideButton routePath="https://github.com/fortheinternet/chalkgrades" :internal="false">
-        <PhGithubLogo weight="bold" size="17px"/>
-        {{ $t('button.github') }}
-      </AsideButton>
-
-      <AsideButton routePath="https://regex101.com" :internal="false">
-        <PhCalculator weight="bold" size="17px"/>
-        {{ $t('button.regex-generator') }}
-      </AsideButton>
-
-      <AsideButton routePath="https://fortheinternet.notion.site/API-Documentation-WIP-be3e672768d243aa855209b4f6e475bb?pvs=4" :internal="false">
-        <PhCloudCheck weight="bold" size="17px"/>
-        {{ $t('button.api-docs') }}
-      </AsideButton>
-    </div>
-    <div>
-      <ToggleLocale view="Home">
-        <PhTranslate weight="bold" size="17px"/>
-        {{ $t('button.changelang') }}
-      </ToggleLocale>
-
-      <ToggleTheme>
-        <PhPalette weight="bold" size="17px"/>
-        {{ $t('button.changetheme') }}
-      </ToggleTheme>
-    </div>
-  </aside>
+  <LandingMenu view="Home"/>
   <main>
     <article>
       <h4>{{ $t('text.heading.landing-1') }}</h4>
       <p class="subtext">{{ $t('text.paragraph.landing-1') }}</p>
     </article>
 
-    <div class="flex flex-row">
+    <div class="flex sm:flex-row flex-col">
       <ChipButton routePath="/login" :internal="true" :highlighted="true">{{ $t('button.login') }}</ChipButton>
       <ChipButton routePath="https://github.com/fortheinternet/chalkgrades" :internal="false" :highlighted="false">{{ $t('button.github') }}</ChipButton>
     </div>
+
   </main>
 </template>
