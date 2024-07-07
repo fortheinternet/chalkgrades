@@ -1,59 +1,108 @@
 <script>
-// Menus
-import LandingMenu from '@/components/menus/LandingMenu.vue'
+  // Layouts
+  import LandingLeft from '@/layouts/LandingLeft.vue'
 
-// UI elements
-import ChipButton from '@/components/elements/ChipButton.vue';
-import FormInputs from '@/components/elements/FormInputs.vue';
+  // UI elements
+  import Button from '@/components/Button.vue'
+  import Form from '@/components/Form.vue'
 
-export default {
-  components: {
-    // Menus
-    LandingMenu,
+  export default {
+    components: {
+      // Layouts
+      LandingLeft,
 
-    // UI elements
-    ChipButton,
-    FormInputs
-  },
-  created() {
-    document.title = this.$t('title.Login')
-  },
-  data() {
-    return {
-      formData: {
-        username: '',
-        password: ''
-      },
-      formURL: "https://chalk.fortheinternet.xyz/api/logins/logins.json"
-    }
-  },
-  methods: {
-    handleResponse() {
-      console.log('HandleResponse in Parent Component')
+      // UI elements
+      Button,
+      Form
+    },
+    created() {
+      document.title = this.$t('title.Login')
+
+      if (localStorage.getItem('token')) {
+        this.$router.push('/dashboard')
+      }
+    },
+    data() {
+      return {
+        requestData: {
+          username: '',
+          password: ''
+        },
+        requestURL: 'http://localhost:3000/api/logins/logins.json',
+        error: '',
+        success: false
+      }
+    },
+    methods: {
+      handleResponse(data) {
+        this.error = data.error || ''
+        this.success = !this.error
+
+        if (this.success) {
+          localStorage.setItem('token', data.token)
+          this.$router.push('/dashboard')
+        }
+      }
     }
   }
-};
 </script>
 
 <template>
-  <LandingMenu view="Login"/>
-  <main>
-    <article>
-      <h4>{{ $t('text.heading.login-1') }}</h4>
-      <p class="dark:text-opacity-55 text-opacity-55 dark:text-white text-black">{{ $t('text.paragraph.login-1') }}</p>
-    </article>
+  <div id="wrapper">
+    <LandingLeft view="Login" />
+    <main>
+      <article>
+        <h4>{{ $t('text.heading.login-1') }}</h4>
+        <p
+          class="text-black text-opacity-55 dark:text-white dark:text-opacity-55"
+        >
+          {{ $t('text.paragraph.login-1') }}
+        </p>
+      </article>
 
-    <FormInputs :formURL :formData ref="FormInputs">
-      <form>
-        <input v-model="formData.username" :placeholder="$t('inputs.placeholders.username')" autocomplete="on" name="username"></input>
-        <input v-model="formData.password" :placeholder="$t('inputs.placeholders.password')" type="password" autocomplete="on" name="password"></input>
-      </form>
-      
-      <div class="flex sm:flex-row flex-col">
-        <ChipButton @click="this.$refs.FormInputs.submitForm()" :highlighted="true">{{ $t('button.submit') }}</ChipButton>
-        <ChipButton routePath="https://fortheinternet.notion.site/How-to-reset-a-password-b1092586c9fc4893b4d373dd4b94039c?pvs=4" :internal="false">{{ $t('button.forgot-password') }}</ChipButton>
-      </div>
-    </FormInputs>
+      <Form :requestURL :requestData ref="Form" @submitted="handleResponse">
+        <form>
+          <p class="mb-2 text-base font-bold">
+            {{ $t('inputs.text.username') }}
+          </p>
 
-  </main>
+          <input
+            v-model="requestData.username"
+            :placeholder="$t('inputs.placeholders.username')"
+            autocomplete="on"
+            name="username"
+            class="InputField"
+          />
+
+          <p class="mb-2 text-base font-bold">
+            {{ $t('inputs.text.password') }}
+          </p>
+
+          <input
+            v-model="requestData.password"
+            :placeholder="$t('inputs.placeholders.password')"
+            type="password"
+            autocomplete="on"
+            name="password"
+            class="InputField"
+          />
+        </form>
+
+        <p v-if="error" class="error">{{ $t(`errors.${error}`) }}</p>
+        <p v-else-if="success" class="success">{{ $t('success') }}</p>
+
+        <div class="flex flex-col sm:flex-row">
+          <Button @click="this.$refs.Form.submitForm()" :highlighted="true">
+            {{ $t('button.submit') }}
+          </Button>
+          <Button
+            routePath="https://fortheinternet.notion.site/How-to-reset-a-password-b1092586c9fc4893b4d373dd4b94039c?pvs=4"
+            :internal="false"
+          >
+            {{ $t('button.forgot-password') }}
+          </Button>
+        </div>
+      </Form>
+    </main>
+  </div>
 </template>

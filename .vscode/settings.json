@@ -1,12 +1,12 @@
 {
-    "css.customData": [".vscode/tailwind.json"],
-    "css.validate": false,
-	"tailwindCSS.includeLanguages": {
-		"vue": "html",
-		"vue-html": "html"
-	},
-	"editor.quickSuggestions": {
-		"strings": true,
-		"other": true
-	}
+  "css.customData": [".vscode/tailwind.json"],
+  "css.validate": false,
+  "tailwindCSS.includeLanguages": {
+    "vue": "html",
+    "vue-html": "html"
+  },
+  "editor.quickSuggestions": {
+    "strings": true,
+    "other": true
+  }
 }

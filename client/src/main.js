@@ -12,16 +12,20 @@ import messages_hu from './locales/hu.json'
 const savedLocale = localStorage.getItem('locale') || 'en_us'
 
 const i18n = createI18n({
-    locale: savedLocale,
-    fallbackLocale: 'en_us',
-    messages: {
-      en_us: messages_en,
-      hu: messages_hu
-    }
-});
+  locale: savedLocale,
+  fallbackLocale: 'en_us',
+  messages: {
+    en_us: messages_en,
+    hu: messages_hu
+  }
+})
 
 // tailwind darkmode stuff
-if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+if (
+  localStorage.theme === 'dark' ||
+  (!('theme' in localStorage) &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches)
+) {
   document.documentElement.classList.add('dark')
 } else {
   document.documentElement.classList.remove('dark')

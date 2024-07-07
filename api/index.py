@@ -19,8 +19,8 @@ supabase_url = os.getenv("supabase_url")
 supabase_key = os.getenv("supabase_key")
 ably_key = os.getenv("ably_key")
 
-accesskey_user = os.getenv("user_key")
-accesskey_work = os.getenv("work_key")
+access_code_user = os.getenv("user_key")
+access_code_work = os.getenv("work_key")
 
 password_salt = os.getenv("password_salt")
 password_salt_2 = os.getenv("password_salt_2")
@@ -123,7 +123,7 @@ def handle_logins():
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     response = supabase.table('users_data').select('auth, token').eq('username', username).execute().data
 
@@ -148,25 +148,28 @@ def handle_logins():
 @app.route('/api/logins/signups.json', methods=['POST'])
 def handle_signups():
     data = request.get_json()
-    required_values = ['username', 'password', 'password_confirm', 'accesskey']
+    required_values = ['username', 'password', 'password_confirm', 'access_code']
 
     username = data.get('username')
     password = data.get('password')
     password_confirm = data.get('password_confirm')
-    accesskey = data.get('accesskey')
+    access_code = data.get('access_code')
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
         
     response = supabase.table('users_data').select('username').eq('username', username).execute().data
     usernames = response[0]['username'] if response else None
 
+    system_usernames = ['settings', 'admin', 'login', 'signup', 'dashboard', 'test', 'home'] 
+
     conditions = [
         (password != password_confirm, 'confirmation-no-match', 'The passwords you entered did not match.', '400'),
-        (accesskey != accesskey_user, 'bad-access', 'The access key provided is incorrect.', '400'),
+        (access_code != access_code_user, 'bad-access', 'The access code provided is incorrect.', '400'),
+        (username in system_usernames, 'username-system', 'That username is system reserved. Please choose another.', '400'),
         (usernames, 'username-taken', 'The username you chose is already taken. Please choose another.', '400'),
-        (not re.match(r'^[A-Za-z\d_ -ÁáÍíŰűÉéŐőÚúÓóÜüÖö]{3,45}$', username), 'invalid-username', 'The username you entered does not meet standard requirements.', '400'),
+        (not re.match(r'^[A-Za-z\d_ -ÁáÍíŰűÉéŐőÚúÓóÜüÖö]{3,45}$', username), 'invalid-username', 'The username you chose does not meet standard requirements.', '400'),
     ]
 
     for condition in conditions:
@@ -195,7 +198,7 @@ def handle_home():
     
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     user_data = userauth(token)
@@ -234,17 +237,17 @@ def handle_home():
 @app.route('/api/work/create.json', methods=['POST'])
 def handle_work_create():
     data = request.get_json()
-    required_values = ['password', 'token', 'url', 'display', 'accesskey']
+    required_values = ['password', 'token', 'url', 'display', 'access_code']
 
     password = data.get('password')
     token = data.get('token')
     url = data.get('url')
     display = data.get('display')
-    accesskey = data.get('accesskey')
+    access_code = data.get('access_code')
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     user_data = userauth(token)
@@ -265,7 +268,7 @@ def handle_work_create():
     existing_urls = [workspace['url'].lower() for workspace in existing_workspaces.data] if existing_workspaces.data else []
 
     conditions = [
-        (accesskey != accesskey_work, 'bad-access', 'The access key provided is incorrect.', '400'),
+        (access_code != access_code_work, 'bad-access', 'The access code provided is incorrect.', '400'),
         (url.lower() in existing_urls, 'work-already-exists', 'That workspace resource (aka slug/url) already exists for this user.', '400'),
         (not re.match(r'^[A-Za-z\d_-]{3,20}$', url), 'invalid-work-resource', 'That workspace resource does not meet standard requirements.', '400'),
     ]
@@ -292,7 +295,7 @@ async def handle_work_join(creator_username, url):
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "none")
@@ -363,7 +366,7 @@ def handle_work_home(creator_username, url):
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "member")
@@ -451,7 +454,7 @@ async def handle_work_ably_token(creator_username, url):
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "none")
@@ -494,7 +497,7 @@ async def handle_work_settings(creator_username, url):
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "member")
@@ -600,7 +603,7 @@ def handle_exams_create(creator_username, url):
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "work_admin")
@@ -628,7 +631,7 @@ def handle_exam_settings(creator_username, url):
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "work_admin")
@@ -650,7 +653,7 @@ def handle_exam_settings(creator_username, url):
 
     conditions = [
         (exam_work_id != work_id, 'not-exists', 'That resource does not exist.', '404'),
-        (session_id, 'has-active-sessions', 'This exam has one or more active sessions. Please end these sessions before changing settings.', '400')
+        (session_id, 'has-active-sessions', 'This exam has one or more active sessions, so its settings cannot be modified.', '400')
     ]
 
     for condition in conditions: 
@@ -690,7 +693,7 @@ def handle_exam_build(creator_username, url):
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "work_admin")
@@ -712,7 +715,7 @@ def handle_exam_build(creator_username, url):
 
     conditions = [
         (exam_work_id != work_id, 'not-exists', 'That resource does not exist.', '404'),
-        (session_id, 'has-any-sessions', 'This exam can no longer be modified since a session exists for it.', '400')
+        (session_id, 'has-any-sessions', 'This exam has one or more sessions, so its questions cannot be modified.', '400')
     ]
 
     for condition in conditions:
@@ -741,7 +744,7 @@ def handle_exam_build(creator_username, url):
                 option_order = option_data.get('order')
 
                 conditions = [
-                    (option_order in orders, 'syntax-fatal-overdupe', 'One or more of the orders are duplicated.', '400')
+                    (option_order in orders, 'syntax-fatal-orderdupe', 'One or more of the orders are duplicated. This error should not occur naturally using the website, please open a GitHub issue.', '400')
                 ]
 
                 for condition in conditions:
@@ -767,7 +770,7 @@ def handle_exam_home(creator_username, url):
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "member")
@@ -868,7 +871,7 @@ def handle_exam_start(creator_username, url):
 
     for value in required_values:
         if data.get(value) is None:
-            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing.'}), 400
+            return jsonify({'error': 'syntax-fatal-formatting', 'message': 'Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.'}), 400
 
     # Authentication
     work_data = workauth(token, creator_username, url, "MIN_PERM_LVL")

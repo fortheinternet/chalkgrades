@@ -1,36 +1,84 @@
 <script>
-// Menus
-import LandingMenu from '@/components/menus/LandingMenu.vue'
+  // Layouts
+  import LandingLeft from '@/layouts/LandingLeft.vue'
 
-// UI elements
-import ChipButton from '@/components/elements/ChipButton.vue';
+  // Phosphor Icons
+  import {
+    PhUsersThree,
+    PhPaperPlaneTilt,
+    PhGithubLogo
+  } from '@phosphor-icons/vue'
 
-export default {
-  components: {
-    // Menus
-    LandingMenu,
+  // UI elements
+  import Button from '@/components/Button.vue'
+  import Divider from '@/components/Divider.vue'
 
-    // UI elements
-    ChipButton
-  },
-  created() {
-    document.title = this.$t('title.Home')
+  export default {
+    components: {
+      // Layouts
+      LandingLeft,
+
+      // Phosphor Icons
+      PhUsersThree,
+      PhPaperPlaneTilt,
+      PhGithubLogo,
+
+      // UI elements
+      Button,
+      Divider
+    },
+    created() {
+      document.title = this.$t('title.Home')
+
+      if (localStorage.getItem('token')) {
+        this.$router.push('/dashboard')
+      }
+    }
   }
-};
 </script>
 
 <template>
-  <LandingMenu view="Home"/>
+  <LandingLeft view="Home" />
   <main>
-    <article>
+    <article
+      class="flex aspect-[10/5] w-full flex-col items-center justify-center rounded-lg border-[1px] border-solid border-black border-opacity-5 bg-black bg-opacity-5 dark:border-white dark:border-opacity-5 dark:bg-white dark:bg-opacity-5"
+    >
       <h4>{{ $t('text.heading.landing-1') }}</h4>
-      <p class="subtext">{{ $t('text.paragraph.landing-1') }}</p>
+      <p class="subtext mb-10">{{ $t('text.paragraph.landing-1') }}</p>
+      <div class="button-row">
+        <Button routePath="/login" :internal="true" :highlighted="true">
+          {{ $t('button.login') }}
+        </Button>
+        <Button
+          routePath="https://github.com/fortheinternet/chalkgrades"
+          :internal="false"
+          :highlighted="false"
+        >
+          {{ $t('button.github') }}
+        </Button>
+      </div>
     </article>
 
-    <div class="flex sm:flex-row flex-col">
-      <ChipButton routePath="/login" :internal="true" :highlighted="true">{{ $t('button.login') }}</ChipButton>
-      <ChipButton routePath="https://github.com/fortheinternet/chalkgrades" :internal="false" :highlighted="false">{{ $t('button.github') }}</ChipButton>
-    </div>
+    <article>
+      <h5>{{ $t('text.heading.latest-updates') }}</h5>
+      <p>{{ $t('text.paragraph.latest-changes') }}</p>
+    </article>
 
+    <Divider />
+
+    <article>
+      <h6 class="xl:mb-1">{{ $t('text.heading.landing-2') }}</h6>
+      <p class="xl:m-0">{{ $t('text.paragraph.landing-2') }}</p>
+    </article>
+
+    <article>
+      <h6 class="xl:mb-1">{{ $t('text.heading.landing-3') }}</h6>
+      <p class="xl:m-0">{{ $t('text.paragraph.landing-3') }}</p>
+    </article>
+
+    <article>
+      <h6 class="xl:mb-1">{{ $t('text.heading.landing-4') }}</h6>
+      <p class="xl:m-0">{{ $t('text.paragraph.landing-4') }}</p>
+    </article>
   </main>
 </template>

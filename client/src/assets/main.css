@@ -2,57 +2,90 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Styles used in views and layouts after this line */
+/* Styles used in general structure after this line */
 
 body {
-    @apply dark:text-white text-black dark:bg-dark-grey bg-light-grey
+  @apply bg-light-grey text-black dark:bg-dark-grey dark:text-white;
 }
 
 main {
-    @apply p-10 px-12 md:ml-[375px] mr-0
+  @apply mr-0 max-w-[800px] p-8 px-10 md:ml-[375px];
 }
 
 aside {
-    @apply border-r-[1px] border-solid border-black dark:border-white border-opacity-5 dark:border-opacity-5 md:flex hidden flex-col justify-between whitespace-nowrap select-none items-start w-[375px] h-full fixed py-8 overflow-y-auto
+  @apply fixed hidden h-screen w-[375px] select-none flex-col items-start justify-between overflow-y-auto whitespace-nowrap border-r-[1px] border-solid border-black border-opacity-5 py-8 md:flex dark:border-white dark:border-opacity-5;
 }
 
 aside > div {
-    @apply w-full
+  @apply w-full;
 }
 
 aside > div > div {
-    @apply w-full px-8 
+  @apply w-full px-8;
 }
 
 article {
-    @apply mb-10
+  @apply mb-10;
 }
 
 /* Styles used in markdown after this line */
 
 .divider {
-    @apply bg-black dark:bg-white bg-opacity-5 dark:bg-opacity-5 h-[1px] w-full my-8
+  @apply h-[1px] w-full bg-black bg-opacity-5 dark:bg-white dark:bg-opacity-5;
 }
 
 .subtext {
-    @apply dark:text-opacity-55 text-opacity-55 dark:text-white text-black mb-6
+  @apply mb-5 text-[1rem] text-black text-opacity-55 dark:text-white dark:text-opacity-55;
 }
 
-input {
-    @apply w-full block text-left text-small font-semibold dark:bg-white bg-black dark:bg-opacity-10 bg-opacity-10 py-2 px-5 rounded-3xl mr-3 mb-4 select-none h-[36px] outline-none;
+h1 {
+  @apply mb-1 text-7xl font-bold;
 }
 
-h1 {@apply text-7xl font-bold mb-1}
-h2 {@apply text-6xl font-bold mb-1}
-h3 {@apply text-5xl font-bold mb-1}
-h4 {@apply text-4xl font-bold mb-1}
-h5 {@apply text-3xl font-bold mb-1}
-h6 {@apply text-2xl font-bold mb-1}
+h2 {
+  @apply mb-1 text-6xl font-bold;
+}
 
-p {@apply text-base mb-4}
+h3 {
+  @apply mb-1 text-5xl font-bold;
+}
+
+h4 {
+  @apply mb-1 text-4xl font-bold;
+}
+
+h5 {
+  @apply mb-1 text-3xl font-bold;
+}
+
+h6 {
+  @apply mb-1 text-2xl font-bold;
+}
+
+p {
+  @apply mb-5 text-base;
+}
 
 /* Styles used in mulitple components after this line */
 
-.AsideButton {
-    @apply w-full lg:w-max flex justify-start gap-4 items-center text-left text-[14px] p-1 rounded-full select-none cursor-pointer
+.InputField {
+  @apply mb-4 mr-3 block h-[36px] w-full select-none rounded-3xl border-[1px] border-solid border-black border-opacity-5 bg-light-grey px-5 py-2 text-left text-base font-semibold outline-none dark:border-white dark:border-opacity-5 dark:bg-dark-grey;
+}
+
+.AsideItem {
+  @apply mb-0 flex w-full select-none items-center justify-start gap-4 rounded-full p-1 text-left text-[14px] lg:w-max;
+}
+
+/* Stlyes used for component usage after this line */
+
+.button-row {
+  @apply flex flex-col sm:flex-row;
+}
+
+.error {
+  @apply select-none text-[14px] font-semibold text-red;
+}
+
+.success {
+  @apply select-none text-[14px] font-semibold text-green;
 }

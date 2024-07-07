@@ -1,44 +1,87 @@
 {
+  "success": "A művelet sikeresen befejeződött.",
+  "loading": "Betöltés, kérem várjon...",
+  "copied": "másolva!",
   "languages": {
     "en_us": "English (US)",
     "hu": "Magyar"
   },
+  "errors": {
+    "syntax-fatal-formatting": "A kérés formátuma hibás, amely azt jelenti hogy valami hiányzik. Ez a hiba nem fordulhat elő természetes módon a webhely használata során, kérjük, nyisson egy GitHub hibajegyet.",
+    "invalid-token": "A használt munkamenet (token) érvénytelen, hiszen nincs felhasználói fiókhoz társítva.",
+    "not-exists": "Az erőforrás nem létezik.",
+    "bad-permissions": "Nincs megfelelő jogosultsága.",
+    "bad-access": "A megadott hozzáférési kód helytelen.",
+    "bad-password": "A megadott jelszó helytelen.",
+    "user-not-exist": "A megadott felhasználó nem létezik.",
+    "confirmation-no-match": "A megadott jelszavak nem egyeznek.",
+    "username-taken": "A kívánt felhasználónév már haználatban van. Kérjük válasszon másikat.",
+    "username-system": "A kívánt felhasználónév rendszer által fenntartott. Kérjük, válasszon másikat.",
+    "invalid-username": "A kívánt felhasználónév nem felel meg a követelményeknek.",
+    "work-already-exists": "Az az osztály már létezik ennek a felhasználónak!",
+    "invalid-work-resource": "A kívánt osztálynév nem felel meg a követelményeknek.",
+    "already-member": "Már tagja vagy ennek az osztálynak!",
+    "has-active-sessions": "Ennek a dolgozatnak van egy vagy több aktív másolata, amiatt nem lehet megváltozatni a beállításait.",
+    "has-any-sessions": "Ennek a dolgozatnak van egy vagy több másolata, amiatt nem lehet megváltoztatni a kérdéseit.",
+    "syntax-fatal-orderdupe": "Egy vagy több sorrend duplikálódott. Ez a hiba nem fordulhat elő természetes módon a webhely használata során, kérjük, nyisson egy GitHub hibajegyet.",
+    "already-started": "Már elkezdted ezt a dolgozatot!"
+  },
   "title": {
-    "Home": "chalk - kezdőoldal",
+    "Home": "chalk - kezdőlap",
     "Login": "chalk - bejelentkezés",
-    "Signup": "chalk - felhasználó létrehozása"
+    "Signup": "chalk - felhasználó létrehozása",
+    "Dashboard": "chalk - osztályok"
   },
   "button": {
-    "home": "Kezdőoldal",
+    "home": "Kezdőlap",
     "login": "Bejelentkezés",
     "signup": "Felhasználó létrehozása",
     "github": "GitHub",
-    "regex-generator": "Általános kifejezések generátor",
+    "regex-generator": "Általános kifejezések",
     "api-docs": "API Dokumentáció",
     "changelang": "Nyelv váltása",
     "changetheme": "Színtéma váltása",
     "submit": "Beküldés",
-    "forgot-password": "Elfelejtett jelszó"
+    "forgot-password": "Elfelejtett jelszó",
+    "dashboard": "Osztályok",
+    "logout": "Kijelentkezés"
   },
   "inputs": {
     "text": {
-      
+      "username": "Felhasználónév",
+      "password": "Jelszó",
+      "new-password": "Új jelszó",
+      "password-confirm": "Jelszó újra",
+      "access": "Hozzáférési kód"
     },
     "placeholders": {
-      "username": "Felhasználónév",
-      "password": "Jelszó"
+      "username": "Példa Tanuló",
+      "password": "alma-1000",
+      "new-password": "körte-1000",
+      "password-confirm": "körte-1000",
+      "access": "'home' vagy 'tanulo'"
     }
   },
   "text": {
     "heading": {
       "landing-1": "Üdvözöl a Chalk!",
+      "landing-2": " Tanulók, tanárok, adminisztrátorok, az egész cirkusz rendszerezése.",
+      "landing-3": "Valók-idejű vizsgák, röpdogák, TZ-k, gyakorlófeladatok, akármi.",
+      "landing-4": "Teljesen nyílt forrású. Nulla fizetőfal.",
+      "latest-updates": "Legújabb frissítések",
       "login-1": "Bejelentkezés",
-      "signup-1": "Felhasználó létrehozása"
+      "signup-1": "Felhasználó létrehozása",
+      "dashboard-1": "Osztályok"
     },
     "paragraph": {
       "landing-1": "A hagyományos oktatási eszközök szabad, nyílt forrású alternatívája.",
+      "landing-2": "Minden osztálynak saját otthona van. Tanulóként beléphetsz és valós időben nézheted a tagokat. A tanárok rendezhetik az osztályokat és kirúghatnak tagokat.",
+      "landing-3": "Nincs több kifogyott toll, gyűrött papír, olvashatatlan kézírás, vagy a név elfelejtése a bal felső sarokból 2 perccel az óra vége után.",
+      "landing-4": "Te vagy az adataid tulajdonában. Az összes kód, pluginok (hamarosan!), bukásra álló jegyek. Akármikor futtathatod a saját példányodat!",
+      "latest-changes": "Az összes változtatás megtalálható a GitHub-on!",
       "login-1": "A felhasználói adataidat legtöbbször az iskoládtól vagy szolgáltatódtól kapod.",
-      "signup-1": "A hozzáférési kódot legtöbbször a rendszergazda vagy szolgáltató biztosítja."
+      "signup-1": "A hozzáférési kódot legtöbbször a rendszergazda vagy szolgáltató biztosítja.",
+      "dashboard-1": "Itt láthatod az összes osztályodat, és műveleteket végezhetsz rajtuk."
     }
   }
 }

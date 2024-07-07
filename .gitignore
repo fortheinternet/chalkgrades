@@ -1,2 +1,3 @@
 api/.env
 api/__pycache__
+*storybook.log

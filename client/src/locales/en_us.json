@@ -1,44 +1,87 @@
 {
+  "success": "The operation completed successfully.",
+  "loading": "Loading, please wait...",
+  "copied": "copied!",
   "languages": {
     "en_us": "English (US)",
     "hu": "Magyar"
   },
+  "errors": {
+    "syntax-fatal-formatting": "Your request is malformed, meaning one of the values are missing. This error should not occur naturally using the website, please open a GitHub issue.",
+    "invalid-token": "Your token is invalid, as its not associated with a user account.",
+    "not-exists": "That resource does not exist.",
+    "bad-permissions": "You have incorrect permissions.",
+    "bad-access": "The access code provided is incorrect.",
+    "bad-password": "Your password is incorrect.",
+    "user-not-exist": "That user does not exist.",
+    "confirmation-no-match": "The passwords you entered did not match.",
+    "username-taken": "The username you chose is already taken. Please choose another.",
+    "username-system": "The username you chose is system reserved. Please choose another.",
+    "invalid-username": "The username you chose does not meet standard requirements.",
+    "work-already-exists": "That workspace resource already exists for this user.",
+    "invalid-work-resource": "That workspace resource does not meet standard requirements.",
+    "already-member": "You are already a member of that workspace!",
+    "has-active-sessions": "This exam has one or more active sessions, so its settings cannot be modified.",
+    "has-any-sessions": "This exam has one or more sessions, so its questions cannot be modified.",
+    "syntax-fatal-orderdupe": "One or more of the orders are duplicated. This error should not occur naturally using the website, please open a GitHub issue.",
+    "already-started": "You already started this exam!"
+  },
   "title": {
     "Home": "chalk - homepage",
     "Login": "chalk - login",
-    "Signup": "chalk - signup"
+    "Signup": "chalk - signup",
+    "Dashboard": "chalk - dashboard"
   },
   "button": {
     "home": "Homepage",
     "login": "Log in",
     "signup": "Sign up",
     "github": "GitHub repository",
-    "regex-generator": "Regular Expressions generator",
+    "regex-generator": "Regular Expressions",
     "api-docs": "API Documentation",
     "changelang": "Change language",
     "changetheme": "Toggle color theme",
     "submit": "Submit",
-    "forgot-password": "Forgot password?"
+    "forgot-password": "Forgot password?",
+    "dashboard": "Dashboard",
+    "logout": "Log out"
   },
   "inputs": {
     "text": {
-      
+      "username": "Username",
+      "password": "Password",
+      "new-password": "New password",
+      "password-confirm": "Repeat password",
+      "access": "Access code"
     },
     "placeholders": {
-      "username": "Username",
-      "password": "Password"
+      "username": "Example Student",
+      "password": "apple-1000",
+      "new-password": "pear-1000",
+      "password-confirm": "pear-1000",
+      "access": "'home' or 'student'"
     }
   },
   "text": {
     "heading": {
       "landing-1": "Welcome to Chalk!",
+      "landing-2": "Organize students, teachers, admins, the whole circus.",
+      "landing-3": "Real-time exams, tests, quizzes, spelling bees, anything really.",
+      "landing-4": "Fully open-source. Zero paywalls.",
+      "latest-updates": "Latest updates",
       "login-1": "Log in to your account",
-      "signup-1": "Create a new user account"
+      "signup-1": "Create a new user account",
+      "dashboard-1": "Dashboard"
     },
     "paragraph": {
       "landing-1": "This is the free and open-source alternative to traditional education tools.",
+      "landing-2": "Create workspaces for each class taught. As a student, you will be able to join in and wiew the members real-time. Teachers can manage workspaces and kick members.",
+      "landing-3": "No more running out of ink, torn pages, unreadable handwriting, or students forgetting to write their name on the top-left corner 2 minutes after everyone left.",
+      "landing-4": "You own your data. All the code, all the plugins (wip), all the failing grades. You can always host your own instance!",
+      "latest-changes": "You can check out all the changes in our GitHub repo!",
       "login-1": "The details for your account are often provided by your school or server provider.",
-      "signup-1": "The access code is usually provided by the administrator or service provider."
+      "signup-1": "The access code is usually provided by the administrator or service provider.",
+      "dashboard-1": "This is where you see all your classes and perform actions on them."
     }
   }
 }
