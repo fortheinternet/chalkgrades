@@ -30,7 +30,7 @@
           password_confirm: '',
           access_code: ''
         },
-        requestURL: 'http://localhost:3000/api/logins/signups.json',
+        requestURL: 'https://chalk.fortheinternet.xyz/api/logins/signups.json',
         error: '',
         success: false
       }

@@ -28,7 +28,7 @@
           username: '',
           password: ''
         },
-        requestURL: 'http://localhost:3000/api/logins/logins.json',
+        requestURL: 'https://chalk.fortheinternet.xyz/api/logins/logins.json',
         error: '',
         success: false
       }

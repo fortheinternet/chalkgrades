@@ -30,7 +30,7 @@
     },
     data() {
       return {
-        requestURL: 'http://localhost:3000/api/logins/home.json',
+        requestURL: 'https://chalk.fortheinternet.xyz/api/logins/home.json',
         loading: true,
         responseData: {
           username: '',
