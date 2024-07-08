@@ -91,7 +91,7 @@
         <p v-if="error" class="error">{{ $t(`errors.${error}`) }}</p>
         <p v-else-if="success" class="success">{{ $t('success') }}</p>
 
-        <div class="flex flex-col sm:flex-row">
+        <div class="button-row">
           <Button @click="this.$refs.Form.submitForm()" :highlighted="true">
             {{ $t('button.submit') }}
           </Button>

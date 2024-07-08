@@ -35,7 +35,7 @@
 
 <style scoped>
   .Button-btn {
-    @apply mr-3 block w-full cursor-pointer select-none rounded-3xl border-[1px] border-solid border-black border-opacity-5 px-5 py-2 text-left text-base font-semibold sm:w-max dark:border-white dark:border-opacity-5;
+    @apply block w-full cursor-pointer select-none rounded-3xl border-[1px] border-solid border-black border-opacity-5 px-5 py-2 text-left text-base font-semibold sm:w-max dark:border-white dark:border-opacity-5;
   }
 
   .Button-btn-highlighted {

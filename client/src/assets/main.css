@@ -73,13 +73,13 @@ p {
 }
 
 .AsideItem {
-  @apply mb-0 flex w-full select-none items-center justify-start gap-4 rounded-full p-1 text-left text-[14px] lg:w-max;
+  @apply mb-0 flex w-full select-none items-center justify-start gap-5 rounded-full p-1 text-left text-[14px] lg:w-max;
 }
 
 /* Stlyes used for component usage after this line */
 
 .button-row {
-  @apply flex flex-col sm:flex-row;
+  @apply flex flex-col items-start gap-5 sm:flex-row;
 }
 
 .error {

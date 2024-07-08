@@ -41,7 +41,7 @@
   <LandingLeft view="Home" />
   <main>
     <article
-      class="flex aspect-[10/5] w-full flex-col items-center justify-center rounded-lg border-[1px] border-solid border-black border-opacity-5 bg-black bg-opacity-5 dark:border-white dark:border-opacity-5 dark:bg-white dark:bg-opacity-5"
+      class="flex aspect-[10/5] w-full flex-col items-center justify-center rounded-lg"
     >
       <h4>{{ $t('text.heading.landing-1') }}</h4>
       <p class="subtext mb-10">{{ $t('text.paragraph.landing-1') }}</p>

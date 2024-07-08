@@ -7,6 +7,7 @@
   // UI elements
   import Button from '@/components/Button.vue'
   import Loading from '@/components/Loading.vue'
+  import Divider from '@/components/Divider.vue'
 
   export default {
     components: {
@@ -15,7 +16,8 @@
 
       // UI elements
       Button,
-      Loading
+      Loading,
+      Divider
     },
     created() {
       document.title = this.$t('title.Dashboard')
@@ -82,7 +84,10 @@
       </p>
     </article>
 
+    <Divider />
+
     <Loading v-if="loading" />
+
     <div
       class="mb-5 flex select-none flex-row justify-between"
       v-for="workspace in responseData.workspaces"
@@ -94,15 +99,20 @@
       >
         <p class="mb-0.5 text-[14px] font-bold">{{ workspace.display_name }}</p>
         <p
-          class="mr-3 inline text-[14px] text-black text-opacity-55 dark:text-white dark:text-opacity-55"
+          class="mb-0 mr-3 inline text-[14px] text-black text-opacity-55 dark:text-white dark:text-opacity-55"
         >
           {{ workspace.creator_username }}
         </p>
         <p
-          class="inline text-[14px] text-black text-opacity-55 dark:text-white dark:text-opacity-55"
+          class="mb-0 inline text-[14px] text-black text-opacity-55 dark:text-white dark:text-opacity-55"
         >
           {{ workspace.url }}
         </p>
+      </div>
+
+      <div class="button-row">
+        <Button :highlighted="true">Dolgozatok</Button>
+        <Button>Tagok</Button>
       </div>
     </div>
   </main>
