@@ -11,12 +11,12 @@ create table
 create table
   public.work_data (
     work_id serial,
-    creator_id integer null,
-    url text not null,
+    work_admin_id integer null,
+    urn text not null,
     auth text not null,
     display text null,
     constraint work_data_pkey primary key (work_id),
-    constraint work_data_creator_id_fkey foreign key (creator_id) references users_data (user_id)
+    constraint work_data_work_admin_id_fkey foreign key (work_admin_id) references users_data (user_id)
   ) tablespace pg_default;
 
 create table
