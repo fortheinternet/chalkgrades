@@ -45,43 +45,43 @@ const router = createRouter({
       component: UserCreateView
     },
     {
-      path: '/:creator_username/:url/members',
+      path: '/:work_admin_username/:urn/members',
       component: WorkMembersView
     },
     {
-      path: '/:creator_username/:url/exams',
+      path: '/:work_admin_username/:urn/exams',
       component: WorkExamsView
     },
     {
-      path: '/:creator_username/:url/settings',
+      path: '/:work_admin_username/:urn/settings',
       component: WorkSettingsView
     },
     {
-      path: '/:creator_username/:url/create',
+      path: '/:work_admin_username/:urn/create',
       component: WorkCreateView
     },
     {
-      path: '/:creator_username/:url/:id/start',
+      path: '/:work_admin_username/:urn/:id/start',
       component: ManageStartView
     },
     {
-      path: '/:creator_username/:url/:id/sessions',
+      path: '/:work_admin_username/:urn/:id/sessions',
       component: ManageSessionsView
     },
     {
-      path: '/:creator_username/:url/:id/questions',
+      path: '/:work_admin_username/:urn/:id/questions',
       component: ManageQuestionsView
     },
     {
-      path: '/:creator_username/:url/:id/settings',
+      path: '/:work_admin_username/:urn/:id/settings',
       component: ManageSettingsView
     },
     {
-      path: '/:creator_username/:url/:id/write',
+      path: '/:work_admin_username/:urn/:id/write',
       component: ExamWriteView
     },
     {
-      path: '/:creator_username/:url/:id/access',
+      path: '/:work_admin_username/:urn/:id/access',
       component: ExamAccessView
     }
   ]

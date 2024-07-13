@@ -67,8 +67,8 @@
           }
         }
       },
-      navigateToWorkspace(creator_username, url, path) {
-        this.$router.push(`${creator_username}/${url}/${path}`)
+      navigateToWorkspace(work_admin_username, urn, path) {
+        this.$router.push(`${work_admin_username}/${urn}/${path}`)
       }
     }
   }
@@ -97,8 +97,8 @@
         class="cursor-pointer"
         @click="
           navigateToWorkspace(
-            workspace.creator_username,
-            workspace.url,
+            workspace.work_admin_username,
+            workspace.urn,
             'members'
           )
         "
@@ -107,12 +107,12 @@
         <p
           class="mb-0 mr-3 inline text-[14px] text-black text-opacity-55 dark:text-white dark:text-opacity-55"
         >
-          {{ workspace.creator_username }}
+          {{ workspace.work_admin_username }}
         </p>
         <p
           class="mb-0 inline text-[14px] text-black text-opacity-55 dark:text-white dark:text-opacity-55"
         >
-          {{ workspace.url }}
+          {{ workspace.urn }}
         </p>
       </div>
 
@@ -122,8 +122,8 @@
             variant="highlighted"
             @click="
               navigateToWorkspace(
-                workspace.creator_username,
-                workspace.url,
+                workspace.work_admin_username,
+                workspace.urn,
                 'exams'
               )
             "
@@ -133,8 +133,8 @@
           <Button
             @click="
               navigateToWorkspace(
-                workspace.creator_username,
-                workspace.url,
+                workspace.work_admin_username,
+                workspace.urn,
                 'members'
               )
             "
