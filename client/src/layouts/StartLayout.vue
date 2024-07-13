@@ -2,10 +2,11 @@
   // Phosphor Icons
   import {
     PhGithubLogo,
-    PhCalculator,
     PhCloudCheck,
     PhUser,
-    PhHouse
+    PhHouse,
+    PhGraduationCap,
+    PhLock
   } from '@phosphor-icons/vue'
 
   // UI elements
@@ -17,10 +18,11 @@
     components: {
       // Phosphor Icons
       PhGithubLogo,
-      PhCalculator,
       PhCloudCheck,
       PhUser,
       PhHouse,
+      PhGraduationCap,
+      PhLock,
 
       // UI elements
       AsideButton,
@@ -37,7 +39,7 @@
   <aside class="left-aside">
     <div>
       <div>
-        <AsideButton routePath="/" :internal="true">
+        <AsideButton routePath="/">
           <PhHouse v-if="view == 'Home'" weight="fill" size="17px" />
           <PhHouse v-else weight="bold" size="17px" />
 
@@ -46,7 +48,7 @@
           </div>
         </AsideButton>
 
-        <AsideButton routePath="/login" :internal="true">
+        <AsideButton routePath="/login">
           <PhUser v-if="view == 'Login'" weight="fill" size="17px" />
           <PhUser v-else weight="bold" size="17px" />
 
@@ -57,25 +59,23 @@
       </div>
       <div class="divider my-8"></div>
       <div>
-        <AsideButton
-          routePath="https://github.com/fortheinternet/chalkgrades"
-          :internal="false"
-        >
+        <AsideButton routePath="https://github.com/fortheinternet/chalkgrades">
           <PhGithubLogo weight="bold" size="17px" />
           {{ $t('button.github') }}
         </AsideButton>
 
-        <AsideButton routePath="https://regex101.com" :internal="false">
-          <PhCalculator weight="bold" size="17px" />
-          {{ $t('button.regex-generator') }}
-        </AsideButton>
-
         <AsideButton
           routePath="https://fortheinternet.notion.site/API-Documentation-WIP-be3e672768d243aa855209b4f6e475bb?pvs=4"
-          :internal="false"
         >
           <PhCloudCheck weight="bold" size="17px" />
           {{ $t('button.api-docs') }}
+        </AsideButton>
+
+        <AsideButton
+          routePath="https://fortheinternet.notion.site/Credits-19a5c234927c47179cb89e00a8149201?pvs=4"
+        >
+          <PhGraduationCap weight="bold" size="17px" />
+          {{ $t('button.credits') }}
         </AsideButton>
       </div>
     </div>

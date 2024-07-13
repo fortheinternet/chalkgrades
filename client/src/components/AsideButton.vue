@@ -1,12 +1,17 @@
 <script>
   export default {
     props: {
-      routePath: '',
-      internal: false
+      routePath: ''
     },
     methods: {
       navigateToPage() {
-        this.$router.push(this.routePath)
+        if (this.routePath) {
+          if (this.routePath.startsWith('https://')) {
+            window.location.href = this.routePath
+          } else {
+            this.$router.push(this.routePath)
+          }
+        }
       }
     }
   }
@@ -14,12 +19,8 @@
 
 <template>
   <div class="w-max cursor-default">
-    <a @click="navigateToPage" v-if="internal" class="AsideItem cursor-pointer">
+    <button @click="navigateToPage" class="AsideItem cursor-pointer">
       <slot></slot>
-    </a>
-
-    <a :href="routePath" v-else class="AsideItem cursor-pointer">
-      <slot></slot>
-    </a>
+    </button>
   </div>
 </template>

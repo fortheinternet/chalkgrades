@@ -66,14 +66,18 @@ p {
   @apply mb-5 text-base;
 }
 
+a {
+  @apply text-black text-opacity-55 underline dark:text-white dark:text-opacity-55;
+}
+
 /* Styles used in mulitple components after this line */
 
 .InputField {
-  @apply mb-4 mr-3 block h-[36px] w-full select-none rounded-3xl border-[1px] border-solid border-black border-opacity-5 bg-light-grey px-5 py-2 text-left text-base font-semibold outline-none dark:border-white dark:border-opacity-5 dark:bg-dark-grey;
+  @apply mb-4 mr-3 block h-[36px] w-full select-none rounded-xl border-[1px] border-solid border-black border-opacity-5 bg-light-grey px-5 py-2 text-left text-base font-semibold outline-none dark:border-white dark:border-opacity-5 dark:bg-dark-grey;
 }
 
 .AsideItem {
-  @apply mb-0 flex w-full select-none items-center justify-start gap-5 rounded-full p-1 text-left text-[14px] lg:w-max;
+  @apply mb-0 flex w-full select-none items-center justify-start gap-5 rounded-xl p-1 text-left text-small lg:w-max;
 }
 
 /* Stlyes used for component usage after this line */

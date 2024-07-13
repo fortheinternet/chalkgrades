@@ -1,2 +1,3 @@
 # chalkgrades
-Chalk is an online examination software that offers real-time monitoring of student's work. It's simple, easy to use, and not hard to host.
+
+Sorry, this readme file isn't excactly finished yet. It's not the main aspect of this project, so I'll do it if I have some free time.

@@ -1,6 +1,6 @@
 <script>
   // Layouts
-  import LandingLeft from '@/layouts/LandingLeft.vue'
+  import LandingLeft from '@/layouts/StartLayout.vue'
 
   // UI elements
   import Button from '@/components/Button.vue'
@@ -53,9 +53,7 @@
     <main>
       <article>
         <h4>{{ $t('text.heading.login-1') }}</h4>
-        <p
-          class="text-black text-opacity-55 dark:text-white dark:text-opacity-55"
-        >
+        <p class="subtext">
           {{ $t('text.paragraph.login-1') }}
         </p>
       </article>
@@ -92,17 +90,21 @@
         <p v-else-if="success" class="success">{{ $t('success') }}</p>
 
         <div class="button-row">
-          <Button @click="this.$refs.Form.submitForm()" :highlighted="true">
+          <Button @click="this.$refs.Form.submitForm()" variant="highlighted">
             {{ $t('button.submit') }}
           </Button>
           <Button
             routePath="https://fortheinternet.notion.site/How-to-reset-a-password-b1092586c9fc4893b4d373dd4b94039c?pvs=4"
-            :internal="false"
+            variant="ghost"
           >
             {{ $t('button.forgot-password') }}
           </Button>
         </div>
       </Form>
+
+      <article>
+        <p class="subtext" v-html="$t('text.paragraph.policies')"></p>
+      </article>
     </main>
   </div>
 </template>

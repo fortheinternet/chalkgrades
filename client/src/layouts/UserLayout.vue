@@ -1,6 +1,6 @@
 <script>
   // Phosphor Icons
-  import { PhHouse, PhUser } from '@phosphor-icons/vue'
+  import { PhHouse, PhUser, PhPlus } from '@phosphor-icons/vue'
 
   // UI elements
   import AsideButton from '@/components/AsideButton.vue'
@@ -14,6 +14,7 @@
       // Phosphor Icons
       PhHouse,
       PhUser,
+      PhPlus,
 
       // UI elements
       AsideButton,
@@ -44,7 +45,7 @@
   <aside class="left-aside">
     <div>
       <div>
-        <AsideButton routePath="/dashboard" :internal="true">
+        <AsideButton routePath="/dashboard">
           <PhHouse v-if="view == 'Dashboard'" weight="fill" size="17px" />
           <PhHouse v-else weight="bold" size="17px" />
 

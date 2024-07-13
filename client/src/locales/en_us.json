@@ -44,7 +44,10 @@
     "submit": "Submit",
     "forgot-password": "Forgot password?",
     "dashboard": "Dashboard",
-    "logout": "Log out"
+    "logout": "Log out",
+    "exams": "Exams",
+    "members": "Members",
+    "credits": "Credits"
   },
   "inputs": {
     "text": {
@@ -81,7 +84,8 @@
       "latest-changes": "You can check out all the changes in our GitHub repo!",
       "login-1": "The details for your account are often provided by your school or server provider.",
       "signup-1": "The access code is usually provided by the administrator or service provider.",
-      "dashboard-1": "This is where you see all your classes and perform actions on them."
+      "dashboard-1": "This is where you see all your classes and perform actions on them.",
+      "policies": "By continuing, you accept our <a href='https://fortheinternet.notion.site/Privacy-Cookie-Policy-e818b63c958649c2b2403278d15085f1?pvs=4'>Privacy Policy</a>."
     }
   }
 }

@@ -1,6 +1,6 @@
 <script>
   // Layouts
-  import LandingLeft from '@/layouts/LandingLeft.vue'
+  import LandingLeft from '@/layouts/StartLayout.vue'
 
   // Phosphor Icons
   import {
@@ -40,45 +40,26 @@
 <template>
   <LandingLeft view="Home" />
   <main>
-    <article
-      class="flex aspect-[10/5] w-full flex-col items-center justify-center rounded-lg"
-    >
+    <article>
       <h4>{{ $t('text.heading.landing-1') }}</h4>
       <p class="subtext mb-10">{{ $t('text.paragraph.landing-1') }}</p>
+    </article>
+    <article>
       <div class="button-row">
-        <Button routePath="/login" :internal="true" :highlighted="true">
+        <Button routePath="/login" variant="highlighted">
           {{ $t('button.login') }}
         </Button>
-        <Button
-          routePath="https://github.com/fortheinternet/chalkgrades"
-          :internal="false"
-          :highlighted="false"
-        >
+        <Button routePath="https://github.com/fortheinternet/chalkgrades">
           {{ $t('button.github') }}
         </Button>
       </div>
     </article>
 
-    <article>
-      <h5>{{ $t('text.heading.latest-updates') }}</h5>
-      <p>{{ $t('text.paragraph.latest-changes') }}</p>
-    </article>
-
     <Divider />
 
     <article>
-      <h6 class="xl:mb-1">{{ $t('text.heading.landing-2') }}</h6>
-      <p class="xl:m-0">{{ $t('text.paragraph.landing-2') }}</p>
-    </article>
-
-    <article>
-      <h6 class="xl:mb-1">{{ $t('text.heading.landing-3') }}</h6>
-      <p class="xl:m-0">{{ $t('text.paragraph.landing-3') }}</p>
-    </article>
-
-    <article>
-      <h6 class="xl:mb-1">{{ $t('text.heading.landing-4') }}</h6>
-      <p class="xl:m-0">{{ $t('text.paragraph.landing-4') }}</p>
+      <h5>{{ $t('text.heading.latest-updates') }}</h5>
+      <p>{{ $t('text.paragraph.latest-changes') }}</p>
     </article>
   </main>
 </template>

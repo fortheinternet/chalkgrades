@@ -1,6 +1,6 @@
 <script>
   // Layouts
-  import LandingLeft from '@/layouts/LandingLeft.vue'
+  import LandingLeft from '@/layouts/StartLayout.vue'
 
   // UI elements
   import Button from '@/components/Button.vue'
@@ -54,9 +54,7 @@
     <main>
       <article>
         <h4>{{ $t('text.heading.signup-1') }}</h4>
-        <p
-          class="text-black text-opacity-55 dark:text-white dark:text-opacity-55"
-        >
+        <p class="subtext">
           {{ $t('text.paragraph.signup-1') }}
         </p>
       </article>
@@ -112,7 +110,7 @@
         <p v-else-if="success" class="success">{{ $t('success') }}</p>
 
         <div class="flex flex-col sm:flex-row">
-          <Button @click="this.$refs.Form.submitForm()" :highlighted="true">
+          <Button @click="this.$refs.Form.submitForm()" variant="highlighted">
             {{ $t('button.submit') }}
           </Button>
         </div>

@@ -44,7 +44,10 @@
     "submit": "Beküldés",
     "forgot-password": "Elfelejtett jelszó",
     "dashboard": "Osztályok",
-    "logout": "Kijelentkezés"
+    "logout": "Kijelentkezés",
+    "exams": "Dolgozatok",
+    "members": "Tagok",
+    "credits": "Impresszum"
   },
   "inputs": {
     "text": {
@@ -81,7 +84,8 @@
       "latest-changes": "Az összes változtatás megtalálható a GitHub-on!",
       "login-1": "A felhasználói adataidat legtöbbször az iskoládtól vagy szolgáltatódtól kapod.",
       "signup-1": "A hozzáférési kódot legtöbbször a rendszergazda vagy szolgáltató biztosítja.",
-      "dashboard-1": "Itt láthatod az összes osztályodat, és műveleteket végezhetsz rajtuk."
+      "dashboard-1": "Itt láthatóak az osztályaink legfontosabb adatai. Műveletek végzése lehetséges.",
+      "policies": "A folytatással beleegyezel az <a href='https://fortheinternet.notion.site/Privacy-Cookie-Policy-e818b63c958649c2b2403278d15085f1?pvs=4'>Adatvédelmi nyilatkozatba</a>."
     }
   }
 }

@@ -14,6 +14,7 @@ const savedLocale = localStorage.getItem('locale') || 'en_us'
 const i18n = createI18n({
   locale: savedLocale,
   fallbackLocale: 'en_us',
+  warnHtmlInMessage: 'off',
   messages: {
     en_us: messages_en,
     hu: messages_hu
@@ -30,6 +31,11 @@ if (
 } else {
   document.documentElement.classList.remove('dark')
 }
+
+// warn user
+console.log(
+  'WARNING: Pasting code into this console will compromise your account, make the application unusable, endanger your data to untraceable attackers, and create a hacker-topia in your browser.'
+)
 
 const app = createApp(App)
 

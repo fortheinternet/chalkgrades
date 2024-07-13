@@ -2,7 +2,7 @@
   import axios from 'axios'
 
   // Layouts
-  import DashboardLeft from '@/layouts/DashboardLeft.vue'
+  import DashboardLeft from '@/layouts/UserLayout.vue'
 
   // UI elements
   import Button from '@/components/Button.vue'
@@ -67,8 +67,8 @@
           }
         }
       },
-      navigateToWorkspace(creator_username, url) {
-        this.$router.push(`${creator_username}/${url}`)
+      navigateToWorkspace(creator_username, url, path) {
+        this.$router.push(`${creator_username}/${url}/${path}`)
       }
     }
   }
@@ -95,7 +95,13 @@
     >
       <div
         class="cursor-pointer"
-        @click="navigateToWorkspace(workspace.creator_username, workspace.url)"
+        @click="
+          navigateToWorkspace(
+            workspace.creator_username,
+            workspace.url,
+            'members'
+          )
+        "
       >
         <p class="mb-0.5 text-[14px] font-bold">{{ workspace.display_name }}</p>
         <p
@@ -110,9 +116,32 @@
         </p>
       </div>
 
-      <div class="button-row">
-        <Button :highlighted="true">Dolgozatok</Button>
-        <Button>Tagok</Button>
+      <div class="hidden lg:block">
+        <div class="button-row">
+          <Button
+            variant="highlighted"
+            @click="
+              navigateToWorkspace(
+                workspace.creator_username,
+                workspace.url,
+                'exams'
+              )
+            "
+          >
+            {{ $t('button.exams') }}
+          </Button>
+          <Button
+            @click="
+              navigateToWorkspace(
+                workspace.creator_username,
+                workspace.url,
+                'members'
+              )
+            "
+          >
+            {{ $t('button.members') }}
+          </Button>
+        </div>
       </div>
     </div>
   </main>
