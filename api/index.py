@@ -162,7 +162,7 @@ def handle_signups():
     response = supabase.table('users_data').select('username').eq('username', username).execute().data
     usernames = response[0]['username'] if response else None
 
-    system_usernames = [ 'admin'] 
+    system_usernames = ['test', 'admin'] 
 
     conditions = [
         (password != password_confirm, 'confirmation-no-match', 'The passwords you entered did not match.', '400'),
